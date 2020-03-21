@@ -16,6 +16,7 @@ import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
 import moise.os.fs.Scheme;
+import moise.os.fs.Throwing;
 import moise.os.ns.NS;
 import moise.os.ns.NS.OpTypes;
 import moise.os.ns.Norm;
@@ -54,6 +55,7 @@ public class os2nopl {
     public static final String[] NOP_NS_PROPS = new String[] {  };
 
     private static final String NGOAL = "ngoal"; // id of the goal obligations
+    private static final String NTHROWING = "nthrowing"; // id of the account obligations
 
     // condition for each property
     private static final Map<String, String> condCode = new HashMap<String, String>();
@@ -281,6 +283,32 @@ public class os2nopl {
             np.append(".\n");
         }
         np.append(superGoal.toString());
+        
+        np.append("\n   // throwing(throwing goal id, concerned goal id)\n");
+        for (Goal g: sch.getGoals()) {
+            if(g instanceof Throwing) {
+                np.append("   throwing(" + g.getId() + "," + ((Throwing) g).getInGoal().getId() + ").\n");
+            }
+        }
+        
+        np.append("\n   // exception(throwing goal id, exception id)\n");
+        for (Goal g: sch.getGoals()) {
+            if(g instanceof Throwing) {
+                for(moise.os.fs.Exception e : ((Throwing) g).getExceptions()) {
+                    np.append("   exception(" + g.getId() + "," + e.getId() + ").\n");
+                }
+            }
+        }
+        
+        np.append("\n   // handler(handler id, ingoal id, exception id, handler goal id)\n");
+        for (Goal g: sch.getGoals()) {
+            if(g.hasHandlers()) {
+                for(moise.os.fs.Handler h : g.getHandlers()) {
+                    np.append("   handler(" + h.getId() + "," + g.getId() + ","  + h.getException().getId() + "," + h.getGoal().getId() + ").\n");
+                }
+            }
+        }
+
 
         np.append("\n   // ** Rules\n");
 
@@ -302,12 +330,22 @@ public class os2nopl {
         np.append("   all_satisfied(S,[G|T]) :- satisfied(S,G) & all_satisfied(S,T).\n");
         np.append("   any_satisfied(S,[G|_]) :- satisfied(S,G).\n");
         np.append("   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).\n\n");
+        
+        np.append("   // a goal is inside an handler if it is the handler's root goal or if the supergoal is inside an handler (recursively)\n");
+        np.append("   in_handler(H,G) :- handler(H,_,_,G).\n");
+        np.append("   in_handler(H,G) :- super_goal(G1,G) & in_handler(H,G1).\n\n");
 
         np.append("   // enabled goals (i.e. dependence between goals)\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & NP \\== 0 & all_satisfied(S,PCG).\n");
-
-        np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
+        np.append("   enabled(S,TG) :- throwing(TG,G) & failed(S,G) & not thrown(S,TG).\n");
+        np.append("   enabled(S,G) :- not in_handler(_,G) & not throwing(G,_) & goal(_, G,  dep(or,PCG), _, NP, _) & not failed(S,G) & NP \\== 0 & any_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- not in_handler(_,G) & not throwing(G,_) & goal(_, G, dep(and,PCG), _, NP, _) & not failed(S,G) & NP \\== 0 & all_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- in_handler(H,G) & handler(H,_,E,_) & exception(TG,E) & thrown(S,TG,E) & goal(_, G, dep(or,PCG), _, NP, _) & not failed(S,G) & NP \\== 0 & any_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- in_handler(H,G) & handler(H,_,E,_) & exception(TG,E) & thrown(S,TG,E) & goal(_, G, dep(and,PCG), _, NP, _) & not failed(S,G) & NP \\== 0 & all_satisfied(S,PCG).\n\n");
+        
+        np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n\n");
+        
+        np.append("   thrown(S,TG) :- thrown(S,TG,E).\n");
+        np.append("   satisfied(S,TG) :- thrown(S,TG).\n");
 
         np.append("\n   // ** Norms\n");
 
@@ -339,12 +377,24 @@ public class os2nopl {
             np.append("            (goal(_,G,_,performance,_,D) & What = done(S,G,A))) &\n");
             // TODO: implement location as annot for What. create an internal action to add this annot?
             //np.append("           ((goal(_,G,_,_,_,_)[location(L)] & WhatL = What[location(L)]) | (not goal(_,G,_,_,_,_)[location(L)] & WhatL = What)) &\n");
+            np.append("           not throwing(G,_) & \n");
             np.append("           well_formed(S) & \n");
             np.append("           not satisfied(S,G) & \n");
             np.append("           not super_satisfied(S,G)\n");
             np.append("        -> obligation(A,enabled(S,G),What,`now` + D).\n");
             // TODO: maintenance goals
             //np.append("   // maintenance goals\n");
+            
+            np.append("\n   // if a goal fails, an agent must throw an exception\n");
+            np.append("   norm "+NTHROWING+": \n");
+            np.append("           committed(A,M,S) & mission_goal(M,TG) & \n");
+            np.append("           well_formed(S) & \n");
+            np.append("           throwing(TG,G) & \n");
+            np.append("           failed(S,G)\n");
+            np.append("        -> obligation(A,enabled(S,TG), thrown(S,TG), `now` + `1 year`).\n");
+            
+            
+            
         }
 
         np.append("} // end of scheme "+sch.getId()+"\n");

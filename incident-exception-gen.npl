@@ -1,0 +1,490 @@
+/*
+    This program was automatically generated from
+    the organisation specification 'incident'
+    on gennaio 22, 2020 - 15:28:24
+
+    This is a MOISE tool, see more at http://moise.sourceforge.net
+
+*/
+
+scope organisation(incident) {
+
+
+   // Role hierarchy
+   subrole(key_account_manager,soc).
+   subrole(second_level_manager,soc).
+   subrole(second_level_worker1,soc).
+   subrole(second_level_worker3,soc).
+   subrole(developer_manager,soc).
+   subrole(second_level_worker2,soc).
+   subrole(developer_worker2,soc).
+   subrole(developer_worker1,soc).
+   subrole(second_level_worker5,soc).
+   subrole(first_level_manager,soc).
+   subrole(second_level_worker4,soc).
+   subrole(key_account_worker1,soc).
+   subrole(first_level_worker4,soc).
+   subrole(key_account_worker3,soc).
+   subrole(key_account_worker2,soc).
+   subrole(first_level_worker1,soc).
+   subrole(key_account_worker4,soc).
+   subrole(first_level_worker3,soc).
+   subrole(customer,soc).
+   subrole(first_level_worker2,soc).
+
+   // f* rules implement the role hierarchy transitivity
+   // t* rules implement the transitivity of some relations
+
+   // fplay(A,R,G) is true if A play R in G or if A play a subrole of R in G
+   fplay(A,R,G) :- play(A,R,G).
+   fplay(A,R,G) :- subrole(R1,R) & fplay(A,R1,G).
+
+   // fcompatible(R1,R2,S) is true if R1 or its sub-roles are compatible with R2 in scope S
+   fcompatible(R1,R2,S) :- tsubrole(R1,R2).
+   fcompatible(R1,R2,S) :- tsubrole(R1,R1a) & tsubrole(R2,R2a) & compatible(R1a,R2a,S).
+   fcompatible(R1,R2,S) :- tcompatible(R1,R2,S,[R1,R2]).
+   tcompatible(R1,R2,S,Path) :- compatible(R1,R3,S) & not .member(R3,Path) & tcompatible(R3,R2,S,[R3|Path]).
+   tsubrole(R,R).
+   tsubrole(R1,R2)    :- subrole(R1,R2).
+   tsubrole(R1,R2)    :- subrole(R1,R3) & tsubrole(R3,R2).
+
+
+scope group(incident_management_group) {
+
+   // ** Facts from OS
+   subgroup_cardinality(developer_group,0,2147483647).
+   subgroup_cardinality(key_account_management_group,0,2147483647).
+
+
+   // ** Rules
+   rplayers(R,G,V)    :- .count(play(_,R,G),V).
+   well_formed(G) :-
+      .count(subgroup(_,developer_group,G),Sdeveloper_group) & Sdeveloper_group >= 0 & Sdeveloper_group <= 2147483647 &
+      .count(subgroup(_,key_account_management_group,G),Skey_account_management_group) & Skey_account_management_group >= 0 & Skey_account_management_group <= 2147483647 &
+      .findall(GInst, subgroup(GInst,_,G), ListSubgroups) & all_subgroups_well_formed(ListSubgroups).
+   all_subgroups_well_formed([]).
+   all_subgroups_well_formed([H|T]) :- subgroup_well_formed(H) & all_subgroups_well_formed(T).
+
+   // ** Properties check 
+   norm role_in_group:  
+           play(Agt,R,Gr) &
+           group_id(Gr) &
+           not role_cardinality(R,_,_)
+        -> fail(role_in_group(Agt,R,Gr)).
+   norm role_cardinality:  
+           group_id(Gr) &
+           role_cardinality(R,_,RMax) &
+           rplayers(R,Gr,RP) &
+           RP > RMax
+        -> fail(role_cardinality(R,Gr,RP,RMax)).
+   norm role_compatibility:  
+           play(Agt,R1,Gr) &
+           play(Agt,R2,Gr) &
+           group_id(Gr) &
+           R1 < R2 &
+           not fcompatible(R1,R2,gr_inst)
+        -> fail(role_compatibility(R1,R2,Gr)).
+   norm well_formed_responsible:  
+           responsible(Gr,S) &
+           not well_formed(Gr)
+        -> fail(well_formed_responsible(Gr)).
+   norm subgroup_in_group:  
+           group_id(Gr) &
+           subgroup(G,GT,Gr) &
+           not subgroup_cardinality(GT,_,_)
+        -> fail(subgroup_in_group(G,GT,Gr)).
+   norm subgroup_cardinality:  
+           group_id(Gr) &
+           subgroup_cardinality(SG,_,SGMax) &
+           .count(subgroup(_,SG,Gr),SGP) &
+           SGP > SGMax
+        -> fail(subgroup_cardinality(SG,Gr,SGP,SGMax)).
+} // end of group incident_management_group
+
+
+// ** Group developer_group, subgroup of incident_management_group
+scope group(developer_group) {
+
+   // ** Facts from OS
+   role_cardinality(developer_manager,1,1).
+   role_cardinality(developer_worker2,1,1).
+   role_cardinality(developer_worker1,1,1).
+
+
+   // ** Rules
+   rplayers(R,G,V)    :- .count(play(_,R,G),V).
+   well_formed(G) :-
+      rplayers(developer_manager,G,Vdeveloper_manager) & Vdeveloper_manager >= 1 & Vdeveloper_manager <= 1 &
+      rplayers(developer_worker2,G,Vdeveloper_worker2) & Vdeveloper_worker2 >= 1 & Vdeveloper_worker2 <= 1 &
+      rplayers(developer_worker1,G,Vdeveloper_worker1) & Vdeveloper_worker1 >= 1 & Vdeveloper_worker1 <= 1 &
+      .findall(GInst, subgroup(GInst,_,G), ListSubgroups) & all_subgroups_well_formed(ListSubgroups).
+   all_subgroups_well_formed([]).
+   all_subgroups_well_formed([H|T]) :- subgroup_well_formed(H) & all_subgroups_well_formed(T).
+
+   // ** Properties check 
+   norm role_in_group:  
+           play(Agt,R,Gr) &
+           group_id(Gr) &
+           not role_cardinality(R,_,_)
+        -> fail(role_in_group(Agt,R,Gr)).
+   norm role_cardinality:  
+           group_id(Gr) &
+           role_cardinality(R,_,RMax) &
+           rplayers(R,Gr,RP) &
+           RP > RMax
+        -> fail(role_cardinality(R,Gr,RP,RMax)).
+   norm role_compatibility:  
+           play(Agt,R1,Gr) &
+           play(Agt,R2,Gr) &
+           group_id(Gr) &
+           R1 < R2 &
+           not fcompatible(R1,R2,gr_inst)
+        -> fail(role_compatibility(R1,R2,Gr)).
+   norm well_formed_responsible:  
+           responsible(Gr,S) &
+           not well_formed(Gr)
+        -> fail(well_formed_responsible(Gr)).
+   norm subgroup_in_group:  
+           group_id(Gr) &
+           subgroup(G,GT,Gr) &
+           not subgroup_cardinality(GT,_,_)
+        -> fail(subgroup_in_group(G,GT,Gr)).
+   norm subgroup_cardinality:  
+           group_id(Gr) &
+           subgroup_cardinality(SG,_,SGMax) &
+           .count(subgroup(_,SG,Gr),SGP) &
+           SGP > SGMax
+        -> fail(subgroup_cardinality(SG,Gr,SGP,SGMax)).
+} // end of group developer_group
+
+
+
+// ** Group key_account_management_group, subgroup of incident_management_group
+scope group(key_account_management_group) {
+
+   // ** Facts from OS
+   role_cardinality(key_account_manager,1,1).
+   role_cardinality(key_account_worker1,1,1).
+   role_cardinality(key_account_worker3,1,1).
+   role_cardinality(key_account_worker2,1,1).
+   role_cardinality(key_account_worker4,1,1).
+   role_cardinality(customer,1,1).
+
+
+   // ** Rules
+   rplayers(R,G,V)    :- .count(play(_,R,G),V).
+   well_formed(G) :-
+      rplayers(key_account_manager,G,Vkey_account_manager) & Vkey_account_manager >= 1 & Vkey_account_manager <= 1 &
+      rplayers(key_account_worker1,G,Vkey_account_worker1) & Vkey_account_worker1 >= 1 & Vkey_account_worker1 <= 1 &
+      rplayers(key_account_worker3,G,Vkey_account_worker3) & Vkey_account_worker3 >= 1 & Vkey_account_worker3 <= 1 &
+      rplayers(key_account_worker2,G,Vkey_account_worker2) & Vkey_account_worker2 >= 1 & Vkey_account_worker2 <= 1 &
+      rplayers(key_account_worker4,G,Vkey_account_worker4) & Vkey_account_worker4 >= 1 & Vkey_account_worker4 <= 1 &
+      rplayers(customer,G,Vcustomer) & Vcustomer >= 1 & Vcustomer <= 1 &
+      .findall(GInst, subgroup(GInst,_,G), ListSubgroups) & all_subgroups_well_formed(ListSubgroups).
+   all_subgroups_well_formed([]).
+   all_subgroups_well_formed([H|T]) :- subgroup_well_formed(H) & all_subgroups_well_formed(T).
+
+   // ** Properties check 
+   norm role_in_group:  
+           play(Agt,R,Gr) &
+           group_id(Gr) &
+           not role_cardinality(R,_,_)
+        -> fail(role_in_group(Agt,R,Gr)).
+   norm role_cardinality:  
+           group_id(Gr) &
+           role_cardinality(R,_,RMax) &
+           rplayers(R,Gr,RP) &
+           RP > RMax
+        -> fail(role_cardinality(R,Gr,RP,RMax)).
+   norm role_compatibility:  
+           play(Agt,R1,Gr) &
+           play(Agt,R2,Gr) &
+           group_id(Gr) &
+           R1 < R2 &
+           not fcompatible(R1,R2,gr_inst)
+        -> fail(role_compatibility(R1,R2,Gr)).
+   norm well_formed_responsible:  
+           responsible(Gr,S) &
+           not well_formed(Gr)
+        -> fail(well_formed_responsible(Gr)).
+   norm subgroup_in_group:  
+           group_id(Gr) &
+           subgroup(G,GT,Gr) &
+           not subgroup_cardinality(GT,_,_)
+        -> fail(subgroup_in_group(G,GT,Gr)).
+   norm subgroup_cardinality:  
+           group_id(Gr) &
+           subgroup_cardinality(SG,_,SGMax) &
+           .count(subgroup(_,SG,Gr),SGP) &
+           SGP > SGMax
+        -> fail(subgroup_cardinality(SG,Gr,SGP,SGMax)).
+} // end of group key_account_management_group
+
+
+scope scheme(scheme_am) {
+
+   // ** Facts from OS
+
+   // mission_cardinality(mission id, min, max)
+   mission_cardinality(m4,1,1).
+   mission_cardinality(m3,1,1).
+   mission_cardinality(m2,1,1).
+   mission_cardinality(m1,1,1).
+   mission_cardinality(m0,1,1).
+
+   // mission_role(mission id, role id)
+   mission_role(m0,key_account_manager).
+   mission_role(m1,key_account_worker1).
+   mission_role(m2,key_account_worker2).
+   mission_role(m3,key_account_worker3).
+   mission_role(m4,key_account_worker4).
+
+   // mission_goal(mission id, goal id)
+   mission_goal(m4,rec).
+   mission_goal(m3,es1).
+   mission_goal(m3,es2).
+   mission_goal(m2,ask1ls).
+   mission_goal(m2,throw_ask1ls).
+   mission_goal(m1,gd).
+   mission_goal(m0,cpr).
+   mission_goal(m0,ch).
+   mission_goal(m0,root_am).
+   mission_goal(m0,cnh).
+
+   // goal(missions, goal id, dependence (on goal statisfaction), type, #ags to satisfy, ttf)
+   goal([m3],es1,dep(and,[ch]),performance,all,`1 year`).
+   goal([],cnh_branch,dep(and,[es2]),performance,0,`1 year`).
+   goal([m0],cpr,dep(and,[]),performance,all,`1 year`).
+   goal([m0],ch,dep(and,[gd]),performance,all,`1 year`).
+   goal([m3],es2,dep(and,[ask1ls]),performance,all,`1 year`).
+   goal([m0],root_am,dep(and,[switch_ch_cnh]),performance,all,`1 year`).
+   goal([],ch_branch,dep(and,[es1]),performance,0,`1 year`).
+   goal([m4],rec,dep(and,[]),performance,all,`1 year`).
+   goal([m2],ask1ls,dep(and,[cnh]),performance,all,`1 year`).
+   goal([],switch_ch_cnh,dep(or,[ch_branch, cnh_branch]),performance,0,`1 year`).
+   goal([m2],throw_ask1ls,dep(and,[]),performance,all,`1 year`).
+   goal([m0],cnh,dep(and,[gd]),performance,all,`1 year`).
+   goal([m1],gd,dep(and,[]),performance,all,`1 year`).
+   super_goal(ch_branch, es1).
+   super_goal(switch_ch_cnh, cnh_branch).
+   super_goal(ch_branch, ch).
+   super_goal(cnh_branch, es2).
+   super_goal(switch_ch_cnh, ch_branch).
+   super_goal(cnh_branch, ask1ls).
+   super_goal(root_am, switch_ch_cnh).
+   super_goal(cnh_branch, cnh).
+   super_goal(root_am, gd).
+
+   // throwing(throwing goal id, concerned goal id)
+   throwing(throw_ask1ls,ask1ls).
+
+   // exception(throwing goal id, exception id)
+   exception(throw_ask1ls,timeoutam).
+   exception(throw_ask1ls,cancel1lsreq).
+
+   // handler(handler id, ingoal id, exception id, handler goal id)
+   handler(handler_timeoutam,cnh_branch,timeoutam,rec).
+   handler(handler_cancel1lsreq,root_am,cancel1lsreq,cpr).
+
+   // ** Rules
+   mplayers(M,S,V) :- .count(committed(_,M,S),V).
+   well_formed(S) :- 
+      (mission_accomplished(S,m4) | not mission_accomplished(S,m4) & mplayers(m4,S,Vm4) & Vm4 >= 1 & Vm4 <= 1) &
+      (mission_accomplished(S,m3) | not mission_accomplished(S,m3) & mplayers(m3,S,Vm3) & Vm3 >= 1 & Vm3 <= 1) &
+      (mission_accomplished(S,m2) | not mission_accomplished(S,m2) & mplayers(m2,S,Vm2) & Vm2 >= 1 & Vm2 <= 1) &
+      (mission_accomplished(S,m1) | not mission_accomplished(S,m1) & mplayers(m1,S,Vm1) & Vm1 >= 1 & Vm1 <= 1) &
+      (mission_accomplished(S,m0) | not mission_accomplished(S,m0) & mplayers(m0,S,Vm0) & Vm0 >= 1 & Vm0 <= 1).
+   is_finished(S) :- satisfied(S,root_am).
+   mission_accomplished(S,M) :- .findall(Goal, mission_goal(M,Goal), MissionGoals) & all_satisfied(S,MissionGoals).
+   all_satisfied(_,[]).
+   all_satisfied(S,[G|T]) :- satisfied(S,G) & all_satisfied(S,T).
+   any_satisfied(S,[G|_]) :- satisfied(S,G).
+   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).
+
+   // a goal is inside an handler if it is the handler's root goal or if the supergoal is inside an handler (recursively)
+   in_handler(H,G) :- handler(H,_,_,G).
+   in_handler(H,G) :- super_goal(G1,G) & in_handler(H,G1).
+
+   // enabled goals (i.e. dependence between goals)
+   enabled(S,TG) :- throwing(TG,G) & failed(S,G) & not thrown(S,TG).
+   enabled(S,G) :- not in_handler(_,G) & not throwing(G,_) & goal(_, G,  dep(or,PCG), _, NP, _) & not failed(S,G) & NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- not in_handler(_,G) & not throwing(G,_) & goal(_, G, dep(and,PCG), _, NP, _) & not failed(S,G) & NP \== 0 & all_satisfied(S,PCG).
+   enabled(S,G) :- in_handler(H,G) & handler(H,_,E,_) & exception(TG,E) & thrown(S,TG,E) & goal(_, G, dep(or,PCG), _, NP, _) & not failed(S,G) & NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- in_handler(H,G) & handler(H,_,E,_) & exception(TG,E) & thrown(S,TG,E) & goal(_, G, dep(and,PCG), _, NP, _) & not failed(S,G) & NP \== 0 & all_satisfied(S,PCG).
+
+   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).
+
+   thrown(S,TG) :- thrown(S,TG,E).
+   satisfied(S,TG) :- thrown(S,TG).
+
+   // ** Norms
+
+   // --- Properties check ---
+   norm mission_left:  
+           leaved_mission(Agt,M,S) &
+           not mission_accomplished(S,M)
+        -> fail(mission_left(Agt,M,S)).
+   norm ach_not_enabled_goal:  
+           done(S,G,Agt) &
+           mission_goal(M,G) &
+           not mission_accomplished(S,M) &
+           not enabled(S,G)
+        -> fail(ach_not_enabled_goal(S,G,Agt)).
+   norm ach_not_committed_goal:  
+           done(S,G,Agt) &
+           .findall(M, mission_goal(M,G) &
+           (committed(Agt,M,S) | mission_accomplished(S,M)), [])
+        -> fail(ach_not_committed_goal(S,G,Agt)).
+   norm mission_permission:  
+           committed(Agt,M,S) &
+           not (mission_role(M,R) &
+           responsible(Gr,S) &
+           fplay(Agt,R,Gr))
+        -> fail(mission_permission(Agt,M,S)).
+   norm mission_cardinality:  
+           scheme_id(S) &
+           mission_cardinality(M,_,MMax) &
+           mplayers(M,S,MP) &
+           MP > MMax
+        -> fail(mission_cardinality(M,S,MP,MMax)).
+
+   // agents are obliged to fulfill their enabled goals
+   norm ngoal: 
+           committed(A,M,S) & mission_goal(M,G) & 
+           ((goal(_,G,_,achievement,_,D) & What = satisfied(S,G)) | 
+            (goal(_,G,_,performance,_,D) & What = done(S,G,A))) &
+           not throwing(G,_) & 
+           well_formed(S) & 
+           not satisfied(S,G) & 
+           not super_satisfied(S,G)
+        -> obligation(A,enabled(S,G),What,`now` + D).
+
+   // if a goal fails, an agent must throw an exception
+   norm nthrowing: 
+           committed(A,M,S) & mission_goal(M,TG) & 
+           well_formed(S) & 
+           throwing(TG,G) & 
+           failed(S,G)
+        -> obligation(A,enabled(S,TG), thrown(S,TG), `now` + `1 year`).
+} // end of scheme scheme_am
+
+scope scheme(scheme_developer) {
+
+   // ** Facts from OS
+
+   // mission_cardinality(mission id, min, max)
+   mission_cardinality(m7,1,1).
+   mission_cardinality(m6,1,1).
+   mission_cardinality(m5,1,1).
+
+   // mission_role(mission id, role id)
+   mission_role(m5,developer_manager).
+   mission_role(m6,developer_worker1).
+   mission_role(m7,developer_worker2).
+
+   // mission_goal(mission id, goal id)
+   mission_goal(m7,pff2ls).
+   mission_goal(m7,throw_pff2ls).
+   mission_goal(m6,ep).
+   mission_goal(m5,root_developer).
+   mission_goal(m5,expfdev).
+
+   // goal(missions, goal id, dependence (on goal statisfaction), type, #ags to satisfy, ttf)
+   goal([m5],root_developer,dep(and,[pff2ls]),performance,all,`5seconds`).
+   goal([m7],pff2ls,dep(and,[ep]),performance,all,`1 year`).
+   goal([m5],expfdev,dep(and,[]),performance,all,`1 year`).
+   goal([m6],ep,dep(and,[]),performance,all,`1 year`).
+   goal([m7],throw_pff2ls,dep(and,[]),performance,all,`1 year`).
+   super_goal(root_developer, pff2ls).
+   super_goal(root_developer, ep).
+
+   // throwing(throwing goal id, concerned goal id)
+   throwing(throw_pff2ls,pff2ls).
+
+   // exception(throwing goal id, exception id)
+   exception(throw_pff2ls,fail_dev).
+
+   // handler(handler id, ingoal id, exception id, handler goal id)
+   handler(handler_fail_dev,root_developer,fail_dev,expfdev).
+
+   // ** Rules
+   mplayers(M,S,V) :- .count(committed(_,M,S),V).
+   well_formed(S) :- 
+      (mission_accomplished(S,m7) | not mission_accomplished(S,m7) & mplayers(m7,S,Vm7) & Vm7 >= 1 & Vm7 <= 1) &
+      (mission_accomplished(S,m6) | not mission_accomplished(S,m6) & mplayers(m6,S,Vm6) & Vm6 >= 1 & Vm6 <= 1) &
+      (mission_accomplished(S,m5) | not mission_accomplished(S,m5) & mplayers(m5,S,Vm5) & Vm5 >= 1 & Vm5 <= 1).
+   is_finished(S) :- satisfied(S,root_developer).
+   mission_accomplished(S,M) :- .findall(Goal, mission_goal(M,Goal), MissionGoals) & all_satisfied(S,MissionGoals).
+   all_satisfied(_,[]).
+   all_satisfied(S,[G|T]) :- satisfied(S,G) & all_satisfied(S,T).
+   any_satisfied(S,[G|_]) :- satisfied(S,G).
+   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).
+
+   // a goal is inside an handler if it is the handler's root goal or if the supergoal is inside an handler (recursively)
+   in_handler(H,G) :- handler(H,_,_,G).
+   in_handler(H,G) :- super_goal(G1,G) & in_handler(H,G1).
+
+   // enabled goals (i.e. dependence between goals)
+   enabled(S,TG) :- throwing(TG,G) & failed(S,G) & not thrown(S,TG).
+   enabled(S,G) :- not in_handler(_,G) & not throwing(G,_) & goal(_, G,  dep(or,PCG), _, NP, _) & not failed(S,G) & NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- not in_handler(_,G) & not throwing(G,_) & goal(_, G, dep(and,PCG), _, NP, _) & not failed(S,G) & NP \== 0 & all_satisfied(S,PCG).
+   enabled(S,G) :- in_handler(H,G) & handler(H,_,E,_) & exception(TG,E) & thrown(S,TG,E) & goal(_, G, dep(or,PCG), _, NP, _) & not failed(S,G) & NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- in_handler(H,G) & handler(H,_,E,_) & exception(TG,E) & thrown(S,TG,E) & goal(_, G, dep(and,PCG), _, NP, _) & not failed(S,G) & NP \== 0 & all_satisfied(S,PCG).
+
+   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).
+
+   thrown(S,TG) :- thrown(S,TG,E).
+   satisfied(S,TG) :- thrown(S,TG).
+
+   // ** Norms
+
+   // --- Properties check ---
+   norm mission_left:  
+           leaved_mission(Agt,M,S) &
+           not mission_accomplished(S,M)
+        -> fail(mission_left(Agt,M,S)).
+   norm ach_not_enabled_goal:  
+           done(S,G,Agt) &
+           mission_goal(M,G) &
+           not mission_accomplished(S,M) &
+           not enabled(S,G)
+        -> fail(ach_not_enabled_goal(S,G,Agt)).
+   norm ach_not_committed_goal:  
+           done(S,G,Agt) &
+           .findall(M, mission_goal(M,G) &
+           (committed(Agt,M,S) | mission_accomplished(S,M)), [])
+        -> fail(ach_not_committed_goal(S,G,Agt)).
+   norm mission_permission:  
+           committed(Agt,M,S) &
+           not (mission_role(M,R) &
+           responsible(Gr,S) &
+           fplay(Agt,R,Gr))
+        -> fail(mission_permission(Agt,M,S)).
+   norm mission_cardinality:  
+           scheme_id(S) &
+           mission_cardinality(M,_,MMax) &
+           mplayers(M,S,MP) &
+           MP > MMax
+        -> fail(mission_cardinality(M,S,MP,MMax)).
+
+   // agents are obliged to fulfill their enabled goals
+   norm ngoal: 
+           committed(A,M,S) & mission_goal(M,G) & 
+           ((goal(_,G,_,achievement,_,D) & What = satisfied(S,G)) | 
+            (goal(_,G,_,performance,_,D) & What = done(S,G,A))) &
+           not throwing(G,_) & 
+           well_formed(S) & 
+           not satisfied(S,G) & 
+           not super_satisfied(S,G)
+        -> obligation(A,enabled(S,G),What,`now` + D).
+
+   // if a goal fails, an agent must throw an exception
+   norm nthrowing: 
+           committed(A,M,S) & mission_goal(M,TG) & 
+           well_formed(S) & 
+           throwing(TG,G) & 
+           failed(S,G)
+        -> obligation(A,enabled(S,TG), thrown(S,TG), `now` + `1 year`).
+} // end of scheme scheme_developer
+
+} // end of organisation incident

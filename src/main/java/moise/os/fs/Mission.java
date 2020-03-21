@@ -12,6 +12,7 @@ import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
+import org.ietf.jgss.GSSContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -148,9 +149,16 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
         }
         // goals
         for (Goal gs: getGoals()) {
-            Element eg = (Element) document.createElement(Goal.getXMLTag());
-            eg.setAttribute("id", gs.getId());
-            ele.appendChild(eg);
+            if(gs instanceof Throwing) {
+                Element eg = (Element) document.createElement(Throwing.getXMLTag());
+                eg.setAttribute("id", gs.getId());
+                ele.appendChild(eg);
+            }
+            else {
+                Element eg = (Element) document.createElement(Goal.getXMLTag());
+                eg.setAttribute("id", gs.getId());
+                ele.appendChild(eg);
+            }
         }
 
         // Preferable
@@ -177,6 +185,15 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
                 throw new MoiseXMLParserException("the goal '"+g.getAttribute("id")+"' in mission '"+getId()+"' is not in any plan!");
             }
             addGoal(g.getAttribute("id"));
+        }
+        
+        for (Element t: DOMUtils.getDOMDirectChilds(ele, Throwing.getXMLTag())) {
+            Throwing ts = (Throwing) sch.getGoal(t.getAttribute("id"));
+            if (ts == null) {
+                //sch.addGoal(new GoalSpec(g.getAttribute("id")));
+                throw new MoiseXMLParserException("the goal '"+t.getAttribute("id")+"' in mission '"+getId()+"' is not in any plan!");
+            }
+            addGoal(t.getAttribute("id"));
         }
 
         for (Element p: DOMUtils.getDOMDirectChilds(ele, "preferred")) {

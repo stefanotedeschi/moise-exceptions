@@ -26,6 +26,7 @@ import jason.asSyntax.VarTerm;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
+import moise.os.fs.Throwing;
 
 /**
  Represents an instance of scheme
@@ -45,7 +46,9 @@ public class Scheme extends CollectiveOE {
         createLiteral("done", new VarTerm("SID"), new VarTerm("Goal"), new VarTerm("Ag") ),
         createLiteral("satisfied", new VarTerm("SID"), new VarTerm("Goal")),
         createLiteral(Group.playPI.getFunctor(), new VarTerm("Ag"), new VarTerm("Role"), new VarTerm("Gr")), // from group
-        createLiteral(Group.responsiblePI.getFunctor(), new VarTerm("Gr"), new VarTerm("Sch"))               // from group
+        createLiteral(Group.responsiblePI.getFunctor(), new VarTerm("Gr"), new VarTerm("Sch")),               // from group
+        createLiteral("failed",new VarTerm("SID"), new VarTerm("Goal")),
+        createLiteral("thrown", new VarTerm("SID"), new VarTerm("Goal"), new VarTerm("Exception"))
     };
 
 
@@ -54,6 +57,8 @@ public class Scheme extends CollectiveOE {
     public final static PredicateIndicator exCommittedPI = dynamicFacts[2].getPredicateIndicator();
     public final static PredicateIndicator donePI        = dynamicFacts[3].getPredicateIndicator();
     public final static PredicateIndicator satisfiedPI   = dynamicFacts[4].getPredicateIndicator();
+    public final static PredicateIndicator failedPI      = dynamicFacts[7].getPredicateIndicator();
+    public final static PredicateIndicator thrownPI     = dynamicFacts[8].getPredicateIndicator();
 
     // specification
     private moise.os.fs.Scheme spec;
@@ -63,9 +68,15 @@ public class Scheme extends CollectiveOE {
 
     // the literal is done(schemeId, goalId, agent name)
     private ConcurrentSkipListSet<Literal> doneGoals = new ConcurrentSkipListSet<>();
+    
+    // the literal is failed(schemeId, goalId)
+    private ConcurrentSkipListSet<Literal> failedGoals = new ConcurrentSkipListSet<>();
 
     // values for goal arguments (key = goal + arg, value = value)
     private HashMap<Pair<String,String>,Object> goalArgs = new HashMap<>();
+    
+ // the literal is account(goalId, exceptionId, account taker name)
+    private ConcurrentSkipListSet<Literal> throwns = new ConcurrentSkipListSet<>();
 
     // list of satisfied goals
     private Set<String> satisfiedGoals = new HashSet<>(); // we use "contains" a lot, so remains HashSet
@@ -93,6 +104,18 @@ public class Scheme extends CollectiveOE {
     public void addDoneGoal(String ag, String goal) {
         doneGoals.add(createLiteral(donePI.getFunctor(), termId, createAtom(goal), createAtom(ag)));
     }
+    
+    public void addFailedGoal(String goal) {
+        failedGoals.add(createLiteral(failedPI.getFunctor(), termId, createAtom(goal)));
+    }
+    
+    public void addThrown(String goal, String exception) {
+        throwns.add(createLiteral(thrownPI.getFunctor(), termId, createAtom(goal), createAtom(exception)));
+    }
+    
+    public Term getTermId() {
+        return termId;
+    }
 
     public boolean removeDoneGoal(Goal goal) {
         boolean r = false;
@@ -102,6 +125,34 @@ public class Scheme extends CollectiveOE {
             Literal l = iDoneGoals.next();
             if (l.getTerm(1).equals(gAtom)) {
                 iDoneGoals.remove();
+                r = true;
+            }
+        }
+        return r;
+    }
+    
+    public boolean removeFailedGoal(Goal goal) {
+        boolean r = false;
+        Atom gAtom = createAtom(goal.getId());
+        Iterator<Literal> iFailedGoals = failedGoals.iterator();
+        while (iFailedGoals.hasNext()) {
+            Literal l = iFailedGoals.next();
+            if (l.getTerm(1).equals(gAtom)) {
+                iFailedGoals.remove();
+                r = true;
+            }
+        }
+        return r;
+    }
+    
+    public boolean removeThrown(Goal goal) {
+        boolean r = false;
+        Atom gAtom = createAtom(goal.getId());
+        Iterator<Literal> iThrowns = throwns.iterator();
+        while (iThrowns.hasNext()) {
+            Literal l = iThrowns.next();
+            if (l.getTerm(1).equals(gAtom)) {
+                iThrowns.remove();
                 r = true;
             }
         }
@@ -121,6 +172,10 @@ public class Scheme extends CollectiveOE {
                 changed = resetGoal(g) || changed;
             }
         }
+        
+        if(goal.hasThrowing()) {
+            changed = resetGoal(goal.getThrowing()) || changed;
+        }
 
         if (changed) {
             // reset also satisfied goals
@@ -131,6 +186,8 @@ public class Scheme extends CollectiveOE {
     
     protected boolean resetGoalAndPreConditions(Goal goal) {
         boolean changed = removeDoneGoal(goal);
+        changed = removeFailedGoal(goal);
+        changed = removeThrown(goal);
 
         // recompute for all goals which this goal is pre condition
         for (Goal g: spec.getGoals()) {
@@ -202,9 +259,15 @@ public class Scheme extends CollectiveOE {
                 return LogExpr.createUnifIterator(u);
             else
                 return LogExpr.EMPTY_UNIF_LIST.iterator();
-
+            
+        } else if (pi.equals(thrownPI)) {
+            return consultFromCollection(l, u, throwns);
+            
         } else if (pi.equals(donePI)) {
             return consultFromCollection(l, u, doneGoals);
+
+        } else if (pi.equals(failedPI)) {
+            return consultFromCollection(l, u, failedGoals);
 
         } else if (pi.equals(satisfiedPI)) {
             Term lCopy = l.getTerm(1).capply(u);
@@ -258,6 +321,9 @@ public class Scheme extends CollectiveOE {
         for (Goal g: spec.getGoals()) {
             if ( !satisfiedGoals.contains(g.getId()) && isSatisfied(g) ) {
                 satisfiedGoals.add(g.getId());
+                if(g.getInHandler() != null) {
+                    satisfiedGoals.add(g.getInHandler().getInGoal().getId());
+                }
                 changed = true;
                 //System.out.println("added sat "+g);
             }
@@ -275,6 +341,16 @@ public class Scheme extends CollectiveOE {
     public boolean isSatisfied(Goal g) {
         if (satisfiedGoals.contains(g.getId()))
             return true;
+        
+        if(g instanceof Throwing) {
+            
+            for (Literal t: throwns) {
+                if(t.getTerm(1).toString().equals(g.getId())) {
+                    return true;
+                }
+            }
+            
+        }
 
         // all pre-conditions
         //    satisfied(S,G) :-     // no agents have to achieve -- automatically satisfied by its pre-conditions
@@ -326,6 +402,8 @@ public class Scheme extends CollectiveOE {
         g.exPlayers.addAll(this.exPlayers);
         g.groups.addAll(this.groups);
         g.doneGoals.addAll(this.doneGoals);
+        g.failedGoals.addAll(this.failedGoals);
+        g.throwns.addAll(this.throwns);
         //g.accomplisedMissions.addAll(this.accomplisedMissions);
         g.satisfiedGoals.addAll(this.satisfiedGoals);
         g.goalArgs.putAll(this.goalArgs);

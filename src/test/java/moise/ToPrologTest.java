@@ -37,7 +37,8 @@ public class ToPrologTest {
     @Test
     public void testGoalSpec() {
         Goal g = sch.getSpec().getGoal("g3");
-        assertEquals("goal(g3,performance,\"kick the ball to the m2Ag\",1,\"infinity\",[M2Ag],noplan)", g.getAsProlog());
+        System.out.println(g.getAsProlog());
+        assertEquals("goal(g3,performance,\"kick the ball to the m2Ag\",1,\"infinity\",[M2Ag],[],noplan)", g.getAsProlog());
         g = sch.getSpec().getGoal("g2");
         System.out.println(g.getAsProlog());
         System.out.println(sch.getSpec().getAsProlog());
