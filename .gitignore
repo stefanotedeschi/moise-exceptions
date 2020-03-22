@@ -15,8 +15,8 @@ src/test/jcm/dyn-scheme/x.xml
 .stop___MAS
 .gradle
 .settings
-.classpath
-.project
+./.classpath
+./.project
 .DS_Store
 test.xml
 
