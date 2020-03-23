@@ -84,58 +84,57 @@
 					<goal id="addItems" />
 					<goal id="checkout">
 						<plan operator="sequence">
-							<goal id="payOrder">
-								<throwing id="throwPayOrder">
-									<exception id="paymentRefused" />
-								</throwing>
-							</goal>
+							<goal id="payOrder" />
 							<goal id="sendOrder" />
 						</plan>
-						<handler id="handlePaymentRefused" target="paymentRefused">
-							<goal id="retry">
-								<throwing id="throwRetry">
-									<exception id="checkoutFailed" />
-								</throwing>
-							</goal>
-						</handler>
 					</goal>
-					<goal id="receiveItems">
-						<throwing id="throwReceiveItems">
-							<exception id="itemsNotReceived" />
-						</throwing>
-					</goal>
+					<goal id="receiveItems" />
 				</plan>
-				<handler id="handleCheckoutFailed" target="checkoutFailed">
-					<goal id="cancelOrder" />
-				</handler>
-				<handler id="handleItemsNotReceived" target="itemsNotReceived">
-					<goal id="requestRefund" />
-				</handler>
 			</goal>
+
+			<goal id="raisePaymentRefused" />
+			<goal id="raiseCheckoutFailed" />
+			<goal id="raiseItemsNotReceived" />
+			<goal id="retry" />
+			<goal id="cancelOrder" />
+			<goal id="requestRefund" />
+
 			<mission id="mCustomer1" min="1" max="1">
 				<goal id="browseProducts" />
 				<goal id="addItems" />
 			</mission>
 			<mission id="mCustomer2" min="1" max="1">
 				<goal id="checkout" />
-				<goal id="retry" />
-				<throwing id="throwRetry" />
+				<handler id="handlerPaymentRefused" target="paymentRefused">
+					<goal id="retry" />
+				</handler>
+				<exception id="checkoutFailed" when="failed(customer_sch,retry)">
+					<goal id="raiseCheckoutFailed" />
+				</exception>
 			</mission>
 			<mission id="mCustomer3" min="1" max="1">
 				<goal id="payOrder" />
-				<throwing id="throwPayOrder" />
+				<exception id="paymentRefused" when="failed(customer_sch,payOrder)">
+					<goal id="raisePaymentRefused" />
+				</exception>
 			</mission>
 			<mission id="mCustomer4" min="1" max="1">
 				<goal id="sendOrder" />
 			</mission>
 			<mission id="mCustomer5" min="1" max="1">
 				<goal id="receiveItems" />
-				<throwing id="throwReceiveItems" />
+				<exception id="itemsNotReceived" when="failed(customer_sch,receiveItems)">
+					<goal id="raiseItemsNotReceived" />
+				</exception>
 			</mission>
 			<mission id="mCustomer6" min="1" max="1">
 				<goal id="placeOrder" />
-				<goal id="cancelOrder" />
-				<goal id="requestRefund" />
+				<handler id="handlerCheckoutFailed" target="checkoutFailed">
+					<goal id="cancelOrder" />
+				</handler>
+				<handler id="handlerItemsNotReceived" target="itemsNotReceived">
+					<goal id="requestRefund" />
+				</handler>
 			</mission>
 		</scheme>
 
@@ -190,16 +189,13 @@
 				<plan operator="sequence">
 					<goal id="pickItems" />
 					<goal id="loadTruck" />
-					<goal id="deliverItems">
-						<throwing id="throwDeliverItems">
-							<exception id="itemsLost" />
-						</throwing>
-					</goal>
+					<goal id="deliverItems" />
 				</plan>
-				<handler id="handleItemsLost" target="itemsLost">
-					<goal id="notifyCustomer" />
-				</handler>
 			</goal>
+
+			<goal id="raiseItemsLost" />
+			<goal id="notifyCustomer" />
+
 			<mission id="mCarrier1" min="1" max="1">
 				<goal id="pickItems" />
 			</mission>
@@ -208,10 +204,14 @@
 			</mission>
 			<mission id="mCarrier3" min="1" max="1">
 				<goal id="deliverItems" />
-				<throwing id="throwDeliverItems" />
+				<exception id="itemsLost" when="failed(carrier_sch,deliverItems)" />
+					<goal id="raiseItemsLost" />
+				</exception>
 			</mission>
 			<mission id="mCarrier4" min="1" max="1">
-				<goal id="notifyCustomer" />
+				<handler id="handlerItemsLost" target="itemsLost">
+					<goal id="notifyCustomer" />
+				</handler>
 			</mission>
 		</scheme>
 
