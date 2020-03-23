@@ -15,6 +15,10 @@ import moise.xml.ToXML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import jason.asSyntax.ASSyntax;
+import jason.asSyntax.Literal;
+import jason.asSyntax.parser.ParseException;
+
 /**
  Represents a Mission. The mission id is prefixed by the scheme id.
 
@@ -27,8 +31,10 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
 
     private static final long serialVersionUID = 1L;
 
-    protected Set<Goal>     goals      = new HashSet<>();
-    protected Set<Mission>  preferable = new HashSet<>();
+    protected Set<Goal>        goals      = new HashSet<>();
+    protected Set<Mission>     preferable = new HashSet<>();
+    protected Set<Report>      reports    = new HashSet<>();
+    protected Set<Treatment>   treatments = new HashSet<>();
 
     protected Scheme sch = null;
 
@@ -152,6 +158,18 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
             eg.setAttribute("id", gs.getId());
             ele.appendChild(eg);
         }
+        
+        // reports
+        for(Report r : reports) {
+            Element er = r.getAsDOM(document);
+            ele.appendChild(er);
+        }
+        
+        // treatments
+        for(Treatment t : treatments) {
+            Element et = t.getAsDOM(document);
+            ele.appendChild(et);
+        }
 
         // Preferable
         for (Mission misPref: getPreferables()) {
@@ -178,6 +196,34 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
             }
             addGoal(g.getAttribute("id"));
         }
+        
+        for (Element rEle: DOMUtils.getDOMDirectChilds(ele, Report.getXMLTag())) {
+            String id = rEle.getAttribute("id");
+            Literal condition;
+            try {
+                condition = ASSyntax.parseLiteral(rEle.getAttribute("when"));
+            } catch (ParseException e) {
+                throw new MoiseException(e.getMessage());
+            }
+            Report r = new Report(id, condition);
+            r.setFromDOM(rEle, sch);
+            reports.add(r);
+            if(r.getGoal() != null) {
+                goals.add(r.getGoal());
+            }
+        }
+        
+        for (Element tEle: DOMUtils.getDOMDirectChilds(ele, Treatment.getXMLTag())) {
+            String id = tEle.getAttribute("id");
+            String rep = tEle.getAttribute("reporting");
+            Report r = sch.getReport(rep);
+            Treatment t = new Treatment(id, r);
+            t.setFromDOM(tEle, sch);
+            treatments.add(t);
+            if(t.getGoal() != null) {
+                goals.add(t.getGoal());
+            }
+        }
 
         for (Element p: DOMUtils.getDOMDirectChilds(ele, "preferred")) {
             addPreferable(p.getAttribute("mission"));
@@ -187,4 +233,24 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
     public String toString() {
         return getFullId();
     }
+    
+    public Report getReport(String repId) throws MoiseException {
+        for(Report r : reports) {
+            if(r.getId().equals(repId)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+
+    public Set<Report> getReports() {
+        return reports;
+    }
+
+
+    public Set<Treatment> getTreatments() {
+        return treatments;
+    }
+    
 }

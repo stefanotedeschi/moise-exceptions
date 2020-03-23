@@ -15,7 +15,9 @@ import moise.os.OS;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
+import moise.os.fs.Report;
 import moise.os.fs.Scheme;
+import moise.os.fs.Treatment;
 import moise.os.ns.NS;
 import moise.os.ns.NS.OpTypes;
 import moise.os.ns.Norm;
@@ -54,6 +56,7 @@ public class os2nopl {
     public static final String[] NOP_NS_PROPS = new String[] {  };
 
     private static final String NGOAL = "ngoal"; // id of the goal obligations
+    private static final String NREPORT = "nreport";
 
     // condition for each property
     private static final Map<String, String> condCode = new HashMap<String, String>();
@@ -239,12 +242,89 @@ public class os2nopl {
                 }
             }
         }
-        np.append("\n   // mission_goal(mission id, goal id)\n");
+        
+        String missionGoal      = "\n   // mission_goal(mission id, goal id)\n";
+        String report           = "\n   // report(report id, condition)\n";
+        String treatment        = "\n   // treatment(treatment id, report id)\n";
+        String missionReport    = "\n   // mission_report(mission id, report id)\n";
+        String reportGoal       = "\n   // report_goal(report id, goal id)\n";
+        String missionTreatment = "\n   // mission_treatment(mission id, treatment id)\n";
+        String treatmentGoal    = "\n   // treatment_goal(treatment id, goal id)\n";
+        
+        //np.append("\n   // mission_goal(mission id, goal id)\n");
         for (Mission m: sch.getMissions()) {
             for (Goal g: m.getGoals()) {
-                np.append("   mission_goal("+m.getId()+","+g.getId()+").\n");
+                missionGoal += "   mission_goal("+m.getId()+","+g.getId()+").\n";
+            }
+            for (Report r: m.getReports()) {
+                report += "   report("+r.getId()+","+r.getCondition()+").\n";
+                missionReport += "   mission_report("+m.getId()+","+r.getId()+").\n";
+                if(r.getGoal() != null) {
+                    reportGoal += "   report_goal("+r.getId()+","+r.getGoal().getId()+").\n";
+                }
+            }
+            for (Treatment t: m.getTreatments()) {
+                treatment += "   treatment("+t.getId()+","+t.getReport().getId()+").\n";
+                missionTreatment += "   mission_treatment("+m.getId()+","+t.getId()+").\n";
+                if(t.getGoal() != null) {
+                    treatmentGoal += "   treatment_goal("+t.getId()+","+t.getGoal().getId()+").\n";
+                }
             }
         }
+        
+        np.append(missionGoal);
+        np.append(report);
+        np.append(treatment);
+        np.append(missionReport);
+        np.append(reportGoal);
+        np.append(missionTreatment);
+        np.append(treatmentGoal);
+        
+//        np.append("\n   // report(report id, condition)\n");
+//        for (Mission m: sch.getMissions()) {
+//            for (Report r: m.getReports()) {
+//                np.append("   report("+r.getId()+","+r.getCondition()+").\n");
+//            }
+//        }
+//        
+//        np.append("\n   // treatment(treatment id, report id)\n");
+//        for (Mission m: sch.getMissions()) {
+//            for (Treatment t: m.getTreatments()) {
+//                np.append("   treatment("+t.getId()+","+t.getReport().getId()+").\n");
+//            }
+//        }
+//        
+//        np.append("\n   // mission_report(mission id, report id)\n");
+//        for (Mission m: sch.getMissions()) {
+//            for (Report r: m.getReports()) {
+//                np.append("   mission_report("+m.getId()+","+r.getId()+").\n");
+//            }
+//        }
+//        
+//        np.append("\n   // report_goal(report id, goal id)\n");
+//        for (Mission m: sch.getMissions()) {
+//            for (Report r: m.getReports()) {
+//              if(r.getGoal() != null) {
+//                  np.append("   report_goal("+r.getId()+","+r.getGoal().getId()+").\n");
+//              }
+//            }
+//        }
+//        
+//        np.append("\n   // mission_treatment(mission id, treatment id)\n");
+//        for (Mission m: sch.getMissions()) {
+//            for (Treatment t: m.getTreatments()) {
+//                np.append("   mission_treatment("+m.getId()+","+t.getId()+").\n");
+//            }
+//        }
+//        
+//        np.append("\n   // treatment_goal(treatment id, goal id)\n");
+//        for (Mission m: sch.getMissions()) {
+//            for (Treatment t : m.getTreatments()) {
+//              if(t.getGoal() != null) {
+//                  np.append("   treatment_goal("+t.getId()+","+t.getGoal().getId()+").\n");
+//              }
+//            }
+//        }
 
         np.append("\n   // goal(missions, goal id, dependence (on goal statisfaction), type, #ags to satisfy, ttf)\n");
 
@@ -304,9 +384,11 @@ public class os2nopl {
         np.append("   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).\n\n");
 
         np.append("   // enabled goals (i.e. dependence between goals)\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & NP \\== 0 & all_satisfied(S,PCG).\n");
-
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), Type, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), Type, NP, _) & Type \\== reporting & Type \\== treatment & NP \\== 0 & all_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), reporting, NP, _) & NP \\== 0 & all_satisfied(S,PCG) & request(Ag,M,R) & mission_report(M,R) & report_goal(R,G).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(or,PCG), reporting, NP, _) & NP \\== 0 & any_satisfied(S,PCG) & request(Ag,M,R) & mission_report(M,R) & report_goal(R,G).\n");
+        
         np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
 
         np.append("\n   // ** Norms\n");
@@ -330,6 +412,21 @@ public class os2nopl {
             }
         }
 
+        np.append("\n   // --- Reports ---\n");
+        np.append("   norm request_invalid_context:\n");
+        np.append("           request(Ag,M,R) &\n");
+        np.append("           report(R,C) &\n");
+        np.append("           not C\n");
+        np.append("        -> fail(request_invalid_context(Ag,M,R,C)).\n");
+        
+        np.append("   norm request_agent_not_allowed:\n");
+        np.append("           request(Ag,M1,R) &\n");
+        np.append("           report(R,_) &\n");
+        np.append("           treatment(T,R) &\n");
+        np.append("           mission_treatment(M,T) &\n");
+        np.append("           not committed(Ag,M,_)\n");
+        np.append("        -> fail(request_agent_not_allowed(Ag,M1,R)).\n");
+        
         if (isSB) {
             np.append("\n   // agents are obliged to fulfill their enabled goals\n");
             np.append("   norm "+NGOAL+": \n");
@@ -345,6 +442,16 @@ public class os2nopl {
             np.append("        -> obligation(A,enabled(S,G),What,`now` + D).\n");
             // TODO: maintenance goals
             //np.append("   // maintenance goals\n");
+            
+            np.append("\n   // agents are obliged to provide reports if requested\n");
+            np.append("   norm "+NREPORT+": \n");
+            np.append("           committed(A,M,S) & mission_report(M,R) & report_goal(R,G) & \n");
+            np.append("           goal(_,G,_,reporting,_,D) & What = reported(S,G,R) & \n");
+            np.append("           well_formed(S) & \n");
+            np.append("           not satisfied(S,G) & \n");
+            np.append("           not super_satisfied(S,G) \n");
+            np.append("        -> obligation(A,enabled(S,G),What,`now` + D).\n\n");
+            
         }
 
         np.append("} // end of scheme "+sch.getId()+"\n");

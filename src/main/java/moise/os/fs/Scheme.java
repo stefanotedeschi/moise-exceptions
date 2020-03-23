@@ -12,6 +12,7 @@ import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import jason.asSyntax.parser.ParseException;
 import moise.common.MoiseConsistencyException;
 import moise.common.MoiseElement;
 import moise.common.MoiseException;
@@ -207,7 +208,13 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
         // goals
         ele.appendChild(getRoot().getAsDOM(document));
-
+        
+        for(Goal g : goals.values()) {
+            if(g.isRoot() && g != getRoot()) {
+                 ele.appendChild(g.getAsDOM(document));
+            }
+        }
+        
         // missions
         for (Mission m: getMissions()) {
             ele.appendChild(m.getAsDOM(document));
@@ -224,11 +231,21 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         //    setMonitoringSch(ele.getAttribute("monitoring-scheme"));
 
         // root goal
-        Element grEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
-        Goal rootG = new Goal(grEle.getAttribute("id"));
-        rootG.setFromDOM(grEle, this);
-        addGoal(rootG);
-        setRoot(rootG);
+        // Element grEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
+        // Goal rootG = new Goal(grEle.getAttribute("id"));
+        // rootG.setFromDOM(grEle, this);
+        // addGoal(rootG);
+        // setRoot(rootG);
+        
+        // goals
+        for (Element gEle: DOMUtils.getDOMDirectChilds(ele, Goal.getXMLTag())) {
+            Goal g = new Goal(gEle.getAttribute("id"));
+            g.setFromDOM(gEle, this);
+            addGoal(g);
+            if(root == null) {
+                setRoot(g);
+            }
+        }
 
         // missions
         for (Element mEle: DOMUtils.getDOMDirectChilds(ele, Mission.getXMLTag())) {
@@ -252,6 +269,16 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
                 g.setMinAgToSatisfy(0);
             }
         }
+    }
+    
+    public Report getReport(String repId) throws MoiseException {
+        for(Mission m : missions) {
+            Report r = m.getReport(repId);
+            if(r != null) {
+                return r;
+            }
+        }
+        throw new MoiseException("Report " + repId+ " undefined");
     }
 
 }

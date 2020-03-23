@@ -44,6 +44,7 @@ public class Scheme extends CollectiveOE {
         createLiteral("leaved_mission", new VarTerm("Ag"), new VarTerm("Mis"), new VarTerm("SID")),
         createLiteral("done", new VarTerm("SID"), new VarTerm("Goal"), new VarTerm("Ag") ),
         createLiteral("satisfied", new VarTerm("SID"), new VarTerm("Goal")),
+        createLiteral("request", new VarTerm("Ag"), new VarTerm("Mission"), new VarTerm("Report")),
         createLiteral(Group.playPI.getFunctor(), new VarTerm("Ag"), new VarTerm("Role"), new VarTerm("Gr")), // from group
         createLiteral(Group.responsiblePI.getFunctor(), new VarTerm("Gr"), new VarTerm("Sch"))               // from group
     };
@@ -54,6 +55,7 @@ public class Scheme extends CollectiveOE {
     public final static PredicateIndicator exCommittedPI = dynamicFacts[2].getPredicateIndicator();
     public final static PredicateIndicator donePI        = dynamicFacts[3].getPredicateIndicator();
     public final static PredicateIndicator satisfiedPI   = dynamicFacts[4].getPredicateIndicator();
+    public final static PredicateIndicator requestPI     = dynamicFacts[5].getPredicateIndicator();
 
     // specification
     private moise.os.fs.Scheme spec;
@@ -63,6 +65,9 @@ public class Scheme extends CollectiveOE {
 
     // the literal is done(schemeId, goalId, agent name)
     private ConcurrentSkipListSet<Literal> doneGoals = new ConcurrentSkipListSet<>();
+    
+ // the literal is request(agent, mission, report)
+    private ConcurrentSkipListSet<Literal> requests = new ConcurrentSkipListSet<>();
 
     // values for goal arguments (key = goal + arg, value = value)
     private HashMap<Pair<String,String>,Object> goalArgs = new HashMap<>();
@@ -92,6 +97,10 @@ public class Scheme extends CollectiveOE {
 
     public void addDoneGoal(String ag, String goal) {
         doneGoals.add(createLiteral(donePI.getFunctor(), termId, createAtom(goal), createAtom(ag)));
+    }
+    
+    public void addRequest(String ag, String mission, String report) {
+        requests.add(createLiteral(requestPI.getFunctor(), createAtom(ag), createAtom(mission), createAtom(report)));
     }
 
     public boolean removeDoneGoal(Goal goal) {
@@ -171,7 +180,6 @@ public class Scheme extends CollectiveOE {
         return l;
     }
 
-
     @Override
     PredicateIndicator getPlayerPI() {
         return committedPI;
@@ -206,6 +214,10 @@ public class Scheme extends CollectiveOE {
         } else if (pi.equals(donePI)) {
             return consultFromCollection(l, u, doneGoals);
 
+        } else if(pi.equals(requestPI)) {
+            return consultFromCollection(l, u, requests);
+        
+        
         } else if (pi.equals(satisfiedPI)) {
             Term lCopy = l.getTerm(1).capply(u);
             if (lCopy.isGround()) {
@@ -358,4 +370,5 @@ public class Scheme extends CollectiveOE {
 
         return out.toString();
     }
+
 }
