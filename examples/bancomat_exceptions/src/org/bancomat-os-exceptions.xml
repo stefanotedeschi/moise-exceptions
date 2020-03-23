@@ -38,42 +38,41 @@
 					<goal id="obtainAmount">
 						<plan operator="sequence">
 							<goal id="getAmountAsString" />
-							<goal id="parseAmount">
-								<throwing id="throwParseAmount">
-									<exception id="nan" />
-								</throwing>
-							</goal>
+							<goal id="parseAmount" />
 						</plan>
-						<handler id="handler_nan" target="nan">
-							<goal id="recoverFromNan">
-								<throwing id="throwRecoverFromNan">
-									<exception id="amountUnavailable" />
-								</throwing>
-							</goal>
-						</handler>
 					</goal>
 					<goal id="provideMoney"/>
 				</plan>
-				<handler id="handler_au" target="amountUnavailable">
-					<goal id="retryLater" />
-				</handler>
 			</goal>
+
+			<goal id="raiseNan" />
+			<goal id="recoverFromNan" />
+			<goal id="raiseAmountUnavailable" />
+			<goal id="retryLater" />
 
 			<mission id="mWithdraw" min="1" max="1">
 				<goal id="withdraw" />
-				<goal id="retryLater" />
+				<handler id="handler_au" target="amountUnavailable">
+					<goal id="retryLater" /> --> QUESTO DOVREBBE ANDARE A SOSTITUIRE withdraw NELLO SCHEMA
+				</handler>
 			</mission>
 			<mission id="mObtainAmount" min="1" max="1">
 				<goal id="obtainAmount" />
-				<goal id="recoverFromNan" />
-				<throwing id="throwRecoverFromNan" />
+				<handler id="handler_nan" target="nan">
+					<goal id="recoverFromNan" /> --> QUESTO DOVREBBE ANDARE A SOSTITUIRE obtainAmount NELLO SCHEMA
+				</handler>
+				<exception id="amountUnavailable" when="failed(bancomat_sch,recoverFromNan)">
+					<goal id="raiseAmountUnavailable" />
+				</exception>
 			</mission>
 			<mission id="mGetAmountAsString" min="1" max="1">
 				<goal id="getAmountAsString" />
 			</mission>
 			<mission id="mParseAmount" min="1" max="1">
 				<goal id="parseAmount" />
-				<throwing id="throwParseAmount" />
+				<exception id="nan" when="failed(bancomat_sch,parseAmount)">
+					<goal id="raiseNan" />
+				</exception>
 			</mission>
 			<mission id="mProvideMoney" min="1" max="1">
 				<goal id="provideMoney" />
