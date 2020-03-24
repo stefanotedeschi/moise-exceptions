@@ -15,9 +15,9 @@ import moise.os.OS;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
-import moise.os.fs.Report;
+import moise.os.fs.Exception;
 import moise.os.fs.Scheme;
-import moise.os.fs.Treatment;
+import moise.os.fs.Handler;
 import moise.os.ns.NS;
 import moise.os.ns.NS.OpTypes;
 import moise.os.ns.Norm;
@@ -56,7 +56,7 @@ public class os2nopl {
     public static final String[] NOP_NS_PROPS = new String[] {  };
 
     private static final String NGOAL = "ngoal"; // id of the goal obligations
-    private static final String NREPORT = "nreport";
+    private static final String NEXCEPTION = "nexception";
 
     // condition for each property
     private static final Map<String, String> condCode = new HashMap<String, String>();
@@ -244,41 +244,41 @@ public class os2nopl {
         }
         
         String missionGoal      = "\n   // mission_goal(mission id, goal id)\n";
-        String report           = "\n   // report(report id, condition)\n";
-        String treatment        = "\n   // treatment(treatment id, report id)\n";
-        String missionReport    = "\n   // mission_report(mission id, report id)\n";
-        String reportGoal       = "\n   // report_goal(report id, goal id)\n";
-        String missionTreatment = "\n   // mission_treatment(mission id, treatment id)\n";
-        String treatmentGoal    = "\n   // treatment_goal(treatment id, goal id)\n";
+        String exception           = "\n   // exception(exception id, condition)\n";
+        String handler        = "\n   // handler(handler id, exception id)\n";
+        String missionReport    = "\n   // mission_exception(mission id, exception id)\n";
+        String exceptionGoal       = "\n   // exception_goal(exception id, goal id)\n";
+        String missionTreatment = "\n   // mission_handler(mission id, handler id)\n";
+        String handlerGoal    = "\n   // handler_goal(handler id, goal id)\n";
         
         //np.append("\n   // mission_goal(mission id, goal id)\n");
         for (Mission m: sch.getMissions()) {
             for (Goal g: m.getGoals()) {
                 missionGoal += "   mission_goal("+m.getId()+","+g.getId()+").\n";
             }
-            for (Report r: m.getReports()) {
-                report += "   report("+r.getId()+","+r.getCondition()+").\n";
-                missionReport += "   mission_report("+m.getId()+","+r.getId()+").\n";
+            for (Exception r: m.getExceptions()) {
+                exception += "   exception("+r.getId()+","+r.getCondition()+").\n";
+                missionReport += "   mission_exception("+m.getId()+","+r.getId()+").\n";
                 if(r.getGoal() != null) {
-                    reportGoal += "   report_goal("+r.getId()+","+r.getGoal().getId()+").\n";
+                    exceptionGoal += "   exception_goal("+r.getId()+","+r.getGoal().getId()+").\n";
                 }
             }
-            for (Treatment t: m.getTreatments()) {
-                treatment += "   treatment("+t.getId()+","+t.getReport().getId()+").\n";
-                missionTreatment += "   mission_treatment("+m.getId()+","+t.getId()+").\n";
+            for (Handler t: m.getHandlers()) {
+                handler += "   handler("+t.getId()+","+t.getException().getId()+").\n";
+                missionTreatment += "   mission_handler("+m.getId()+","+t.getId()+").\n";
                 if(t.getGoal() != null) {
-                    treatmentGoal += "   treatment_goal("+t.getId()+","+t.getGoal().getId()+").\n";
+                    handlerGoal += "   handler_goal("+t.getId()+","+t.getGoal().getId()+").\n";
                 }
             }
         }
         
         np.append(missionGoal);
-        np.append(report);
-        np.append(treatment);
+        np.append(exception);
+        np.append(handler);
         np.append(missionReport);
-        np.append(reportGoal);
+        np.append(exceptionGoal);
         np.append(missionTreatment);
-        np.append(treatmentGoal);
+        np.append(handlerGoal);
         
 //        np.append("\n   // report(report id, condition)\n");
 //        for (Mission m: sch.getMissions()) {
@@ -332,7 +332,7 @@ public class os2nopl {
         for (Goal g: sch.getGoals()) {
             try {
                 superGoal.append("   super_goal("+g.getInPlan().getTargetGoal().getId()+", "+g.getId()+").\n");
-            } catch (Exception e) {}
+            } catch (java.lang.Exception e) {}
 
             StringBuilder smis = new StringBuilder("[");
             String com = "";
@@ -386,8 +386,8 @@ public class os2nopl {
         np.append("   // enabled goals (i.e. dependence between goals)\n");
         np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), Type, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
         np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), Type, NP, _) & Type \\== reporting & Type \\== treatment & NP \\== 0 & all_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), reporting, NP, _) & NP \\== 0 & all_satisfied(S,PCG) & request(Ag,M,R) & mission_report(M,R) & report_goal(R,G).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(or,PCG), reporting, NP, _) & NP \\== 0 & any_satisfied(S,PCG) & request(Ag,M,R) & mission_report(M,R) & report_goal(R,G).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), reporting, NP, _) & NP \\== 0 & all_satisfied(S,PCG) & request(Ag,M,R) & mission_exception(M,R) & exception_goal(R,G).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(or,PCG), reporting, NP, _) & NP \\== 0 & any_satisfied(S,PCG) & request(Ag,M,R) & mission_exception(M,R) & exception_goal(R,G).\n");
         
         np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
 
@@ -415,15 +415,15 @@ public class os2nopl {
         np.append("\n   // --- Reports ---\n");
         np.append("   norm request_invalid_context:\n");
         np.append("           request(Ag,M,R) &\n");
-        np.append("           report(R,C) &\n");
+        np.append("           exception(R,C) &\n");
         np.append("           not C\n");
         np.append("        -> fail(request_invalid_context(Ag,M,R,C)).\n");
         
         np.append("   norm request_agent_not_allowed:\n");
         np.append("           request(Ag,M1,R) &\n");
-        np.append("           report(R,_) &\n");
-        np.append("           treatment(T,R) &\n");
-        np.append("           mission_treatment(M,T) &\n");
+        np.append("           exception(R,_) &\n");
+        np.append("           handler(T,R) &\n");
+        np.append("           mission_handler(M,T) &\n");
         np.append("           not committed(Ag,M,_)\n");
         np.append("        -> fail(request_agent_not_allowed(Ag,M1,R)).\n");
         
@@ -443,9 +443,9 @@ public class os2nopl {
             // TODO: maintenance goals
             //np.append("   // maintenance goals\n");
             
-            np.append("\n   // agents are obliged to provide reports if requested\n");
-            np.append("   norm "+NREPORT+": \n");
-            np.append("           committed(A,M,S) & mission_report(M,R) & report_goal(R,G) & \n");
+            np.append("\n   // agents are obliged to provide exceptions if requested\n");
+            np.append("   norm "+NEXCEPTION+": \n");
+            np.append("           committed(A,M,S) & mission_exception(M,R) & exception_goal(R,G) & \n");
             np.append("           goal(_,G,_,reporting,_,D) & What = reported(S,G,R) & \n");
             np.append("           well_formed(S) & \n");
             np.append("           not satisfied(S,G) & \n");

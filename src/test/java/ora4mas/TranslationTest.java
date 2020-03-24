@@ -65,8 +65,8 @@ public class TranslationTest {
     }
     
     @Test
-    public void testReport() throws ParseException, TransformerFactoryConfigurationError, TransformerException, IOException, jason.asSyntax.parser.ParseException {
-        OS os = OS.loadOSFromURI("cake-os-report.xml");
+    public void testExceptions() throws ParseException, TransformerFactoryConfigurationError, TransformerException, IOException, jason.asSyntax.parser.ParseException {
+        OS os = OS.loadOSFromURI("bancomat-os-exceptions.xml");
         
         Document d = DOMUtils.getAsXmlDocument(os);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -77,7 +77,7 @@ public class TranslationTest {
         transformer.transform(input, output);
         
         String np = os2nopl.transform(os);
-        BufferedWriter out = new BufferedWriter(new FileWriter("cake-os-report.npl"));
+        BufferedWriter out = new BufferedWriter(new FileWriter("bancomat-os-exceptions.npl"));
         out.write(np);
         out.close();
         

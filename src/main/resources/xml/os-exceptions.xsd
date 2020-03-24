@@ -68,8 +68,8 @@
                     <xsd:attribute name="id" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
-            <xsd:element maxOccurs="unbounded" minOccurs="0" name="report" type="moise:reportType"/>
-            <xsd:element maxOccurs="unbounded" minOccurs="0" name="treatment" type="moise:treatmentType"/>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="exception" type="moise:exceptionType"/>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="handler" type="moise:handlerType"/>
             <xsd:element maxOccurs="unbounded" minOccurs="0" name="preferred">
                 <xsd:complexType>
                     <xsd:attribute name="mission" type="xsd:string" use="required"/>
@@ -237,7 +237,7 @@
         <xsd:attribute name="location" type="xsd:string"             use="optional"/>
     </xsd:complexType>
 
-    <xsd:complexType name="reportType">
+    <xsd:complexType name="exceptionType">
         <xsd:sequence>
           <xsd:element maxOccurs="1" minOccurs="0" name="goal">
             <xsd:complexType>
@@ -245,11 +245,11 @@
             </xsd:complexType>
           </xsd:element>
         </xsd:sequence>
-        <xsd:attribute name="id" type="xsd:string" use="required"/>
-        <xsd:attribute name="when" type="xsd:string" use="required"/>
+        <xsd:attribute name="id" type="xsd:string" use="required" />
+        <xsd:attribute name="when" type="xsd:string" use="required" />
     </xsd:complexType>
 
-    <xsd:complexType name="treatmentType">
+    <xsd:complexType name="handlerType">
         <xsd:sequence>
           <xsd:element maxOccurs="1" minOccurs="0" name="goal">
             <xsd:complexType>
@@ -258,7 +258,7 @@
           </xsd:element>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
-        <xsd:attribute name="reporting" type="xsd:string" use="required"/>
+        <xsd:attribute name="target" type="xsd:string" use="required"/>
     </xsd:complexType>
 
     <xsd:complexType name="argumentType">
@@ -283,8 +283,6 @@
             <xsd:enumeration value="performance"/>
             <xsd:enumeration value="achievement"/>
             <xsd:enumeration value="maintenance"/>
-            <xsd:enumeration value="reporting"/>
-            <xsd:enumeration value="treatment"/>
         </xsd:restriction>
     </xsd:simpleType>
 

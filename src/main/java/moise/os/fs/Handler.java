@@ -5,24 +5,24 @@ import org.w3c.dom.Element;
 
 import moise.xml.DOMUtils;
 
-public class Treatment {
+public class Handler {
 
     private String id;
-    private Report report;
+    private Exception exception;
     private Goal goal;
     
-    public Treatment(String id, Report report) {
+    public Handler(String id, Exception exception) {
         super();
         this.id = id;
-        this.report = report;
+        this.exception = exception;
     }
 
     public String getId() {
         return id;
     }
 
-    public Report getReport() {
-        return report;
+    public Exception getException() {
+        return exception;
     }
 
     public Goal getGoal() {
@@ -33,8 +33,8 @@ public class Treatment {
         this.id = id;
     }
 
-    public void setReport(Report report) {
-        this.report = report;
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 
     public void setGoal(Goal goal) {
@@ -46,13 +46,14 @@ public class Treatment {
         if(gEl != null) {
             Goal g = sch.getGoal(gEl.getAttribute("id"));
             setGoal(g);
+            g.setInHandler(this);
         }
     }
     
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        ele.setAttribute("reporting", report.getId());
+        ele.setAttribute("target", exception.getId());
         if(goal != null) {
             Element eg = (Element) document.createElement(Goal.getXMLTag());
             eg.setAttribute("id", goal.getId());
@@ -62,7 +63,12 @@ public class Treatment {
     }
     
     public static String getXMLTag() {
-        return "treatment";
+        return "handler";
+    }
+    
+    @Override
+    public String toString() {
+        return id;
     }
     
 }

@@ -33,8 +33,8 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
 
     protected Set<Goal>        goals      = new HashSet<>();
     protected Set<Mission>     preferable = new HashSet<>();
-    protected Set<Report>      reports    = new HashSet<>();
-    protected Set<Treatment>   treatments = new HashSet<>();
+    protected Set<Exception>      exceptions    = new HashSet<>();
+    protected Set<Handler>   handlers = new HashSet<>();
 
     protected Scheme sch = null;
 
@@ -154,19 +154,21 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
         }
         // goals
         for (Goal gs: getGoals()) {
-            Element eg = (Element) document.createElement(Goal.getXMLTag());
-            eg.setAttribute("id", gs.getId());
-            ele.appendChild(eg);
+        	if(gs.getInException() == null && gs.getInHandler() == null) {
+        		Element eg = (Element) document.createElement(Goal.getXMLTag());
+        		eg.setAttribute("id", gs.getId());
+        		ele.appendChild(eg);
+        	}
         }
         
         // reports
-        for(Report r : reports) {
-            Element er = r.getAsDOM(document);
-            ele.appendChild(er);
+        for(Exception e : exceptions) {
+            Element eEle = e.getAsDOM(document);
+            ele.appendChild(eEle);
         }
         
         // treatments
-        for(Treatment t : treatments) {
+        for(Handler t : handlers) {
             Element et = t.getAsDOM(document);
             ele.appendChild(et);
         }
@@ -197,7 +199,7 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
             addGoal(g.getAttribute("id"));
         }
         
-        for (Element rEle: DOMUtils.getDOMDirectChilds(ele, Report.getXMLTag())) {
+        for (Element rEle: DOMUtils.getDOMDirectChilds(ele, Exception.getXMLTag())) {
             String id = rEle.getAttribute("id");
             Literal condition;
             try {
@@ -205,21 +207,21 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
             } catch (ParseException e) {
                 throw new MoiseException(e.getMessage());
             }
-            Report r = new Report(id, condition);
+            Exception r = new Exception(id, condition);
             r.setFromDOM(rEle, sch);
-            reports.add(r);
+            exceptions.add(r);
             if(r.getGoal() != null) {
                 goals.add(r.getGoal());
             }
         }
         
-        for (Element tEle: DOMUtils.getDOMDirectChilds(ele, Treatment.getXMLTag())) {
+        for (Element tEle: DOMUtils.getDOMDirectChilds(ele, Handler.getXMLTag())) {
             String id = tEle.getAttribute("id");
-            String rep = tEle.getAttribute("reporting");
-            Report r = sch.getReport(rep);
-            Treatment t = new Treatment(id, r);
+            String rep = tEle.getAttribute("target");
+            Exception r = sch.getException(rep);
+            Handler t = new Handler(id, r);
             t.setFromDOM(tEle, sch);
-            treatments.add(t);
+            handlers.add(t);
             if(t.getGoal() != null) {
                 goals.add(t.getGoal());
             }
@@ -234,8 +236,8 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
         return getFullId();
     }
     
-    public Report getReport(String repId) throws MoiseException {
-        for(Report r : reports) {
+    public Exception getException(String repId) throws MoiseException {
+        for(Exception r : exceptions) {
             if(r.getId().equals(repId)) {
                 return r;
             }
@@ -244,13 +246,13 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
     }
 
 
-    public Set<Report> getReports() {
-        return reports;
+    public Set<Exception> getExceptions() {
+        return exceptions;
     }
 
 
-    public Set<Treatment> getTreatments() {
-        return treatments;
+    public Set<Handler> getHandlers() {
+        return handlers;
     }
     
 }

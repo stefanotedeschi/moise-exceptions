@@ -6,13 +6,13 @@ import org.w3c.dom.Element;
 import jason.asSyntax.Literal;
 import moise.xml.DOMUtils;
 
-public class Report {
+public class Exception {
     
     private String id;
     private Literal condition;
     private Goal goal;
     
-    public Report(String id, Literal condition) {
+    public Exception(String id, Literal condition) {
         super();
         this.id = id;
         this.condition = condition;
@@ -37,7 +37,7 @@ public class Report {
     }
     
     public static String getXMLTag() {
-        return "report";
+        return "exception";
     }
     
     public void setFromDOM(Element ele, Scheme sch) {
@@ -45,6 +45,7 @@ public class Report {
         if(gEle != null) {
             Goal g = sch.getGoal(gEle.getAttribute("id"));
             setGoal(g);
+            g.setInException(this);
         }
     }
     

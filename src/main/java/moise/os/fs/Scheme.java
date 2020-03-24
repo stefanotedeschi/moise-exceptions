@@ -271,14 +271,14 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         }
     }
     
-    public Report getReport(String repId) throws MoiseException {
+    public Exception getException(String repId) throws MoiseException {
         for(Mission m : missions) {
-            Report r = m.getReport(repId);
+            Exception r = m.getException(repId);
             if(r != null) {
                 return r;
             }
         }
-        throw new MoiseException("Report " + repId+ " undefined");
+        throw new MoiseException("Exception " + repId+ " undefined");
     }
 
 }

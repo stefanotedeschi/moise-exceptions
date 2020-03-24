@@ -39,8 +39,27 @@ public class Goal extends MoiseElement implements ToXML, ToProlog {
     protected String   ttf = ""; // time to fulfill
     protected List<Goal> dependencies = null; // explicit goals this goal depend on to be enabled
     protected String   location = "";
+    
+    protected Exception inException = null;
+    protected Handler inHandler = null;
 
-    public Goal(String goal) {
+    public Exception getInException() {
+		return inException;
+	}
+
+	public Handler getInHandler() {
+		return inHandler;
+	}
+
+	public void setInException(Exception inException) {
+		this.inException = inException;
+	}
+
+	public void setInHandler(Handler inHandler) {
+		this.inHandler = inHandler;
+	}
+
+	public Goal(String goal) {
         setId(goal);
     }
 

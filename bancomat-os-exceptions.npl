@@ -1,13 +1,13 @@
 /*
     This program was automatically generated from
-    the organisation specification 'parse_integer'
-    on marzo 16, 2020 - 18:07:25
+    the organisation specification 'bancomat_exceptions'
+    on marzo 24, 2020 - 17:57:49
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
 */
 
-scope organisation(parse_integer) {
+scope organisation(bancomat_exceptions) {
 
 
    // Role hierarchy
@@ -111,47 +111,50 @@ scope scheme(bancomat_sch) {
    mission_role(mProvideMoney,moneyKeeper).
 
    // mission_goal(mission id, goal id)
+   mission_goal(mObtainAmount,recoverFromNan).
    mission_goal(mObtainAmount,obtainAmount).
-   mission_goal(mObtainAmount,retry).
+   mission_goal(mObtainAmount,raiseAmountUnavailable).
+   mission_goal(mWithdraw,retryLater).
    mission_goal(mWithdraw,withdraw).
    mission_goal(mGetAmountAsString,getAmountAsString).
    mission_goal(mProvideMoney,provideMoney).
-   mission_goal(mParseAmount,reportRemainingTimeParseAmount).
-   mission_goal(mParseAmount,reportFailureParseAmount).
    mission_goal(mParseAmount,parseAmount).
+   mission_goal(mParseAmount,raiseNan).
 
-   // report(report id, condition)
-   report(failureParseAmount,failed(bancomat_sch,parseAmount)).
-   report(remainingTimeParseAmount,satisfied(bancomat_sch,getAmountAsString)).
+   // exception(exception id, condition)
+   exception(amountUnavailable,failed(bancomat_sch,recoverFromNan)).
+   exception(nan,failed(bancomat_sch,parseAmount)).
 
-   // treatment(treatment id, report id)
-   treatment(treatFailureParseAmount,failureParseAmount).
-   treatment(treatRemainingTimeParseAmount,remainingTimeParseAmount).
+   // handler(handler id, exception id)
+   handler(handler_nan,nan).
+   handler(handler_au,amountUnavailable).
 
-   // mission_report(mission id, report id)
-   mission_report(mParseAmount,failureParseAmount).
-   mission_report(mParseAmount,remainingTimeParseAmount).
+   // mission_exception(mission id, exception id)
+   mission_exception(mObtainAmount,amountUnavailable).
+   mission_exception(mParseAmount,nan).
 
-   // report_goal(report id, goal id)
-   report_goal(failureParseAmount,reportFailureParseAmount).
-   report_goal(remainingTimeParseAmount,reportRemainingTimeParseAmount).
+   // exception_goal(exception id, goal id)
+   exception_goal(amountUnavailable,raiseAmountUnavailable).
+   exception_goal(nan,raiseNan).
 
-   // mission_treatment(mission id, treatment id)
-   mission_treatment(mObtainAmount,treatFailureParseAmount).
-   mission_treatment(mWithdraw,treatRemainingTimeParseAmount).
+   // mission_handler(mission id, handler id)
+   mission_handler(mObtainAmount,handler_nan).
+   mission_handler(mWithdraw,handler_au).
 
-   // treatment_goal(treatment id, goal id)
-   treatment_goal(treatFailureParseAmount,retry).
+   // handler_goal(handler id, goal id)
+   handler_goal(handler_nan,recoverFromNan).
+   handler_goal(handler_au,retryLater).
 
    // goal(missions, goal id, dependence (on goal statisfaction), type, #ags to satisfy, ttf)
+   goal([mObtainAmount],recoverFromNan,dep(and,[]),performance,all,`1 year`).
    goal([mProvideMoney],provideMoney,dep(and,[obtainAmount]),performance,all,`1 year`).
-   goal([mParseAmount],reportRemainingTimeParseAmount,dep(and,[]),reporting,all,`1 year`).
    goal([mGetAmountAsString],getAmountAsString,dep(and,[]),performance,all,`1 year`).
-   goal([mParseAmount],reportFailureParseAmount,dep(and,[]),reporting,all,`1 year`).
    goal([mParseAmount],parseAmount,dep(and,[getAmountAsString]),performance,all,`1 year`).
    goal([mObtainAmount],obtainAmount,dep(and,[parseAmount]),performance,all,`1 year`).
-   goal([mObtainAmount],retry,dep(and,[]),treatment,all,`1 year`).
+   goal([mParseAmount],raiseNan,dep(and,[]),performance,all,`1 year`).
+   goal([mWithdraw],retryLater,dep(and,[]),performance,all,`1 year`).
    goal([mWithdraw],withdraw,dep(and,[provideMoney]),performance,all,`1 year`).
+   goal([mObtainAmount],raiseAmountUnavailable,dep(and,[]),performance,all,`1 year`).
    super_goal(withdraw, provideMoney).
    super_goal(obtainAmount, getAmountAsString).
    super_goal(obtainAmount, parseAmount).
@@ -175,8 +178,8 @@ scope scheme(bancomat_sch) {
    // enabled goals (i.e. dependence between goals)
    enabled(S,G) :- goal(_, G,  dep(or,PCG), Type, NP, _) & NP \== 0 & any_satisfied(S,PCG).
    enabled(S,G) :- goal(_, G, dep(and,PCG), Type, NP, _) & Type \== reporting & Type \== treatment & NP \== 0 & all_satisfied(S,PCG).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), reporting, NP, _) & NP \== 0 & all_satisfied(S,PCG) & request(Ag,M,R) & mission_report(M,R) & report_goal(R,G).
-   enabled(S,G) :- goal(_, G, dep(or,PCG), reporting, NP, _) & NP \== 0 & any_satisfied(S,PCG) & request(Ag,M,R) & mission_report(M,R) & report_goal(R,G).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), reporting, NP, _) & NP \== 0 & all_satisfied(S,PCG) & request(Ag,M,R) & mission_exception(M,R) & exception_goal(R,G).
+   enabled(S,G) :- goal(_, G, dep(or,PCG), reporting, NP, _) & NP \== 0 & any_satisfied(S,PCG) & request(Ag,M,R) & mission_exception(M,R) & exception_goal(R,G).
    super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).
 
    // ** Norms
@@ -213,14 +216,14 @@ scope scheme(bancomat_sch) {
    // --- Reports ---
    norm request_invalid_context:
            request(Ag,M,R) &
-           report(R,C) &
+           exception(R,C) &
            not C
         -> fail(request_invalid_context(Ag,M,R,C)).
    norm request_agent_not_allowed:
            request(Ag,M1,R) &
-           report(R,_) &
-           treatment(T,R) &
-           mission_treatment(M,T) &
+           exception(R,_) &
+           handler(T,R) &
+           mission_handler(M,T) &
            not committed(Ag,M,_)
         -> fail(request_agent_not_allowed(Ag,M1,R)).
 
@@ -234,9 +237,9 @@ scope scheme(bancomat_sch) {
            not super_satisfied(S,G)
         -> obligation(A,enabled(S,G),What,`now` + D).
 
-   // agents are obliged to provide reports if requested
-   norm nreport: 
-           committed(A,M,S) & mission_report(M,R) & report_goal(R,G) & 
+   // agents are obliged to provide exceptions if requested
+   norm nexception: 
+           committed(A,M,S) & mission_exception(M,R) & exception_goal(R,G) & 
            goal(_,G,_,reporting,_,D) & What = reported(S,G,R) & 
            well_formed(S) & 
            not satisfied(S,G) & 
@@ -245,4 +248,4 @@ scope scheme(bancomat_sch) {
 
 } // end of scheme bancomat_sch
 
-} // end of organisation parse_integer
+} // end of organisation bancomat_exceptions

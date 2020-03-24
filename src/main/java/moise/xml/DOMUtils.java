@@ -127,7 +127,7 @@ public class DOMUtils {
 
     public static Validator getOSSchemaValidator() throws SAXException, IOException {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = schemaFactory.newSchema(new StreamSource(DOMUtils.class.getResource("/xml/os-report.xsd").openStream()));
+        Schema schema = schemaFactory.newSchema(new StreamSource(DOMUtils.class.getResource("/xml/os-exceptions.xsd").openStream()));
         return schema.newValidator();
     }
 
