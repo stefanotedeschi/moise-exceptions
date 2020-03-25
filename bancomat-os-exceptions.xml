@@ -41,9 +41,19 @@
 							<goal id="parseAmount" />
 						</plan>
 					</goal>
-					<goal id="provideMoney"/>
+					<goal id="provideMoney" />
 				</plan>
 			</goal>
+
+			<!--
+				POWERS:
+				+ fail goal
+				+ achieve goal
+				+ reset goal
+				+ change goal ==> apply policy ==> nel caso delle eccezioni possiamo dire che la policy
+																					 è di default la sostituzione del goal con un altro
+				+ add goal ?
+			-->
 
 			<goal id="raiseNan" />
 			<goal id="recoverFromNan" />
