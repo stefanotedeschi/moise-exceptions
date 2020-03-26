@@ -53,21 +53,21 @@
                 </plan>
             </goal>
             <goal id="recoverFromNan" type="performance"/>
-            <goal id="raiseNan" type="performance"/>
+            <goal id="throwAmountUnavailable" type="performance"/>
+            <goal id="throwNan" type="performance"/>
             <goal id="retryLater" type="performance"/>
-            <goal id="raiseAmountUnavailable" type="performance"/>
             <mission id="mObtainAmount" max="1" min="1">
                 <goal id="obtainAmount"/>
                 <exception id="amountUnavailable" when="failed(bancomat_sch,recoverFromNan)">
-                    <goal id="raiseAmountUnavailable"/>
+                    <goal id="throwAmountUnavailable"/>
                 </exception>
-                <handler id="handler_nan" target="nan">
+                <handler id="handler_nan" tackles="nan">
                     <goal id="recoverFromNan"/>
                 </handler>
             </mission>
             <mission id="mWithdraw" max="1" min="1">
                 <goal id="withdraw"/>
-                <handler id="handler_au" target="amountUnavailable">
+                <handler id="handler_au" tackles="amountUnavailable">
                     <goal id="retryLater"/>
                 </handler>
             </mission>
@@ -80,7 +80,7 @@
             <mission id="mParseAmount" max="1" min="1">
                 <goal id="parseAmount"/>
                 <exception id="nan" when="failed(bancomat_sch,parseAmount)">
-                    <goal id="raiseNan"/>
+                    <goal id="throwNan"/>
                 </exception>
             </mission>
         </scheme>

@@ -167,7 +167,7 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
             ele.appendChild(eEle);
         }
         
-        // treatments
+        // handlers
         for(Handler t : handlers) {
             Element et = t.getAsDOM(document);
             ele.appendChild(et);
@@ -217,7 +217,7 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
         
         for (Element tEle: DOMUtils.getDOMDirectChilds(ele, Handler.getXMLTag())) {
             String id = tEle.getAttribute("id");
-            String rep = tEle.getAttribute("target");
+            String rep = tEle.getAttribute("tackles");
             Exception r = sch.getException(rep);
             Handler t = new Handler(id, r);
             t.setFromDOM(tEle, sch);

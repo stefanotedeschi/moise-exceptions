@@ -53,7 +53,7 @@ public class Handler {
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        ele.setAttribute("target", exception.getId());
+        ele.setAttribute("tackles", exception.getId());
         if(goal != null) {
             Element eg = (Element) document.createElement(Goal.getXMLTag());
             eg.setAttribute("id", goal.getId());

@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'bancomat_exceptions'
-    on marzo 24, 2020 - 17:57:49
+    on marzo 26, 2020 - 18:42:11
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -112,14 +112,14 @@ scope scheme(bancomat_sch) {
 
    // mission_goal(mission id, goal id)
    mission_goal(mObtainAmount,recoverFromNan).
+   mission_goal(mObtainAmount,throwAmountUnavailable).
    mission_goal(mObtainAmount,obtainAmount).
-   mission_goal(mObtainAmount,raiseAmountUnavailable).
    mission_goal(mWithdraw,retryLater).
    mission_goal(mWithdraw,withdraw).
    mission_goal(mGetAmountAsString,getAmountAsString).
    mission_goal(mProvideMoney,provideMoney).
+   mission_goal(mParseAmount,throwNan).
    mission_goal(mParseAmount,parseAmount).
-   mission_goal(mParseAmount,raiseNan).
 
    // exception(exception id, condition)
    exception(amountUnavailable,failed(bancomat_sch,recoverFromNan)).
@@ -134,8 +134,8 @@ scope scheme(bancomat_sch) {
    mission_exception(mParseAmount,nan).
 
    // exception_goal(exception id, goal id)
-   exception_goal(amountUnavailable,raiseAmountUnavailable).
-   exception_goal(nan,raiseNan).
+   exception_goal(amountUnavailable,throwAmountUnavailable).
+   exception_goal(nan,throwNan).
 
    // mission_handler(mission id, handler id)
    mission_handler(mObtainAmount,handler_nan).
@@ -147,14 +147,14 @@ scope scheme(bancomat_sch) {
 
    // goal(missions, goal id, dependence (on goal statisfaction), type, #ags to satisfy, ttf)
    goal([mObtainAmount],recoverFromNan,dep(and,[]),performance,all,`1 year`).
+   goal([mObtainAmount],throwAmountUnavailable,dep(and,[]),performance,all,`1 year`).
    goal([mProvideMoney],provideMoney,dep(and,[obtainAmount]),performance,all,`1 year`).
+   goal([mParseAmount],throwNan,dep(and,[]),performance,all,`1 year`).
    goal([mGetAmountAsString],getAmountAsString,dep(and,[]),performance,all,`1 year`).
    goal([mParseAmount],parseAmount,dep(and,[getAmountAsString]),performance,all,`1 year`).
    goal([mObtainAmount],obtainAmount,dep(and,[parseAmount]),performance,all,`1 year`).
-   goal([mParseAmount],raiseNan,dep(and,[]),performance,all,`1 year`).
    goal([mWithdraw],retryLater,dep(and,[]),performance,all,`1 year`).
    goal([mWithdraw],withdraw,dep(and,[provideMoney]),performance,all,`1 year`).
-   goal([mObtainAmount],raiseAmountUnavailable,dep(and,[]),performance,all,`1 year`).
    super_goal(withdraw, provideMoney).
    super_goal(obtainAmount, getAmountAsString).
    super_goal(obtainAmount, parseAmount).

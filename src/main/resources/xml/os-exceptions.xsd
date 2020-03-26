@@ -258,7 +258,7 @@
           </xsd:element>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
-        <xsd:attribute name="target" type="xsd:string" use="required"/>
+        <xsd:attribute name="tackles" type="xsd:string" use="required"/>
     </xsd:complexType>
 
     <xsd:complexType name="argumentType">
