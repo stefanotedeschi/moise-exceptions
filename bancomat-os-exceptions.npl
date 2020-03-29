@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'bancomat_exceptions'
-    on marzo 26, 2020 - 18:42:11
+    on marzo 29, 2020 - 17:03:13
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -175,11 +175,41 @@ scope scheme(bancomat_sch) {
    any_satisfied(S,[G|_]) :- satisfied(S,G).
    any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).
 
+   in_exception(G) :- exception_goal(_,G). // throwing
+   in_exception(G) :- super_goal(SG,G) & in_exception(SG).
+   in_handler(G) :- handler_goal(_,G). // catching
+   in_handler(G) :- super_goal(SG,G) & in_exception(SG).
+
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), Type, NP, _) & NP \== 0 & any_satisfied(S,PCG).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), Type, NP, _) & Type \== reporting & Type \== treatment & NP \== 0 & all_satisfied(S,PCG).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), reporting, NP, _) & NP \== 0 & all_satisfied(S,PCG) & request(Ag,M,R) & mission_exception(M,R) & exception_goal(R,G).
-   enabled(S,G) :- goal(_, G, dep(or,PCG), reporting, NP, _) & NP \== 0 & any_satisfied(S,PCG) & request(Ag,M,R) & mission_exception(M,R) & exception_goal(R,G).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not in_exception(G) & not in_handler(G) & NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not in_exception(G) & not in_handler(G) & NP \== 0 & all_satisfied(S,PCG).
+
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) &
+                   in_exception(G) &
+                   exception_goal(E,G) &
+                   exception(E,failed(S,FG)) &
+                   failed(S,FG) &
+                   NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) &
+                   in_exception(G) &
+                   exception_goal(E,G) &
+                   exception(E,failed(S,FG)) &
+                   failed(S,FG) &
+                   NP \== 0 & all_satisfied(S,PCG).
+
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) &
+                   in_handler(G) &
+                   handler(H,E) &
+                   handler_goal(H,G) &
+                   thrown(S,_,E) &
+                   NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) &
+                   in_handler(G) &
+                   handler(H,E) &
+                   handler_goal(H,G) &
+                   thrown(S,_,E) &
+                   NP \== 0 & all_satisfied(S,PCG).
+
    super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).
 
    // ** Norms
@@ -213,20 +243,6 @@ scope scheme(bancomat_sch) {
            MP > MMax
         -> fail(mission_cardinality(M,S,MP,MMax)).
 
-   // --- Reports ---
-   norm request_invalid_context:
-           request(Ag,M,R) &
-           exception(R,C) &
-           not C
-        -> fail(request_invalid_context(Ag,M,R,C)).
-   norm request_agent_not_allowed:
-           request(Ag,M1,R) &
-           exception(R,_) &
-           handler(T,R) &
-           mission_handler(M,T) &
-           not committed(Ag,M,_)
-        -> fail(request_agent_not_allowed(Ag,M1,R)).
-
    // agents are obliged to fulfill their enabled goals
    norm ngoal: 
            committed(A,M,S) & mission_goal(M,G) & 
@@ -237,14 +253,19 @@ scope scheme(bancomat_sch) {
            not super_satisfied(S,G)
         -> obligation(A,enabled(S,G),What,`now` + D).
 
-   // agents are obliged to provide exceptions if requested
+   // agents are obliged to throw an exception if a corresponding goal fails
    norm nexception: 
-           committed(A,M,S) & mission_exception(M,R) & exception_goal(R,G) & 
-           goal(_,G,_,reporting,_,D) & What = reported(S,G,R) & 
+           failed(S,G) & 
+           exception(E,failed(S,G)) & 
+           mission_exception(M,E) & 
+           exception_goal(E,TG) & 
+           committed(A,M,S) & 
+           goal(_,TG,_,_,_,D) & 
+           What = thrown(S,TG,E) & 
            well_formed(S) & 
-           not satisfied(S,G) & 
-           not super_satisfied(S,G) 
-        -> obligation(A,enabled(S,G),What,`now` + D).
+           not satisfied(S,TG) & 
+           not super_satisfied(S,TG) 
+        -> obligation(A,enabled(S,TG),What,`now` + D).
 
 } // end of scheme bancomat_sch
 

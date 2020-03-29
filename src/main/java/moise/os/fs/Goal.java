@@ -27,7 +27,7 @@ public class Goal extends MoiseElement implements ToXML, ToProlog {
 
     private static final long serialVersionUID = 1L;
 
-    public enum GoalType { performance, achievement, maintenance, reporting, treatment };
+    public enum GoalType { performance, achievement, maintenance };
 
     protected Plan     plan = null;   // the plan to achieve this goal (in case the goal is the head of a plan)
     protected Plan     inPlan = null; // the plan this goal belongs to
