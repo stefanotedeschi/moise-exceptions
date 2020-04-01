@@ -1,0 +1,24 @@
+
+exception(E,Condition).
+report(R,Condition).
+
+report(E,C) :- exception(E,C).
+
+exception_goal(E,G).
+
+throwing(G) :- exception_goal(E,G).
+throwing(G) :- super_goal(SG,G) & throwing(SG).
+
+reporting(G) :- throwing(G).
+
+handler(H,E).
+policy(P,Report).
+
+policy(H,E) :- handler(H,E).
+
+handler_goal(H,G).
+
+catching(G) :- handler_goal(H,G).
+catching(G) :- super_goal(SG,G) & catching(SG).
+
+treatment(G) :- catching(G).
