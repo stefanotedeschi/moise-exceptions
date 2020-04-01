@@ -338,41 +338,42 @@ public class os2nopl {
         np.append("   any_satisfied(S,[G|_]) :- satisfied(S,G).\n");
         np.append("   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).\n\n");
 
-        np.append("   in_exception(G) :- exception_goal(_,G). // throwing\n");
-        np.append("   in_exception(G) :- super_goal(SG,G) & in_exception(SG).\n");
-        np.append("   in_handler(G) :- handler_goal(_,G). // catching\n");
-        np.append("   in_handler(G) :- super_goal(SG,G) & in_exception(SG).\n\n");
+        np.append("   throwing(G) :- exception_goal(_,G).\n");
+        np.append("   throwing(G) :- super_goal(SG,G) & throwing(SG).\n");
+        np.append("   catching(G) :- handler_goal(_,G).\n");
+        np.append("   catching(G) :- super_goal(SG,G) & catching(SG).\n\n");
+        
+        np.append("   reporting(G) :- throwing(G).\n\n");
+        
+        np.append("   enabled(S,G) :- throwing(G) &\n");
+        np.append("                   exception_goal(E,G) &\n");
+        np.append("                   exception(E,failed(S,FG)) &\n");
+        np.append("                   failed(S,FG) &\n");
+        np.append("                   goal(_, G,  dep(or,PCG), _, NP, _) &\n");
+        np.append("                   NP \\== 0 & any_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- throwing(G) &\n");
+        np.append("                   exception_goal(E,G) &\n");
+        np.append("                   exception(E,failed(S,FG)) &\n");
+        np.append("                   failed(S,FG) &\n");
+        np.append("                   goal(_, G, dep(and,PCG), _, NP, _) &\n");
+        np.append("                   NP \\== 0 & all_satisfied(S,PCG).\n\n");
+        
+        np.append("   enabled(S,G) :- catching(G) &\n");
+        np.append("                   handler(H,E) &\n");
+        np.append("                   handler_goal(H,G) &\n");
+        np.append("                   thrown(S,_,E) &\n");
+        np.append("                   goal(_, G,  dep(or,PCG), _, NP, _) &\n");
+        np.append("                   NP \\== 0 & any_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- catching(G) &\n");
+        np.append("                   handler(H,E) &\n");
+        np.append("                   handler_goal(H,G) &\n");
+        np.append("                   thrown(S,_,E) &\n");
+        np.append("                   goal(_, G, dep(and,PCG), _, NP, _) &\n");
+        np.append("                   NP \\== 0 & all_satisfied(S,PCG).\n\n");
         
         np.append("   // enabled goals (i.e. dependence between goals)\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not in_exception(G) & not in_handler(G) & NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not in_exception(G) & not in_handler(G) & NP \\== 0 & all_satisfied(S,PCG).\n\n");
-        
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) &\n");
-        np.append("                   in_exception(G) &\n");
-        np.append("                   exception_goal(E,G) &\n");
-        np.append("                   exception(E,failed(S,FG)) &\n");
-        np.append("                   failed(S,FG) &\n");
-        np.append("                   NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) &\n");
-        np.append("                   in_exception(G) &\n");
-        np.append("                   exception_goal(E,G) &\n");
-        np.append("                   exception(E,failed(S,FG)) &\n");
-        np.append("                   failed(S,FG) &\n");
-        np.append("                   NP \\== 0 & all_satisfied(S,PCG).\n\n");
-        
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) &\n");
-        np.append("                   in_handler(G) &\n");
-        np.append("                   handler(H,E) &\n");
-        np.append("                   handler_goal(H,G) &\n");
-        np.append("                   thrown(S,_,E) &\n");
-        np.append("                   NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) &\n");
-        np.append("                   in_handler(G) &\n");
-        np.append("                   handler(H,E) &\n");
-        np.append("                   handler_goal(H,G) &\n");
-        np.append("                   thrown(S,_,E) &\n");
-        np.append("                   NP \\== 0 & all_satisfied(S,PCG).\n\n");
-        
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not reporting(G) & not treatment(G) & NP \\== 0 & any_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not reporting(G) & not treatment(G) & NP \\== 0 & all_satisfied(S,PCG).\n\n");
         
         np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
 
