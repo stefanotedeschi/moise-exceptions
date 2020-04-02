@@ -343,6 +343,8 @@ public class os2nopl {
         np.append("   catching(G) :- handler_goal(_,G).\n");
         np.append("   catching(G) :- super_goal(SG,G) & catching(SG).\n\n");
         
+        np.append("")
+        
         np.append("   reporting(G) :- throwing(G).\n\n");
         
         np.append("   enabled(S,G) :- throwing(G) &\n");

@@ -6,10 +6,37 @@ report(E,C) :- exception(E,C).
 
 exception_goal(E,G).
 
-throwing(G) :- exception_goal(E,G).
-throwing(G) :- super_goal(SG,G) & throwing(SG).
+report_goal(E,G) :- exception_goal(E,G).
 
-reporting(G) :- throwing(G).
+throwing(E,G) :- exception_goal(E,G).
+throwing(E,G) :- super_goal(SG,G) & throwing(SG).
+
+reporting(E,G) :- throwing(E,G).
+
+enabled(S,TG) :- throwing(E,TG) &
+                 exception(E,failed(S,FG)) &
+                 failed(S,FG) &
+                 goal(_, TG,  dep(or,PCG), _, NP, _) &
+                 NP \== 0 & any_satisfied(S,PCG).
+enabled(S,TG) :- throwing(E,TG) &
+                 exception(E,failed(S,FG)) &
+                 failed(S,FG) &
+                 goal(_, TG, dep(and,PCG), _, NP, _) &
+                 NP \== 0 & all_satisfied(S,PCG).
+
+// TG = TG1 ; TG2
+
+// super_goal(TG,TG1)
+// super_goal(TG,TG2)
+
+// exception(E,failed(S,G)) --> report(E,failed(S,G))
+
+// exception_goal(E,TG)     --> report_goal(E,TG)
+// throwing(E,TG)           --> reporting(E,TG)
+// throwing(E,TG1)          --> reporting(E,TG1)
+// throwing(E,TG2)          --> reporting(E,TG2)
+
+
 
 handler(H,E).
 policy(P,Report).
@@ -18,7 +45,32 @@ policy(H,E) :- handler(H,E).
 
 handler_goal(H,G).
 
-catching(G) :- handler_goal(H,G).
-catching(G) :- super_goal(SG,G) & catching(SG).
+policy_goal(H,E) :- handler_goal(H,G).
 
-treatment(G) :- catching(G).
+catching(E,G) :- handler_goal(H,G) & handler(H,E).
+catching(E,G) :- super_goal(SG,G) & catching(E,SG).
+
+treatment(E,G) :- catching(E,G).
+
+
+enabled(S,CG) :- catching(E,CG) &
+                 thrown(S,_,E) &
+                 goal(_, CG,  dep(or,PCG), _, NP, _) &
+                 NP \== 0 & any_satisfied(S,PCG).
+enabled(S,CG) :- catching(E,CG) &
+                 thrown(S,_,E) &
+                 goal(_, CG, dep(and,PCG), _, NP, _) &
+                 NP \== 0 & all_satisfied(S,PCG).
+
+// CG = CG1 ; CG2
+
+// super_goal(CG,CG1)
+// super_goal(CG,CG2)
+
+// exception(E,failed(S,G)) --> report(E,failed(S,G))
+// handler(H,E)             --> policy(H,E)
+
+// handler_goal(H,CG)       --> treatment_goal(H,CG)
+// catching(E,CG)           --> treatment(E,CG)
+// catching(E,CG1)          --> treatment(E,CG1)
+// catching(E,CG2)          --> treatment(E,CG2)
