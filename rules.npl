@@ -1,13 +1,55 @@
 
-exception(E,Condition).
 report(Rep,Condition).
-
 request(Req,Rep).
+policy(P,Report).
+
+exception(E,Condition).
+handler(H,E).
+
+
+
 request_goal(Req,RG).
 request_policy(Req,P).
 
 requesting(R,G) :- request_goal(R,G).
 requesting(R,G) :- super_goal(SG,G) & requesting(R,SG).
+
+enabled(S,RG) :- requesting(Req,RG) &
+                 request(Req,Rep) &
+                 report(Rep,Condition) &
+                 Condition &
+                 goal(_, RG,  dep(or,PCG), _, NP, _) &
+                 NP \== 0 & any_satisfied(S,PCG).
+enabled(S,RG) :- requesting(Req,RG) &
+                 request(Req,Rep) &
+                 report(Rep,Condition) &
+                 Condition &
+                 goal(_, RG, dep(and,PCG), _, NP, _) &
+                 NP \== 0 & all_satisfied(S,PCG).
+
+
+
+report_goal(R,G).
+
+reporting(R,G) :- report_goal(R,G).
+reporting(R,G) :- super_goal(SG,G) & reporting(R,SG).
+
+enabled(S,RG) :- reporting(R,RG) &
+                 report(R,Condition) &
+                 Condition &
+                 request(Req,R) &
+                 submitted(S,_,Req) &
+                 goal(_, RG,  dep(or,PCG), _, NP, _) &
+                 NP \== 0 & any_satisfied(S,PCG).
+enabled(S,RG) :- reporting(R,RG) &
+                 report(R,Condition) &
+                 Condition &
+                 request(_,R) &
+                 submitted(S,_,Req) &
+                 goal(_, RG, dep(and,PCG), _, NP, _) &
+                 NP \== 0 & all_satisfied(S,PCG).
+
+
 
 report(E,C) :- exception(E,C).
 
@@ -31,34 +73,6 @@ enabled(S,TG) :- throwing(E,TG) &
                  goal(_, TG, dep(and,PCG), _, NP, _) &
                  NP \== 0 & all_satisfied(S,PCG).
 
-enabled(S,RG) :- requesting(Req,RG) &
-                 request(Req,Rep) &
-                 report(Rep,Condition) &
-                 Condition &
-                 goal(_, RG,  dep(or,PCG), _, NP, _) &
-                 NP \== 0 & any_satisfied(S,PCG).
-enabled(S,RG) :- requesting(Req,RG) &
-                 request(Req,Rep) &
-                 report(Rep,Condition) &
-                 Condition &
-                 goal(_, RG, dep(and,PCG), _, NP, _) &
-                 NP \== 0 & all_satisfied(S,PCG).
-
-enabled(S,RG) :- reporting(R,RG) &
-                 report(R,Condition) &
-                 Condition &
-                 request(Req,R) &
-                 submitted(S,_,Req) &
-                 goal(_, RG,  dep(or,PCG), _, NP, _) &
-                 NP \== 0 & any_satisfied(S,PCG).
-enabled(S,RG) :- reporting(R,RG) &
-                 report(R,Condition) &
-                 Condition &
-                 request(_,R) &
-                 submitted(S,_,Req) &
-                 goal(_, RG, dep(and,PCG), _, NP, _) &
-                 NP \== 0 & all_satisfied(S,PCG).
-
 // TG = TG1 ; TG2
 
 // super_goal(TG,TG1)
@@ -71,10 +85,6 @@ enabled(S,RG) :- reporting(R,RG) &
 // throwing(E,TG1)          --> reporting(E,TG1)
 // throwing(E,TG2)          --> reporting(E,TG2)
 
-
-
-handler(H,E).
-policy(P,Report).
 
 policy(H,E) :- handler(H,E).
 
@@ -109,3 +119,11 @@ enabled(S,CG) :- catching(E,CG) &
 // catching(E,CG)           --> treatment(E,CG)
 // catching(E,CG1)          --> treatment(E,CG1)
 // catching(E,CG2)          --> treatment(E,CG2)
+
+
+mission_request(M,Req).
+mission_report(M,Rep).
+mission_exception(M,E).
+mission_handler(M,H).
+
+mission_policy(M,P) :- mission_request(M,R), request_policy(Req,P).
