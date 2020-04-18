@@ -6,10 +6,8 @@
 -!parseAmount
 	<- goalFailed(parseAmount).
 
-+obligation(Ag,_,thrown(_,throwParseAmount),_)
-	 : .my_name(Ag)
-	<- println("DEVO LANCIARE UN'ECCEZIONE");
-	   exceptionThrown(throwParseAmount,nan,[motivo(x)]).
++!throwNan
+	<- println("Throwing exception!").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

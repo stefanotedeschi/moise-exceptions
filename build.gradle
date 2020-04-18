@@ -10,7 +10,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
-version '0.13-SNAPSHOT'
+version '0.13-EXCEPTIONS'
 group   'org.jacamo'
 
 sourceCompatibility = 1.8
@@ -212,4 +212,3 @@ task publishMavenGitHub(dependsOn: [ 'build', 'publishToMavenLocal']) {
     }
   }
 }
-

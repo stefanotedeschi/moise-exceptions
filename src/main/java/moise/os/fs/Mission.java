@@ -16,7 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import jason.asSyntax.ASSyntax;
-import jason.asSyntax.Literal;
+import jason.asSyntax.LogicalFormula;
 import jason.asSyntax.parser.ParseException;
 
 /**
@@ -154,11 +154,11 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
         }
         // goals
         for (Goal gs: getGoals()) {
-        	if(gs.getInException() == null && gs.getInHandler() == null) {
-        		Element eg = (Element) document.createElement(Goal.getXMLTag());
-        		eg.setAttribute("id", gs.getId());
-        		ele.appendChild(eg);
-        	}
+            if(gs.getInException() == null && gs.getInHandler() == null) {
+                Element eg = (Element) document.createElement(Goal.getXMLTag());
+                eg.setAttribute("id", gs.getId());
+                ele.appendChild(eg);
+            }
         }
         
         // reports
@@ -201,9 +201,9 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
         
         for (Element rEle: DOMUtils.getDOMDirectChilds(ele, Exception.getXMLTag())) {
             String id = rEle.getAttribute("id");
-            Literal condition;
+            LogicalFormula condition;
             try {
-                condition = ASSyntax.parseLiteral(rEle.getAttribute("when"));
+                condition = ASSyntax.parseFormula(rEle.getAttribute("when"));
             } catch (ParseException e) {
                 throw new MoiseException(e.getMessage());
             }

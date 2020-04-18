@@ -44,22 +44,22 @@ public class Goal extends MoiseElement implements ToXML, ToProlog {
     protected Handler inHandler = null;
 
     public Exception getInException() {
-		return inException;
-	}
+        return inException;
+    }
 
-	public Handler getInHandler() {
-		return inHandler;
-	}
+    public Handler getInHandler() {
+        return inHandler;
+    }
 
-	public void setInException(Exception inException) {
-		this.inException = inException;
-	}
+    public void setInException(Exception inException) {
+        this.inException = inException;
+    }
 
-	public void setInHandler(Handler inHandler) {
-		this.inHandler = inHandler;
-	}
+    public void setInHandler(Handler inHandler) {
+        this.inHandler = inHandler;
+    }
 
-	public Goal(String goal) {
+    public Goal(String goal) {
         setId(goal);
     }
 

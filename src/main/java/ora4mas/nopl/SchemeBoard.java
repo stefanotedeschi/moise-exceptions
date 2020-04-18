@@ -291,24 +291,6 @@ public class SchemeBoard extends OrgArt {
             }
         },"Error leaving mission "+mission);
     }
-
-//	@OPERATION
-//	public void reportProvided(String goal, String report, Object[] args) throws CartagoException {
-//		reportProvided(getOpUserName(), goal, report, args);
-//	}
-//
-//	protected void reportProvided(final String agent, final String goal, final String report, final Object[] args) throws CartagoException {
-//        ora4masOperationTemplate(new Operation() {
-//            public void exec() throws NormativeFailureException, Exception {
-//                getSchState().provideReport(goal, );
-//                nengine.verifyNorms();
-//                exceptionsObsProps.add(defineObsProperty("exceptionThrown",createAtom(getId().getName()), createAtom(goal), createAtom(exception)));
-//                for(Object a : arguments) {
-//                    exceptionArgumentsObsProps.add(defineObsProperty("exceptionArgument", createAtom(getId().getName()), createAtom(exception), ASSyntax.parseLiteral((String)a)));
-//                }
-//            }
-//        },"Error throwing exception " + exception + " for goal " + goal);
-//    }
     
     @OPERATION public void goalAchieved(String goal) throws CartagoException {
         goalDone(getOpUserName(), goal);
@@ -327,18 +309,14 @@ public class SchemeBoard extends OrgArt {
         },"Error achieving goal "+goal);
     }
     
-    @OPERATION public void request(String mission, String report) throws CartagoException {
-        goalDone(getOpUserName(), mission, report);
-    }
-
-    protected void goalDone(final String agent, final String mission, final String report) throws CartagoException {
+    @OPERATION public void goalFailed(String goal) throws CartagoException {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
-                getSchState().addRequest(agent, mission, report);
+                getSchState().addFailedGoal(goal);
                 nengine.verifyNorms();
-                //updateRequestObsProp();
+                updateGoalStateObsProp();
             }
-        },"Error making request for " + mission + ", " + report);
+        },"Error setting goal "+goal+" as failed");
     }
 
     /** The agent executing this operation sets a value for a goal argument.
@@ -656,6 +634,7 @@ public class SchemeBoard extends OrgArt {
     protected static final Atom aWaiting   = new Atom("waiting");
     protected static final Atom aEnabled   = new Atom("enabled");
     protected static final Atom aSatisfied = new Atom("satisfied");
+    protected static final Atom aFailed = new Atom("failed");
 
     List<Literal> getGoalStates() {
         List<Literal> all = new ArrayList<>();
@@ -686,6 +665,9 @@ public class SchemeBoard extends OrgArt {
             Atom aState = aWaiting;
             if (nengine.holds(new NPLLiteral(ASSyntax.createLiteral("satisfied", tSch, aGoal), orgState))) {
                 aState = aSatisfied;
+            }  else if(isWellFormed() &&
+                nengine.holds(new NPLLiteral(ASSyntax.createLiteral("failed", tSch, aGoal), orgState))) {
+                aState = aFailed;
             } else if (isWellFormed() &&
                 nengine.holds(ASSyntax.createLiteral("enabled", tSch, aGoal))) {
                 aState = aEnabled;

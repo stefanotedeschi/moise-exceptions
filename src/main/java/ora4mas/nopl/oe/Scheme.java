@@ -44,9 +44,9 @@ public class Scheme extends CollectiveOE {
         createLiteral("leaved_mission", new VarTerm("Ag"), new VarTerm("Mis"), new VarTerm("SID")),
         createLiteral("done", new VarTerm("SID"), new VarTerm("Goal"), new VarTerm("Ag") ),
         createLiteral("satisfied", new VarTerm("SID"), new VarTerm("Goal")),
-        createLiteral("request", new VarTerm("Ag"), new VarTerm("Mission"), new VarTerm("Report")),
         createLiteral(Group.playPI.getFunctor(), new VarTerm("Ag"), new VarTerm("Role"), new VarTerm("Gr")), // from group
-        createLiteral(Group.responsiblePI.getFunctor(), new VarTerm("Gr"), new VarTerm("Sch"))               // from group
+        createLiteral(Group.responsiblePI.getFunctor(), new VarTerm("Gr"), new VarTerm("Sch")),              // from group
+        createLiteral("failed",new VarTerm("SID"), new VarTerm("Goal"))
     };
 
 
@@ -55,7 +55,7 @@ public class Scheme extends CollectiveOE {
     public final static PredicateIndicator exCommittedPI = dynamicFacts[2].getPredicateIndicator();
     public final static PredicateIndicator donePI        = dynamicFacts[3].getPredicateIndicator();
     public final static PredicateIndicator satisfiedPI   = dynamicFacts[4].getPredicateIndicator();
-    public final static PredicateIndicator requestPI     = dynamicFacts[5].getPredicateIndicator();
+    public final static PredicateIndicator failedPI      = dynamicFacts[7].getPredicateIndicator();
 
     // specification
     private moise.os.fs.Scheme spec;
@@ -66,8 +66,8 @@ public class Scheme extends CollectiveOE {
     // the literal is done(schemeId, goalId, agent name)
     private ConcurrentSkipListSet<Literal> doneGoals = new ConcurrentSkipListSet<>();
     
- // the literal is request(agent, mission, report)
-    private ConcurrentSkipListSet<Literal> requests = new ConcurrentSkipListSet<>();
+    // the literal is failed(schemeId, goalId)
+    private ConcurrentSkipListSet<Literal> failedGoals = new ConcurrentSkipListSet<>();
 
     // values for goal arguments (key = goal + arg, value = value)
     private HashMap<Pair<String,String>,Object> goalArgs = new HashMap<>();
@@ -99,10 +99,10 @@ public class Scheme extends CollectiveOE {
         doneGoals.add(createLiteral(donePI.getFunctor(), termId, createAtom(goal), createAtom(ag)));
     }
     
-    public void addRequest(String ag, String mission, String report) {
-        requests.add(createLiteral(requestPI.getFunctor(), createAtom(ag), createAtom(mission), createAtom(report)));
+    public void addFailedGoal(String goal) {
+        failedGoals.add(createLiteral(failedPI.getFunctor(), termId, createAtom(goal)));
     }
-
+    
     public boolean removeDoneGoal(Goal goal) {
         boolean r = false;
         Atom gAtom = createAtom(goal.getId());
@@ -111,6 +111,20 @@ public class Scheme extends CollectiveOE {
             Literal l = iDoneGoals.next();
             if (l.getTerm(1).equals(gAtom)) {
                 iDoneGoals.remove();
+                r = true;
+            }
+        }
+        return r;
+    }
+    
+    public boolean removeFailedGoal(Goal goal) {
+        boolean r = false;
+        Atom gAtom = createAtom(goal.getId());
+        Iterator<Literal> iFailedGoals = failedGoals.iterator();
+        while (iFailedGoals.hasNext()) {
+            Literal l = iFailedGoals.next();
+            if (l.getTerm(1).equals(gAtom)) {
+                iFailedGoals.remove();
                 r = true;
             }
         }
@@ -140,6 +154,7 @@ public class Scheme extends CollectiveOE {
     
     protected boolean resetGoalAndPreConditions(Goal goal) {
         boolean changed = removeDoneGoal(goal);
+        changed = removeFailedGoal(goal);
 
         // recompute for all goals which this goal is pre condition
         for (Goal g: spec.getGoals()) {
@@ -214,9 +229,8 @@ public class Scheme extends CollectiveOE {
         } else if (pi.equals(donePI)) {
             return consultFromCollection(l, u, doneGoals);
 
-        } else if(pi.equals(requestPI)) {
-            return consultFromCollection(l, u, requests);
-        
+        } else if (pi.equals(failedPI)) {
+            return consultFromCollection(l, u, failedGoals);
         
         } else if (pi.equals(satisfiedPI)) {
             Term lCopy = l.getTerm(1).capply(u);
@@ -338,6 +352,7 @@ public class Scheme extends CollectiveOE {
         g.exPlayers.addAll(this.exPlayers);
         g.groups.addAll(this.groups);
         g.doneGoals.addAll(this.doneGoals);
+        g.failedGoals.addAll(this.failedGoals);
         //g.accomplisedMissions.addAll(this.accomplisedMissions);
         g.satisfiedGoals.addAll(this.satisfiedGoals);
         g.goalArgs.putAll(this.goalArgs);

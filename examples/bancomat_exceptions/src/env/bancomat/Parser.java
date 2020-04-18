@@ -2,9 +2,9 @@ package bancomat;
 
 public class Parser {
 
-	public int parseAmount(String amountString) throws NotANumberException {
-		
-		if (amountString == null) {
+    public int parseAmount(String amountString) throws NotANumberException {
+        
+        if (amountString == null) {
             throw new NotANumberException();
         }
 

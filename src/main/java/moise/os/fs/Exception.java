@@ -4,15 +4,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import jason.asSyntax.Literal;
+import jason.asSyntax.LogicalFormula;
 import moise.xml.DOMUtils;
 
 public class Exception {
     
     private String id;
-    private Literal condition;
+    private LogicalFormula condition;
     private Goal goal;
     
-    public Exception(String id, Literal condition) {
+    public Exception(String id, LogicalFormula condition) {
         super();
         this.id = id;
         this.condition = condition;
@@ -20,7 +21,7 @@ public class Exception {
     public String getId() {
         return id;
     }
-    public Literal getCondition() {
+    public LogicalFormula getCondition() {
         return condition;
     }
     public Goal getGoal() {
@@ -29,7 +30,7 @@ public class Exception {
     public void setId(String id) {
         this.id = id;
     }
-    public void setCondition(Literal condition) {
+    public void setCondition(LogicalFormula condition) {
         this.condition = condition;
     }
     public void setGoal(Goal goal) {

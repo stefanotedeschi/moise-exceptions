@@ -247,9 +247,9 @@ public class os2nopl {
         String missionGoal      = "\n   // mission_goal(mission id, goal id)\n";
         String exception           = "\n   // exception(exception id, condition)\n";
         String handler        = "\n   // handler(handler id, exception id)\n";
-        String missionReport    = "\n   // mission_exception(mission id, exception id)\n";
+        String missionException    = "\n   // mission_exception(mission id, exception id)\n";
         String exceptionGoal       = "\n   // exception_goal(exception id, goal id)\n";
-        String missionTreatment = "\n   // mission_handler(mission id, handler id)\n";
+        String missionHandler = "\n   // mission_handler(mission id, handler id)\n";
         String handlerGoal    = "\n   // handler_goal(handler id, goal id)\n";
         
         //np.append("\n   // mission_goal(mission id, goal id)\n");
@@ -259,14 +259,14 @@ public class os2nopl {
             }
             for (Exception r: m.getExceptions()) {
                 exception += "   exception("+r.getId()+","+r.getCondition()+").\n";
-                missionReport += "   mission_exception("+m.getId()+","+r.getId()+").\n";
+                missionException += "   mission_exception("+m.getId()+","+r.getId()+").\n";
                 if(r.getGoal() != null) {
                     exceptionGoal += "   exception_goal("+r.getId()+","+r.getGoal().getId()+").\n";
                 }
             }
             for (Handler t: m.getHandlers()) {
                 handler += "   handler("+t.getId()+","+t.getException().getId()+").\n";
-                missionTreatment += "   mission_handler("+m.getId()+","+t.getId()+").\n";
+                missionHandler += "   mission_handler("+m.getId()+","+t.getId()+").\n";
                 if(t.getGoal() != null) {
                     handlerGoal += "   handler_goal("+t.getId()+","+t.getGoal().getId()+").\n";
                 }
@@ -276,9 +276,9 @@ public class os2nopl {
         np.append(missionGoal);
         np.append(exception);
         np.append(handler);
-        np.append(missionReport);
+        np.append(missionException);
         np.append(exceptionGoal);
-        np.append(missionTreatment);
+        np.append(missionHandler);
         np.append(handlerGoal);
 
         np.append("\n   // goal(missions, goal id, dependence (on goal statisfaction), type, #ags to satisfy, ttf)\n");
@@ -338,44 +338,26 @@ public class os2nopl {
         np.append("   any_satisfied(S,[G|_]) :- satisfied(S,G).\n");
         np.append("   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).\n\n");
 
-        np.append("   throwing(G) :- exception_goal(_,G).\n");
-        np.append("   throwing(G) :- super_goal(SG,G) & throwing(SG).\n");
-        np.append("   catching(G) :- handler_goal(_,G).\n");
-        np.append("   catching(G) :- super_goal(SG,G) & catching(SG).\n\n");
-        
-        np.append("")
-        
-        np.append("   reporting(G) :- throwing(G).\n\n");
-        
-        np.append("   enabled(S,G) :- throwing(G) &\n");
-        np.append("                   exception_goal(E,G) &\n");
-        np.append("                   exception(E,failed(S,FG)) &\n");
-        np.append("                   failed(S,FG) &\n");
-        np.append("                   goal(_, G,  dep(or,PCG), _, NP, _) &\n");
-        np.append("                   NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- throwing(G) &\n");
-        np.append("                   exception_goal(E,G) &\n");
-        np.append("                   exception(E,failed(S,FG)) &\n");
-        np.append("                   failed(S,FG) &\n");
-        np.append("                   goal(_, G, dep(and,PCG), _, NP, _) &\n");
-        np.append("                   NP \\== 0 & all_satisfied(S,PCG).\n\n");
-        
-        np.append("   enabled(S,G) :- catching(G) &\n");
-        np.append("                   handler(H,E) &\n");
-        np.append("                   handler_goal(H,G) &\n");
-        np.append("                   thrown(S,_,E) &\n");
-        np.append("                   goal(_, G,  dep(or,PCG), _, NP, _) &\n");
-        np.append("                   NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- catching(G) &\n");
-        np.append("                   handler(H,E) &\n");
-        np.append("                   handler_goal(H,G) &\n");
-        np.append("                   thrown(S,_,E) &\n");
-        np.append("                   goal(_, G, dep(and,PCG), _, NP, _) &\n");
-        np.append("                   NP \\== 0 & all_satisfied(S,PCG).\n\n");
+        np.append("   enabled(S,TG) :- exception_goal(E,TG) &\r\n" + 
+                  "                 not failed(S,TG) &\r\n" + 
+                  "                 exception(E,Condition) &\r\n" + 
+                  "                 Condition &\r\n" + 
+                  "                 goal(_, TG,  Dep, _, NP, _) & NP \\== 0 & \r\n" +
+                  "                 ((Dep = dep(or,PCG)  & any_satisfied(S,PCG)) |\r\n" + 
+                  "                  (Dep = dep(and,PCG) & all_satisfied(S,PCG))\r\n" + 
+                  "                 ).\r\n");
+        np.append("   enabled(S,CG) :- handler_goal(H,CG) &\r\n" +
+                  "                 not failed(S,CG) &\r\n" + 
+                  "                 handler(H,E) &\r\n" + 
+                  "                 thrown(S,_,E) &\r\n" + 
+                  "                 goal(_, CG,  Dep, _, NP, _) & NP \\== 0 &\r\n" + 
+                  "                 ((Dep = dep(or,PCG)  & any_satisfied(S,PCG)) |\r\n" + 
+                  "                  (Dep = dep(and,PCG) & all_satisfied(S,PCG))\r\n" + 
+                  "                 ).\r\n\n");
         
         np.append("   // enabled goals (i.e. dependence between goals)\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not reporting(G) & not treatment(G) & NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not reporting(G) & not treatment(G) & NP \\== 0 & all_satisfied(S,PCG).\n\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & not failed(S,G) & NP \\== 0 & any_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & not failed(S,G) & NP \\== 0 & all_satisfied(S,PCG).\n\n");
         
         np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
 
@@ -399,21 +381,6 @@ public class os2nopl {
                 }
             }
         }
-
-//        np.append("\n   // --- Reports ---\n");
-//        np.append("   norm request_invalid_context:\n");
-//        np.append("           request(Ag,M,R) &\n");
-//        np.append("           exception(R,C) &\n");
-//        np.append("           not C\n");
-//        np.append("        -> fail(request_invalid_context(Ag,M,R,C)).\n");
-//        
-//        np.append("   norm request_agent_not_allowed:\n");
-//        np.append("           request(Ag,M1,R) &\n");
-//        np.append("           exception(R,_) &\n");
-//        np.append("           handler(T,R) &\n");
-//        np.append("           mission_handler(M,T) &\n");
-//        np.append("           not committed(Ag,M,_)\n");
-//        np.append("        -> fail(request_agent_not_allowed(Ag,M1,R)).\n");
         
         if (isSB) {
             np.append("\n   // agents are obliged to fulfill their enabled goals\n");
@@ -427,23 +394,23 @@ public class os2nopl {
             np.append("           well_formed(S) & \n");
             np.append("           not satisfied(S,G) & \n");
             np.append("           not super_satisfied(S,G)\n");
-            np.append("        -> obligation(A,enabled(S,G),What,`now` + D).\n");
+            np.append("        -> obligation(A,enabled(S,G),What,`now` + D).\n\n");
             // TODO: maintenance goals
             //np.append("   // maintenance goals\n");
             
-            np.append("\n   // agents are obliged to throw an exception if a corresponding goal fails\n");
-            np.append("   norm "+NEXCEPTION+": \n");
-            np.append("           failed(S,G) & \n");
-            np.append("           exception(E,failed(S,G)) & \n");
-            np.append("           mission_exception(M,E) & \n");
-            np.append("           exception_goal(E,TG) & \n");
-            np.append("           committed(A,M,S) & \n");
-            np.append("           goal(_,TG,_,_,_,D) & \n");
-            np.append("           What = thrown(S,TG,E) & \n");
-            np.append("           well_formed(S) & \n");
-            np.append("           not satisfied(S,TG) & \n");
-            np.append("           not super_satisfied(S,TG) \n");
-            np.append("        -> obligation(A,enabled(S,TG),What,`now` + D).\n\n");
+//            np.append("\n   // agents are obliged to throw an exception if a corresponding goal fails\n");
+//            np.append("   norm "+NEXCEPTION+": \n");
+//            np.append("           failed(S,G) & \n");
+//            np.append("           exception(E,failed(S,G)) & \n");
+//            np.append("           mission_exception(M,E) & \n");
+//            np.append("           exception_goal(E,TG) & \n");
+//            np.append("           committed(A,M,S) & \n");
+//            np.append("           goal(_,TG,_,_,_,D) & \n");
+//            np.append("           What = thrown(S,TG,E) & \n");
+//            np.append("           well_formed(S) & \n");
+//            np.append("           not satisfied(S,TG) & \n");
+//            np.append("           not super_satisfied(S,TG) \n");
+//            np.append("        -> obligation(A,enabled(S,TG),What,`now` + D).\n\n");
             
         }
 
