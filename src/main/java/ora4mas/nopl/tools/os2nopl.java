@@ -349,15 +349,17 @@ public class os2nopl {
         np.append("   enabled(S,CG) :- handler_goal(H,CG) &\r\n" +
                   "                 not failed(S,CG) &\r\n" + 
                   "                 handler(H,E) &\r\n" + 
-                  "                 thrown(S,_,E) &\r\n" + 
+                  "                 thrown(S,E,_) &\r\n" + 
+                  "                 exception_goal(E,TG) &\r\n" + 
+                  "                 satisfied(S,TG) &\r\n" + 
                   "                 goal(_, CG,  Dep, _, NP, _) & NP \\== 0 &\r\n" + 
                   "                 ((Dep = dep(or,PCG)  & any_satisfied(S,PCG)) |\r\n" + 
                   "                  (Dep = dep(and,PCG) & all_satisfied(S,PCG))\r\n" + 
                   "                 ).\r\n\n");
         
         np.append("   // enabled goals (i.e. dependence between goals)\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & not failed(S,G) & NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & not failed(S,G) & NP \\== 0 & all_satisfied(S,PCG).\n\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & any_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & all_satisfied(S,PCG).\n\n");
         
         np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
 

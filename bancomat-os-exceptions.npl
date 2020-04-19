@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'bancomat_exceptions'
-    on aprile 18, 2020 - 17:32:56
+    on aprile 19, 2020 - 11:39:21
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -176,23 +176,25 @@ scope scheme(bancomat_sch) {
    any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).
 
    enabled(S,TG) :- exception_goal(E,TG) &
-                 exception(E,failed(S,FG)) &
-                 failed(S,FG) &
-                 goal(_, TG,  Dep, _, NP, _) & NP \== 0 &
-                 ((Dep == dep(or,PCG)  & any_satisfied(S,PCG)) |
-                  (Dep == dep(and,PCG) & all_satisfied(S,PCG))
+                 not failed(S,TG) &
+                 exception(E,Condition) &
+                 Condition &
+                 goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
+                 ((Dep = dep(or,PCG)  & any_satisfied(S,PCG)) |
+                  (Dep = dep(and,PCG) & all_satisfied(S,PCG))
                  ).
    enabled(S,CG) :- handler_goal(H,CG) &
+                 not failed(S,CG) &
                  handler(H,E) &
-                 thrown(S,_,E) &
+                 thrown(S,E,_) &
                  goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
-                 ((Dep == dep(or,PCG)  & any_satisfied(S,PCG)) |
-                  (Dep == dep(and,PCG) & all_satisfied(S,PCG))
+                 ((Dep = dep(or,PCG)  & any_satisfied(S,PCG)) |
+                  (Dep = dep(and,PCG) & all_satisfied(S,PCG))
                  ).
 
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & any_satisfied(S,PCG).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & all_satisfied(S,PCG).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & not failed(S,G) & NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & not failed(S,G) & NP \== 0 & all_satisfied(S,PCG).
 
    super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).
 

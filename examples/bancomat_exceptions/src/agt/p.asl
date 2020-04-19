@@ -1,13 +1,14 @@
-
 +!parseAmount
 	<- println("Parsing amount...");
 	   parseAmount.
 
 -!parseAmount
-	<- goalFailed(parseAmount).
+	<- goalFailed(parseAmount);
+	   .fail.
 
 +!throwNan
-	<- println("Throwing exception!").
+	<- println("Throwing exception!");
+	   throwException(nan,[problem]).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

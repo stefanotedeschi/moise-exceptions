@@ -46,7 +46,9 @@ public class Scheme extends CollectiveOE {
         createLiteral("satisfied", new VarTerm("SID"), new VarTerm("Goal")),
         createLiteral(Group.playPI.getFunctor(), new VarTerm("Ag"), new VarTerm("Role"), new VarTerm("Gr")), // from group
         createLiteral(Group.responsiblePI.getFunctor(), new VarTerm("Gr"), new VarTerm("Sch")),              // from group
-        createLiteral("failed",new VarTerm("SID"), new VarTerm("Goal"))
+        createLiteral("failed",new VarTerm("SID"), new VarTerm("Goal")),
+        createLiteral("thrown", new VarTerm("SID"), new VarTerm("Exception"), new VarTerm("Ag")),
+        createLiteral("released", new VarTerm("SID"), new VarTerm("Goal")),
     };
 
 
@@ -56,6 +58,8 @@ public class Scheme extends CollectiveOE {
     public final static PredicateIndicator donePI        = dynamicFacts[3].getPredicateIndicator();
     public final static PredicateIndicator satisfiedPI   = dynamicFacts[4].getPredicateIndicator();
     public final static PredicateIndicator failedPI      = dynamicFacts[7].getPredicateIndicator();
+    public final static PredicateIndicator thrownPI      = dynamicFacts[8].getPredicateIndicator();
+    public final static PredicateIndicator releasedPI    = dynamicFacts[9].getPredicateIndicator();
 
     // specification
     private moise.os.fs.Scheme spec;
@@ -68,9 +72,15 @@ public class Scheme extends CollectiveOE {
     
     // the literal is failed(schemeId, goalId)
     private ConcurrentSkipListSet<Literal> failedGoals = new ConcurrentSkipListSet<>();
+    
+    // the literal is released(schemeId, goalId)
+    private ConcurrentSkipListSet<Literal> releasedGoals = new ConcurrentSkipListSet<>();
 
     // values for goal arguments (key = goal + arg, value = value)
     private HashMap<Pair<String,String>,Object> goalArgs = new HashMap<>();
+    
+    // the literal is thrown(schemeId, exceptionId, agent name)
+    private ConcurrentSkipListSet<Literal> throwns = new ConcurrentSkipListSet<>();
 
     // list of satisfied goals
     private Set<String> satisfiedGoals = new HashSet<>(); // we use "contains" a lot, so remains HashSet
@@ -103,6 +113,18 @@ public class Scheme extends CollectiveOE {
         failedGoals.add(createLiteral(failedPI.getFunctor(), termId, createAtom(goal)));
     }
     
+    public void addReleasedGoal(String goal) {
+        releasedGoals.add(createLiteral(releasedPI.getFunctor(), termId, createAtom(goal)));
+    }
+    
+    public void addThrown(String ag, String exception) {
+        throwns.add(createLiteral(thrownPI.getFunctor(), termId, createAtom(exception), createAtom(ag)));
+    }
+    
+    public Term getTermId() {
+        return termId;
+    }
+    
     public boolean removeDoneGoal(Goal goal) {
         boolean r = false;
         Atom gAtom = createAtom(goal.getId());
@@ -125,6 +147,20 @@ public class Scheme extends CollectiveOE {
             Literal l = iFailedGoals.next();
             if (l.getTerm(1).equals(gAtom)) {
                 iFailedGoals.remove();
+                r = true;
+            }
+        }
+        return r;
+    }
+    
+    public boolean removeThrown(moise.os.fs.Exception exception) {
+        boolean r = false;
+        Atom eAtom = createAtom(exception.getId());
+        Iterator<Literal> iThrowns = throwns.iterator();
+        while (iThrowns.hasNext()) {
+            Literal l = iThrowns.next();
+            if (l.getTerm(1).equals(eAtom)) {
+                iThrowns.remove();
                 r = true;
             }
         }
@@ -226,8 +262,14 @@ public class Scheme extends CollectiveOE {
             else
                 return LogExpr.EMPTY_UNIF_LIST.iterator();
 
+        } else if (pi.equals(thrownPI)) {
+            return consultFromCollection(l, u, throwns);
+            
         } else if (pi.equals(donePI)) {
             return consultFromCollection(l, u, doneGoals);
+            
+        } else if (pi.equals(releasedPI)) {
+            return consultFromCollection(l, u, releasedGoals);
 
         } else if (pi.equals(failedPI)) {
             return consultFromCollection(l, u, failedGoals);
@@ -353,6 +395,8 @@ public class Scheme extends CollectiveOE {
         g.groups.addAll(this.groups);
         g.doneGoals.addAll(this.doneGoals);
         g.failedGoals.addAll(this.failedGoals);
+        g.throwns.addAll(this.throwns);
+        g.releasedGoals.addAll(this.releasedGoals);
         //g.accomplisedMissions.addAll(this.accomplisedMissions);
         g.satisfiedGoals.addAll(this.satisfiedGoals);
         g.goalArgs.putAll(this.goalArgs);

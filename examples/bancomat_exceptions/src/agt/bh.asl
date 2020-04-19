@@ -5,6 +5,7 @@
 	   
 +!retryLater
 	<- failWithdraw;
+	   goalReleased(withdraw);
 	   println("TRY LATER").
 	   
 { include("$jacamoJar/templates/common-cartago.asl") }
