@@ -3,99 +3,97 @@
 <?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
 
 <organisational-specification
-	id="bancomat_exceptions" os-version="0.8"
+    id="bancomat_exceptions" os-version="0.8"
 
-	xmlns='http://moise.sourceforge.net/os'
-	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+    xmlns='http://moise.sourceforge.net/os'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 
-	<structural-specification>
+    <structural-specification>
 
-		<role-definitions>
-			<role id="bancomatHandler" />
-			<role id="requestHandler" />
-			<role id="reader" />
-			<role id="parser" />
-			<role id="moneyKeeper" />
-		</role-definitions>
+        <role-definitions>
+            <role id="bancomatHandler" />
+            <role id="requestHandler" />
+            <role id="reader" />
+            <role id="parser" />
+            <role id="moneyKeeper" />
+        </role-definitions>
 
-		<group-specification id="bancomat_group">
-			<roles>
-				<role id="bancomatHandler" min="1" max="1" />
-				<role id="requestHandler" min="1" max="1" />
-				<role id="reader" min="1" max="1" />
-				<role id="parser" min="1" max="1" />
-				<role id="moneyKeeper" min="1" max="1" />
-			</roles>
-		</group-specification>
+        <group-specification id="bancomat_group">
+            <roles>
+                <role id="bancomatHandler" min="1" max="1" />
+                <role id="requestHandler" min="1" max="1" />
+                <role id="reader" min="1" max="1" />
+                <role id="parser" min="1" max="1" />
+                <role id="moneyKeeper" min="1" max="1" />
+            </roles>
+        </group-specification>
 
-	</structural-specification>
+    </structural-specification>
 
-	<functional-specification>
-		<scheme id="bancomat_sch">
+    <functional-specification>
+        <scheme id="bancomat_sch">
 
-			<goal id="withdraw">
-				<plan operator="sequence">
-					<goal id="obtainAmount">
-						<plan operator="sequence">
-							<goal id="getAmountAsString" />
-							<goal id="parseAmount" />
-						</plan>
-					</goal>
-					<goal id="provideMoney" />
-				</plan>
-			</goal>
+            <goal id="withdraw">
+                <plan operator="sequence">
+                    <goal id="obtainAmount">
+                        <plan operator="sequence">
+                            <goal id="getAmountAsString" />
+                            <goal id="parseAmount" />
+                        </plan>
+                    </goal>
+                    <goal id="provideMoney" />
+                </plan>
+            </goal>
 
-			<!--
-				POWERS:
-				+ fail goal
-				+ achieve goal
-				+ reset goal
-				+ release goal ==> apply policy ==> nel caso delle eccezioni possiamo dire che la policy
-																		      			 è di default la sostituzione del goal con un altro
-				+ add goal ?
-			-->
+            <!--
+                POWERS:
+                + fail goal
+                + achieve goal
+                + reset goal
+                + release goal
+            -->
 
-			<goal id="throwNan" />
-			<goal id="recoverFromNan" />
-			<goal id="throwAmountUnavailable" />
-			<goal id="retryLater" />
+            <goal id="throwNan" />
+            <goal id="recoverFromNan" />
+            <goal id="throwAmountUnavailable" />
+            <goal id="retryLater" />
 
-			<mission id="mGetAmountAsString" min="1" max="1">
-				<goal id="getAmountAsString" />
-			</mission>
-			<mission id="mParseAmount" min="1" max="1">
-				<goal id="parseAmount" />
-				<exception id="nan" when="failed(bancomat_sch,parseAmount)">
-					<goal id="throwNan" />
-				</exception>
-			</mission>
-			<mission id="mObtainAmount" min="1" max="1">
-				<goal id="obtainAmount" />
-				<exception id="amountUnavailable" when="failed(bancomat_sch,recoverFromNan)">
-					<goal id="throwAmountUnavailable" />
-				</exception>
-				<handler id="handler_nan" tackles="nan">
-					<goal id="recoverFromNan" />
-				</handler>
-			</mission>
-			<mission id="mProvideMoney" min="1" max="1">
-				<goal id="provideMoney" />
-			</mission>
-			<mission id="mWithdraw" min="1" max="1">
-				<goal id="withdraw" />
-				<handler id="handler_au" tackles="amountUnavailable">
-					<goal id="retryLater" />
-				</handler>
-			</mission>
-		</scheme>
-	</functional-specification>
+            <mission id="mGetAmountAsString" min="1" max="1">
+                <goal id="getAmountAsString" />
+            </mission>
+            <mission id="mParseAmount" min="1" max="1">
+                <goal id="parseAmount" />
+                <exception id="nan" when="scheme_id(S) &amp; failed(S,parseAmount)">
+                    <goal id="throwNan" />
+                </exception>
+            </mission>
+            <mission id="mObtainAmount" min="1" max="1">
+                <goal id="obtainAmount" />
+                <exception id="amountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
+                    <goal id="throwAmountUnavailable" />
+                </exception>
+                <handler id="handler_nan" tackles="nan">
+                    <goal id="recoverFromNan" />
+                </handler>
+            </mission>
+            <mission id="mProvideMoney" min="1" max="1">
+                <goal id="provideMoney" />
+            </mission>
+            <mission id="mWithdraw" min="1" max="1">
+                <goal id="withdraw" />
+                <handler id="handler_au" tackles="amountUnavailable">
+                    <goal id="retryLater" />
+                </handler>
+            </mission>
+        </scheme>
+    </functional-specification>
 
-	<normative-specification>
-		<norm id="n1" type="obligation" role="bancomatHandler" mission="mWithdraw"/>
-		<norm id="n2" type="obligation" role="requestHandler" mission="mObtainAmount" />
-		<norm id="n3" type="obligation" role="reader" mission="mGetAmountAsString" />
-		<norm id="n4" type="obligation" role="parser" mission="mParseAmount" />
-		<norm id="n5" type="obligation" role="moneyKeeper" mission="mProvideMoney" />
-	</normative-specification>
+    <normative-specification>
+        <norm id="n1" type="obligation" role="bancomatHandler" mission="mWithdraw"/>
+        <norm id="n2" type="obligation" role="requestHandler" mission="mObtainAmount" />
+        <norm id="n3" type="obligation" role="reader" mission="mGetAmountAsString" />
+        <norm id="n4" type="obligation" role="parser" mission="mParseAmount" />
+        <norm id="n5" type="obligation" role="moneyKeeper" mission="mProvideMoney" />
+    </normative-specification>
 
 </organisational-specification>

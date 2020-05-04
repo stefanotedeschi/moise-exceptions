@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'bancomat_exceptions'
-    on aprile 19, 2020 - 11:39:21
+    on maggio 02, 2020 - 18:06:34
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -122,8 +122,8 @@ scope scheme(bancomat_sch) {
    mission_goal(mParseAmount,parseAmount).
 
    // exception(exception id, condition)
-   exception(amountUnavailable,failed(bancomat_sch,recoverFromNan)).
-   exception(nan,failed(bancomat_sch,parseAmount)).
+   exception(amountUnavailable,(scheme_id(S) & failed(S,recoverFromNan))).
+   exception(nan,(scheme_id(S) & failed(S,parseAmount))).
 
    // handler(handler id, exception id)
    handler(handler_nan,nan).
@@ -187,14 +187,16 @@ scope scheme(bancomat_sch) {
                  not failed(S,CG) &
                  handler(H,E) &
                  thrown(S,E,_) &
+                 exception_goal(E,TG) &
+                 satisfied(S,TG) &
                  goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
                  ((Dep = dep(or,PCG)  & any_satisfied(S,PCG)) |
                   (Dep = dep(and,PCG) & all_satisfied(S,PCG))
                  ).
 
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & not failed(S,G) & NP \== 0 & any_satisfied(S,PCG).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not exception_goal(_,G) & not handler_goal(_,G) & not failed(S,G) & NP \== 0 & all_satisfied(S,PCG).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & any_satisfied(S,PCG).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & all_satisfied(S,PCG).
 
    super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).
 

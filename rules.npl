@@ -23,8 +23,8 @@ mission_policy(M,P) :- mission_request(M,R), request_policy(Req,P).
 
 // Throwing goals
 enabled(S,TG) :- exception_goal(E,TG) &
-                 exception(E,failed(S,FG)) &
-                 failed(S,FG) &
+                 exception(E,Condition) &
+                 Condition &
                  goal(_, TG,  Dep, _, NP, _) & NP \== 0 &
                  ((Dep == dep(or,PCG)  & any_satisfied(S,PCG)) |
                   (Dep == dep(and,PCG) & all_satisfied(S,PCG))

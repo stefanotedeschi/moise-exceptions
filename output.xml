@@ -58,7 +58,7 @@
             <goal id="retryLater" type="performance"/>
             <mission id="mObtainAmount" max="1" min="1">
                 <goal id="obtainAmount"/>
-                <exception id="amountUnavailable" when="failed(bancomat_sch,recoverFromNan)">
+                <exception id="amountUnavailable" when="(scheme_id(S) &amp; failed(S,recoverFromNan))">
                     <goal id="throwAmountUnavailable"/>
                 </exception>
                 <handler id="handler_nan" tackles="nan">
@@ -79,7 +79,7 @@
             </mission>
             <mission id="mParseAmount" max="1" min="1">
                 <goal id="parseAmount"/>
-                <exception id="nan" when="failed(bancomat_sch,parseAmount)">
+                <exception id="nan" when="(scheme_id(S) &amp; failed(S,parseAmount))">
                     <goal id="throwNan"/>
                 </exception>
             </mission>
