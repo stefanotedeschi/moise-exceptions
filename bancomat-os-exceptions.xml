@@ -45,14 +45,6 @@
                 </plan>
             </goal>
 
-            <!--
-                POWERS:
-                + fail goal
-                + achieve goal
-                + reset goal
-                + release goal
-            -->
-
             <goal id="throwNan" />
             <goal id="recoverFromNan" />
             <goal id="throwAmountUnavailable" />

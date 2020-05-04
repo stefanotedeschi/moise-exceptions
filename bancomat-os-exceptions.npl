@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'bancomat_exceptions'
-    on maggio 02, 2020 - 18:06:34
+    on maggio 04, 2020 - 12:17:22
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -230,6 +230,17 @@ scope scheme(bancomat_sch) {
            mplayers(M,S,MP) &
            MP > MMax
         -> fail(mission_cardinality(M,S,MP,MMax)).
+   norm exc_agent_not_allowed:  
+           thrown(S,Ag,E) &
+           exception(E,_) &
+           mission_exception(M,E) &
+           not committed(Ag,M,S)
+        -> fail(exc_agent_not_allowed(S,E,Ag)).
+   norm exc_condition_not_holding:  
+           thrown(S,Ag,E) &
+           exception(E,Condition) &
+           not Condition
+        -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
 
    // agents are obliged to fulfill their enabled goals
    norm ngoal: 

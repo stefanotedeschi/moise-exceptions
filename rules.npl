@@ -1,4 +1,11 @@
 
+// POWERS:
+// + fail goal
+// + achieve goal
+// + reset goal
+// + release goal
+
+
 report(Rep,Condition).
 request(Req,Rep).
 policy(P,Report).

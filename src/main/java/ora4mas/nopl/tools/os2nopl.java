@@ -44,6 +44,9 @@ public class os2nopl {
     public static final String PROP_MissionCardinality    = "mission_cardinality";
     public static final String PROP_AchNotEnabledGoal     = "ach_not_enabled_goal";
     public static final String PROP_AchNotCommGoal        = "ach_not_committed_goal";
+    
+    public static final String PROP_ExcAgNotAllowed		  = "exc_agent_not_allowed";
+    public static final String PROP_ExcCondNotHolding	  = "exc_condition_not_holding";
 
     //public static final String PROP_NotCompGoal           = "goal_non_compliance";
 
@@ -51,13 +54,11 @@ public class os2nopl {
     public static final String[] NOP_GR_PROPS  = new String[] { PROP_RoleInGroup, PROP_RoleCardinality, PROP_RoleCompatibility, PROP_WellFormedResponsible, PROP_SubgroupInGroup, PROP_SubgroupCardinality};
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { //PROP_NotCompGoal,
-            PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission, PROP_MissionCardinality };
+            PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission, PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {  };
 
     private static final String NGOAL = "ngoal"; // id of the goal obligations
-    private static final String NEXCEPTION = "nexception";
-    private static final String NHANDLER = "nhandler";
 
     // condition for each property
     private static final Map<String, String> condCode = new HashMap<String, String>();
@@ -75,6 +76,10 @@ public class os2nopl {
         condCode.put(PROP_MissionCardinality,    "scheme_id(S) & mission_cardinality(M,_,MMax) & mplayers(M,S,MP) & MP > MMax");
         condCode.put(PROP_AchNotEnabledGoal,     "done(S,G,Agt) & mission_goal(M,G) & not mission_accomplished(S,M) & not enabled(S,G)");
         condCode.put(PROP_AchNotCommGoal,        "done(S,G,Agt) & .findall(M, mission_goal(M,G) & (committed(Agt,M,S) | mission_accomplished(S,M)), [])");
+        
+        condCode.put(PROP_ExcAgNotAllowed, 		 "thrown(S,Ag,E) & exception(E,_) & mission_exception(M,E) & not committed(Ag,M,S)");
+        condCode.put(PROP_ExcCondNotHolding, 	 "thrown(S,Ag,E) & exception(E,Condition) & not Condition");
+        
         //condCode.put(PROP_NotCompGoal,           "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF) & not Obj & `now` > TTF");
     }
     // arguments that 'explains' the property
@@ -93,6 +98,10 @@ public class os2nopl {
         argsCode.put(PROP_MissionCardinality,    "M,S,MP,MMax");
         argsCode.put(PROP_AchNotEnabledGoal,     "S,G,Agt");
         argsCode.put(PROP_AchNotCommGoal,        "S,G,Agt");
+        
+        argsCode.put(PROP_ExcAgNotAllowed, 	     "S,E,Ag");
+        argsCode.put(PROP_ExcCondNotHolding,     "S,E,Ag,Condition");
+        
         //argsCode.put(PROP_NotCompGoal   ,        "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF)");
     }
 
