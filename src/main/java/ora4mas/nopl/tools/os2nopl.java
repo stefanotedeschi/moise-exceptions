@@ -45,8 +45,8 @@ public class os2nopl {
     public static final String PROP_AchNotEnabledGoal     = "ach_not_enabled_goal";
     public static final String PROP_AchNotCommGoal        = "ach_not_committed_goal";
     
-    public static final String PROP_ExcAgNotAllowed		  = "exc_agent_not_allowed";
-    public static final String PROP_ExcCondNotHolding	  = "exc_condition_not_holding";
+    public static final String PROP_ExcAgNotAllowed       = "exc_agent_not_allowed";
+    public static final String PROP_ExcCondNotHolding     = "exc_condition_not_holding";
 
     //public static final String PROP_NotCompGoal           = "goal_non_compliance";
 
@@ -77,8 +77,8 @@ public class os2nopl {
         condCode.put(PROP_AchNotEnabledGoal,     "done(S,G,Agt) & mission_goal(M,G) & not mission_accomplished(S,M) & not enabled(S,G)");
         condCode.put(PROP_AchNotCommGoal,        "done(S,G,Agt) & .findall(M, mission_goal(M,G) & (committed(Agt,M,S) | mission_accomplished(S,M)), [])");
         
-        condCode.put(PROP_ExcAgNotAllowed, 		 "thrown(S,Ag,E) & exception(E,_) & mission_exception(M,E) & not committed(Ag,M,S)");
-        condCode.put(PROP_ExcCondNotHolding, 	 "thrown(S,Ag,E) & exception(E,Condition) & not Condition");
+        condCode.put(PROP_ExcAgNotAllowed,       "thrown(S,E,Ag) & exception(E,_) & mission_exception(M,E) & not committed(Ag,M,S)");
+        condCode.put(PROP_ExcCondNotHolding,     "thrown(S,E,Ag) & exception(E,Condition) & mission_exception(M,E) & committed(Ag,M,S) & not Condition");
         
         //condCode.put(PROP_NotCompGoal,           "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF) & not Obj & `now` > TTF");
     }
@@ -99,7 +99,7 @@ public class os2nopl {
         argsCode.put(PROP_AchNotEnabledGoal,     "S,G,Agt");
         argsCode.put(PROP_AchNotCommGoal,        "S,G,Agt");
         
-        argsCode.put(PROP_ExcAgNotAllowed, 	     "S,E,Ag");
+        argsCode.put(PROP_ExcAgNotAllowed,       "S,E,Ag");
         argsCode.put(PROP_ExcCondNotHolding,     "S,E,Ag,Condition");
         
         //argsCode.put(PROP_NotCompGoal   ,        "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF)");
