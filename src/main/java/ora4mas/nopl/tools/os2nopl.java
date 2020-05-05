@@ -344,6 +344,10 @@ public class os2nopl {
 
         np.append("   all_satisfied(_,[]).\n");
         np.append("   all_satisfied(S,[G|T]) :- satisfied(S,G) & all_satisfied(S,T).\n");
+        np.append("   all_released(_,[]).\n");
+        np.append("   all_released(S,[G|T]) :- released(S,G) & all_released(S,T).\n");
+        np.append("   all_satisfied_released(_,[]).\n");
+        np.append("   all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).\n");
         np.append("   any_satisfied(S,[G|_]) :- satisfied(S,G).\n");
         np.append("   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).\n\n");
 
@@ -352,8 +356,8 @@ public class os2nopl {
                   "                 exception(E,Condition) &\r\n" + 
                   "                 Condition &\r\n" + 
                   "                 goal(_, TG,  Dep, _, NP, _) & NP \\== 0 & \r\n" +
-                  "                 ((Dep = dep(or,PCG)  & any_satisfied(S,PCG)) |\r\n" + 
-                  "                  (Dep = dep(and,PCG) & all_satisfied(S,PCG))\r\n" + 
+                  "                 ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n" + 
+                  "                  (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))\r\n" + 
                   "                 ).\r\n");
         np.append("   enabled(S,CG) :- handler_goal(H,CG) &\r\n" +
                   "                 not failed(S,CG) &\r\n" + 
@@ -362,13 +366,13 @@ public class os2nopl {
                   "                 exception_goal(E,TG) &\r\n" + 
                   "                 satisfied(S,TG) &\r\n" + 
                   "                 goal(_, CG,  Dep, _, NP, _) & NP \\== 0 &\r\n" + 
-                  "                 ((Dep = dep(or,PCG)  & any_satisfied(S,PCG)) |\r\n" + 
-                  "                  (Dep = dep(and,PCG) & all_satisfied(S,PCG))\r\n" + 
+                  "                 ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n" + 
+                  "                  (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))\r\n" + 
                   "                 ).\r\n\n");
         
         np.append("   // enabled goals (i.e. dependence between goals)\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & all_satisfied(S,PCG).\n\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
         
         np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
 
