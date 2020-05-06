@@ -271,6 +271,9 @@ public class os2nopl {
                 missionException += "   mission_exception("+m.getId()+","+r.getId()+").\n";
                 if(r.getGoal() != null) {
                     exceptionGoal += "   exception_goal("+r.getId()+","+r.getGoal().getId()+").\n";
+                    for(Goal sg : r.getGoal().getSubGoals()) {
+                        exceptionGoal += "   exception_goal("+r.getId()+","+sg.getId()+").\n";
+                    }
                 }
             }
             for (Handler t: m.getHandlers()) {

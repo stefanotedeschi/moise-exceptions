@@ -369,4 +369,15 @@ public class Goal extends MoiseElement implements ToXML, ToProlog {
             sch.addPlan(plan);
         }
     }
+
+	public List<Goal> getSubGoals() {
+		List<Goal> subgoals = new ArrayList<>();
+		if(plan != null) {
+			for(Goal g : plan.getSubGoals()) {
+				subgoals.add(g);
+				subgoals.addAll(g.getSubGoals());
+			}
+		}
+		return subgoals;
+	}
 }

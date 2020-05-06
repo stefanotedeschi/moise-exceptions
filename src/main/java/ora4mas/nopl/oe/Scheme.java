@@ -341,6 +341,7 @@ public class Scheme extends CollectiveOE {
     }
 
     public boolean isSatisfied(Goal g) {
+        
         if (satisfiedGoals.contains(g.getId()))
             return true;
 
