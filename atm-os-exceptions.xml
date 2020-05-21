@@ -3,7 +3,7 @@
 <?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
 
 <organisational-specification
-    id="bancomat_exceptions" os-version="0.8"
+    id="atm_exceptions" os-version="0.8"
 
     xmlns='http://moise.sourceforge.net/os'
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
@@ -11,16 +11,16 @@
     <structural-specification>
 
         <role-definitions>
-            <role id="bancomatHandler" />
+            <role id="atmHandler" />
             <role id="requestHandler" />
             <role id="reader" />
             <role id="parser" />
             <role id="moneyKeeper" />
         </role-definitions>
 
-        <group-specification id="bancomat_group">
+        <group-specification id="atm_group">
             <roles>
-                <role id="bancomatHandler" min="1" max="1" />
+                <role id="atmHandler" min="1" max="1" />
                 <role id="requestHandler" min="1" max="1" />
                 <role id="reader" min="1" max="1" />
                 <role id="parser" min="1" max="1" />
@@ -31,7 +31,7 @@
     </structural-specification>
 
     <functional-specification>
-        <scheme id="bancomat_sch">
+        <scheme id="atm_sch">
 
             <goal id="withdraw">
                 <plan operator="sequence">
@@ -91,7 +91,7 @@
     </functional-specification>
 
     <normative-specification>
-        <norm id="n1" type="obligation" role="bancomatHandler" mission="mWithdraw"/>
+        <norm id="n1" type="obligation" role="atmHandler" mission="mWithdraw"/>
         <norm id="n2" type="obligation" role="requestHandler" mission="mObtainAmount" />
         <norm id="n3" type="obligation" role="reader" mission="mGetAmountAsString" />
         <norm id="n4" type="obligation" role="parser" mission="mParseAmount" />

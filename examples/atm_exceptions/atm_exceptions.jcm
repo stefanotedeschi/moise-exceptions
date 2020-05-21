@@ -1,5 +1,5 @@
 /*
-    bancomat_exceptions
+    atm_exceptions
     ---------------------------
 
     JaCaMo Application File
@@ -12,10 +12,10 @@
     <DATE>
 */
 
-mas bancomat_exceptions {
+mas atm_exceptions {
 
     agent bh {
-    	roles: bancomatHandler in g1
+    	roles: atmHandler in g1
     }
     agent rh {
     	roles: requestHandler in g1
@@ -31,16 +31,16 @@ mas bancomat_exceptions {
     }
 
     workspace default {
-    	artifact bart: bancomat.BancomatArtifact() {
+    	artifact bart: atm.ATMArtifact() {
         	focused-by: bh, rh, p, r, mk
     	}
 	}
 
-    organisation o1 : bancomat-os-exceptions.xml {
-		group g1 : bancomat_group {
-			responsible-for: bsch
+    organisation o1 : atm-os-exceptions.xml {
+		group g1 : atm_group {
+			responsible-for: atmsch
 		}
-		scheme bsch : bancomat_sch
+		scheme atmsch : atm_sch
 	}
 
 	java-path: ., src/env

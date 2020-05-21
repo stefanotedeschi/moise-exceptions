@@ -1,6 +1,6 @@
-package bancomat;
+package atm;
 
-public class BancomatHandler {
+public class ATMHandler {
 
     private RequestHandler requestHandler = new RequestHandler();
     private MoneyKeeper moneyKeeper = new MoneyKeeper();

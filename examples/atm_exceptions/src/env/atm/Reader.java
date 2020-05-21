@@ -1,4 +1,4 @@
-package bancomat;
+package atm;
 
 import java.util.Scanner;
 

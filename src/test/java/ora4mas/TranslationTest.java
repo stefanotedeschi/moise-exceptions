@@ -48,7 +48,7 @@ public class TranslationTest {
         out.close();
         NormativeProgram p = new NormativeProgram();
         new nplp(new StringReader(np)).program(p, null);
-        assertEquals(8, p.getRoot().getScope(ASSyntax.parseLiteral("scheme(writePaperSch)")).getNorms().size());
+        assertEquals(9, p.getRoot().getScope(ASSyntax.parseLiteral("scheme(writePaperSch)")).getNorms().size());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class TranslationTest {
     
     @Test
     public void testExceptions() throws ParseException, TransformerFactoryConfigurationError, TransformerException, IOException, jason.asSyntax.parser.ParseException {
-        OS os = OS.loadOSFromURI("bancomat-os-exceptions.xml");
+        OS os = OS.loadOSFromURI("atm-os-exceptions.xml");
         
         Document d = DOMUtils.getAsXmlDocument(os);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -77,7 +77,7 @@ public class TranslationTest {
         transformer.transform(input, output);
         
         String np = os2nopl.transform(os);
-        BufferedWriter out = new BufferedWriter(new FileWriter("bancomat-os-exceptions.npl"));
+        BufferedWriter out = new BufferedWriter(new FileWriter("atm-os-exceptions.npl"));
         out.write(np);
         out.close();
         

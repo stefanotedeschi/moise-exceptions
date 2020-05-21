@@ -1,4 +1,4 @@
-package bancomat;
+package atm;
 
 public class Parser {
 

@@ -1,4 +1,4 @@
-package bancomat;
+package atm;
 
 import java.awt.event.ActionEvent;
 
@@ -13,15 +13,15 @@ import cartago.OPERATION;
 import cartago.OpFeedbackParam;
 import cartago.tools.GUIArtifact;
 
-public class BancomatArtifact extends GUIArtifact {
+public class ATMArtifact extends GUIArtifact {
 
-    private BancomatFrame frame;
+    private ATMFrame frame;
 
     private String amountString;
     private int amountInt;
 
     public void setup() {
-        frame = new BancomatFrame();
+        frame = new ATMFrame();
 
         linkActionEventToOp(frame.okButton, "ok");
         linkKeyStrokeToOp(frame.text, "ENTER", "ok");
@@ -117,19 +117,19 @@ public class BancomatArtifact extends GUIArtifact {
     }
     
     @OPERATION
-    public void closeBancomat() {
+    public void closeATM() {
         frame.dispose();
     }
 
-    class BancomatFrame extends JFrame {
+    class ATMFrame extends JFrame {
 
         private JLabel label;
         private JButton okButton;
         private JTextField text;
         private JLabel status;
 
-        public BancomatFrame() {
-            setTitle("JaCaMo Bancomat ");
+        public ATMFrame() {
+            setTitle("JaCaMo ATM ");
             setSize(400, 130);
             JPanel panel = new JPanel();
             setContentPane(panel);
