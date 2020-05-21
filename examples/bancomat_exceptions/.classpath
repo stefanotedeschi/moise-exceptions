@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/ASUS/jacamo-0.8/libs/ant-1.10.5.jar"/>
 	<classpathentry kind="lib" path="C:/Users/ASUS/jacamo-0.8/libs/ant-launcher-1.10.5.jar"/>
