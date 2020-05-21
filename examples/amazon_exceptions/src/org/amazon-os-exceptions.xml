@@ -103,27 +103,27 @@
                 <goal id="browseProducts" />
                 <goal id="addItems" />
             </mission>
+            <mission id="mCustomer3" min="1" max="1">
+                <goal id="payOrder" />
+                <exception id="paymentRefused" when="scheme_id(S) &amp; failed(S,payOrder)">
+                    <goal id="raisePaymentRefused" />
+                </exception>
+            </mission>
             <mission id="mCustomer2" min="1" max="1">
                 <goal id="checkout" />
+                <exception id="checkoutFailed" when="scheme_id(S) &amp; failed(S,retry)">
+                    <goal id="raiseCheckoutFailed" />
+                </exception>
                 <handler id="handlerPaymentRefused" tackles="paymentRefused">
                     <goal id="retry" />
                 </handler>
-                <exception id="checkoutFailed" when="failed(customer_sch,retry)">
-                    <goal id="raiseCheckoutFailed" />
-                </exception>
-            </mission>
-            <mission id="mCustomer3" min="1" max="1">
-                <goal id="payOrder" />
-                <exception id="paymentRefused" when="failed(customer_sch,payOrder)">
-                    <goal id="raisePaymentRefused" />
-                </exception>
             </mission>
             <mission id="mCustomer4" min="1" max="1">
                 <goal id="sendOrder" />
             </mission>
             <mission id="mCustomer5" min="1" max="1">
                 <goal id="receiveItems" />
-                <exception id="itemsNotReceived" when="failed(customer_sch,receiveItems)">
+                <exception id="itemsNotReceived" when="scheme_id(S) &amp; failed(S,receiveItems)">
                     <goal id="raiseItemsNotReceived" />
                 </exception>
             </mission>
@@ -204,7 +204,7 @@
             </mission>
             <mission id="mCarrier3" min="1" max="1">
                 <goal id="deliverItems" />
-                <exception id="itemsLost" when="failed(carrier_sch,deliverItems)" />
+                <exception id="itemsLost" when="scheme_id(S) &amp; failed(S,deliverItems)">
                     <goal id="raiseItemsLost" />
                 </exception>
             </mission>

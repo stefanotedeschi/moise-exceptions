@@ -3,6 +3,7 @@ package ora4mas.nopl.oe;
 import static jason.asSyntax.ASSyntax.createAtom;
 import static jason.asSyntax.ASSyntax.createLiteral;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,17 +16,23 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import jaca.ToProlog;
 import jason.asSemantics.Unifier;
+import jason.asSyntax.ASSyntax;
 import jason.asSyntax.Atom;
 import jason.asSyntax.ListTerm;
 import jason.asSyntax.ListTermImpl;
 import jason.asSyntax.Literal;
 import jason.asSyntax.LogExpr;
+import jason.asSyntax.LogicalFormula;
 import jason.asSyntax.PredicateIndicator;
 import jason.asSyntax.Term;
 import jason.asSyntax.VarTerm;
+import jason.asSyntax.parser.ParseException;
+import moise.common.MoiseException;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
+import npl.NPLInterpreter;
+import npl.parser.nplp;
 
 /**
  Represents an instance of scheme
@@ -153,6 +160,20 @@ public class Scheme extends CollectiveOE {
         return r;
     }
     
+    public boolean removeReleasedGoal(Goal goal) {
+        boolean r = false;
+        Atom gAtom = createAtom(goal.getId());
+        Iterator<Literal> iReleasedGoals = releasedGoals.iterator();
+        while (iReleasedGoals.hasNext()) {
+            Literal l = iReleasedGoals.next();
+            if (l.getTerm(1).equals(gAtom)) {
+                iReleasedGoals.remove();
+                r = true;
+            }
+        }
+        return r;
+    }
+    
     public boolean removeThrown(moise.os.fs.Exception exception) {
         boolean r = false;
         Atom eAtom = createAtom(exception.getId());
@@ -190,8 +211,13 @@ public class Scheme extends CollectiveOE {
     
     protected boolean resetGoalAndPreConditions(Goal goal) {
         boolean changed = removeDoneGoal(goal);
-        changed = removeFailedGoal(goal);
-
+        if(!changed) {
+            changed = removeFailedGoal(goal);
+        }
+        if(!changed) {
+            changed = removeReleasedGoal(goal);
+        }
+            
         // recompute for all goals which this goal is pre condition
         for (Goal g: spec.getGoals()) {
             if (g.getPreConditionGoals().contains(goal)) {
@@ -199,6 +225,32 @@ public class Scheme extends CollectiveOE {
             }
         }
 
+        return changed;
+    }
+    
+    public boolean resetExceptions(NPLInterpreter nengine) {
+        boolean changed = false;
+        Iterator<Literal> iThrowns = throwns.iterator();
+        while (iThrowns.hasNext()) {
+            Literal l = iThrowns.next();
+            try {
+                moise.os.fs.Exception e = spec.getException(l.getTerm(1).toString());
+                LogicalFormula condition = e.getCondition();
+                
+                nplp parser = new nplp(new StringReader(condition.toString()));
+                parser.setDFP(this);
+                LogicalFormula formula = (LogicalFormula)parser.log_expr();
+                if(!nengine.holds(formula)) {
+                    iThrowns.remove();
+                    Goal tg = e.getGoal();
+                    resetGoal(tg);
+                    changed = true;
+                }
+            } catch (MoiseException | npl.parser.ParseException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
         return changed;
     }
 
@@ -419,6 +471,12 @@ public class Scheme extends CollectiveOE {
             out.append("    "+g+"\n");
         out.append("  satisfied goals:\n");
         for (String g: satisfiedGoals)
+            out.append("    "+g+"\n");
+        out.append("  failed goals:\n");
+        for (Literal g: failedGoals)
+            out.append("    "+g+"\n");
+        out.append("  released goals:\n");
+        for (Literal g: releasedGoals)
             out.append("    "+g+"\n");
         out.append("  goal arguments:\n");
         for (Pair<String,String> k: goalArgs.keySet())

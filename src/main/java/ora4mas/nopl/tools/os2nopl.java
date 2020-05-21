@@ -47,6 +47,7 @@ public class os2nopl {
     
     public static final String PROP_ExcAgNotAllowed       = "exc_agent_not_allowed";
     public static final String PROP_ExcCondNotHolding     = "exc_condition_not_holding";
+    public static final String PROP_AchThGoalExcNotThrown = "ach_th_goal_exc_not_thrown";
 
     //public static final String PROP_NotCompGoal           = "goal_non_compliance";
 
@@ -54,7 +55,7 @@ public class os2nopl {
     public static final String[] NOP_GR_PROPS  = new String[] { PROP_RoleInGroup, PROP_RoleCardinality, PROP_RoleCompatibility, PROP_WellFormedResponsible, PROP_SubgroupInGroup, PROP_SubgroupCardinality};
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { //PROP_NotCompGoal,
-            PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission, PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding };
+            PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission, PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThGoalExcNotThrown };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {  };
 
@@ -79,6 +80,7 @@ public class os2nopl {
         
         condCode.put(PROP_ExcAgNotAllowed,       "thrown(S,E,Ag) & exception(E,_) & mission_exception(M,E) & not committed(Ag,M,S)");
         condCode.put(PROP_ExcCondNotHolding,     "thrown(S,E,Ag) & exception(E,Condition) & mission_exception(M,E) & committed(Ag,M,S) & not Condition");
+        condCode.put(PROP_AchThGoalExcNotThrown, "done(S,G,Ag) & exception_goal(E,G) & not super_goal(SG,G) & not thrown(S,E,_)");        
         
         //condCode.put(PROP_NotCompGoal,           "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF) & not Obj & `now` > TTF");
     }
@@ -101,6 +103,7 @@ public class os2nopl {
         
         argsCode.put(PROP_ExcAgNotAllowed,       "S,E,Ag");
         argsCode.put(PROP_ExcCondNotHolding,     "S,E,Ag,Condition");
+        argsCode.put(PROP_AchThGoalExcNotThrown, "S,G,E,Ag");
         
         //argsCode.put(PROP_NotCompGoal   ,        "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF)");
     }
@@ -374,8 +377,8 @@ public class os2nopl {
                   "                 ).\r\n\n");
         
         np.append("   // enabled goals (i.e. dependence between goals)\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not failed(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not failed(_,G) & not released(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not failed(_,G) & not released(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
         
         np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
 
