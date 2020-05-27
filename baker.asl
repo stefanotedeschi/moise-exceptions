@@ -28,8 +28,8 @@
      exceptionArgument(ingredientsUnavailable,strawberries)
   <- throwException(workspaceSetupFailure,[missingIngredient(strawberries)]).
 
-  +obl(notifyWorkspaceSetupFailure)
-     : exceptionThrown(_,ovenBroken,_) &
-    <- throwException(workspaceSetupFailure,[toolBroken(oven)]).
++obl(notifyWorkspaceSetupFailure)
+   : exceptionThrown(_,ovenBroken,_) &
+  <- throwException(workspaceSetupFailure,[toolBroken(oven)]).
 
 ...

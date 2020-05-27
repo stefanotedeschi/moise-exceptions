@@ -193,6 +193,7 @@ public class Scheme extends CollectiveOE {
     }
 
     public boolean resetGoal(Goal goal) {
+        
         boolean changed = resetGoalAndPreConditions(goal);
 
         if (goal.hasPlan()) {

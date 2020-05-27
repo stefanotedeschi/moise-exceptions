@@ -363,8 +363,12 @@ public class SchemeBoard extends OrgArt {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
                 getSchState().addReleasedGoal(goal);
+                getSchState().removeFailedGoal(spec.getGoal(goal));
+                getSchState().resetExceptions(nengine);
+                getSchState().computeSatisfiedGoals();
                 nengine.verifyNorms();
                 updateGoalStateObsProp();
+                updateExceptionsObsProp();
             }
         }, "Error setting goal " + goal + " as released");
     }
@@ -446,8 +450,8 @@ public class SchemeBoard extends OrgArt {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
                 if (getSchState().resetGoal(g)) {
-                    getSchState().computeSatisfiedGoals();
                     getSchState().resetExceptions(nengine);
+                    getSchState().computeSatisfiedGoals();
                 }
                 
                 nengine.verifyNorms();
