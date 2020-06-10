@@ -45,48 +45,39 @@
                 </plan>
             </goal>
 
-            <strategy>
-      				<exception id="nan" condition="scheme_id(S) &amp; failed(S,parseAmount)">
-      					<goal id="throwNan" />
-      				</exception>
-              <handler id="handler_nan_1">
-                <goal id="recoverFromNan" />
-              </handler>
-              <handler id="handler_nan_2">
-                <goal id="recoverFromNan_2" />
-              </handler>
-            </strategy>
-            <strategy>
-      				<exception id="amountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
-      					<goal id="throwAmountUnavailable"/>
-      				</exception>
-              <handler id="handler_au" tackles="amountUnavailable">
-                    <goal id="retryLater" />
-              </handler>
-            </strategy>
+            <goal id="throwNan" />
+            <goal id="recoverFromNan" />
+            <goal id="throwAmountUnavailable" />
+            <goal id="retryLater" />
 
             <mission id="mGetAmountAsString" min="1" max="1">
                 <goal id="getAmountAsString" />
             </mission>
             <mission id="mParseAmount" min="1" max="1">
                 <goal id="parseAmount" />
-                <goal id="throwNan" />
+                <exception id="nan" when="scheme_id(S) &amp; failed(S,parseAmount)">
+                    <goal id="throwNan" />
+                </exception>
             </mission>
             <mission id="mObtainAmount" min="1" max="1">
                 <goal id="obtainAmount" />
-                <goal id="throwAmountUnavailable" />
-                <goal id="recoverFromNan" />
+                <exception id="amountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
+                    <goal id="throwAmountUnavailable" />
+                </exception>
+                <handler id="handler_nan" tackles="nan">
+                    <goal id="recoverFromNan" />
+                </handler>
             </mission>
             <mission id="mProvideMoney" min="1" max="1">
                 <goal id="provideMoney" />
             </mission>
             <mission id="mWithdraw" min="1" max="1">
                 <goal id="withdraw" />
-                <goal id="retryLater" />
+                <handler id="handler_au" tackles="amountUnavailable">
+                    <goal id="retryLater" />
+                </handler>
             </mission>
-
         </scheme>
-
     </functional-specification>
 
     <normative-specification>
