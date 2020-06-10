@@ -1,0 +1,25 @@
+mas cake_exceptions {
+
+    agent ba {
+    	roles: baker in g1
+    }
+    agent a {
+    	roles: apprentice in g1
+    }
+    agent s {
+    	roles: supplier in g1
+    }
+    agent bo {
+    	roles: boss in g1
+    }
+
+    organisation o1 : cake-os-exceptions.xml {
+		group g1 : bakery {
+			responsible-for: csch
+		}
+		scheme csch : cake_sch
+	}
+
+	java-path: ., src/env
+
+}

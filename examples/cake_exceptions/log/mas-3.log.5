@@ -1,0 +1,30 @@
+[Moise] Workspace o1 created.
+[Moise] scheme created: csch: cake_sch using artifact SchemeBoard
+[Moise] group created: g1: bakery using artifact ora4mas.nopl.GroupBoard
+[bo] joinned workspace o1
+[ba] joinned workspace o1
+[a] joinned workspace o1
+[s] joinned workspace o1
+[ba] focusing on artifact g1 (at workspace o1) using namespace default
+[bo] focusing on artifact g1 (at workspace o1) using namespace default
+[s] focusing on artifact g1 (at workspace o1) using namespace default
+[a] focusing on artifact g1 (at workspace o1) using namespace default
+[a] focusing on artifact o1 (at workspace o1) using namespace default
+[s] focusing on artifact o1 (at workspace o1) using namespace default
+[bo] focusing on artifact o1 (at workspace o1) using namespace default
+[ba] focusing on artifact o1 (at workspace o1) using namespace default
+[s] I am obliged to commit to mSupplier on csch... doing so
+[a] I am obliged to commit to mApprentice on csch... doing so
+[bo] I am obliged to commit to mBoss on csch... doing so
+[ba] I am obliged to commit to mBaker on csch... doing so
+[a] No fail event was generated for +!switchOnOven[scheme(csch),source(self)]
+[a] 
+intention 21: 
+    +obligation(a,enabled(csch,switchOnOven),done(csch,switchOnOven,a),1622044640673)[artifact_id(cobj_6),artifact_name(cobj_6,csch),norm(ngoal,[["A",a],["S",csch],["D","1971-0-5 1:0:0"],["G",switchOnOven],["M",mApprentice],["What",done(csch,switchOnOven,a)]]),percept_type(obs_prop),source(percept),workspace(cobj_6,o1,cobj_2)] <- ... !Goal[scheme(Scheme)]; goalAchieved(Goal)[artifact_id(ArtId)] / {Goal=switchOnOven, Scheme=csch, Ag=a, Deadline=1622044640673, ArtId=cobj_6, Norm=enabled(csch,switchOnOven), What=done(csch,switchOnOven,a)}
+
+[a] Found a goal for which there is no relevant plan: +!switchOnOven[scheme(csch),source(self)]
+[CAgentArch] error trying action with cartago Artifact not found.
+[CAgentArch] Action failed: releaseGoal(provideIngredients), in namespace default, operation ( releaseGoal provideIngredients )
+[ba] Could not finish intention: intention 24: 
+    +obligation(ba,enabled(csch,dealWithMissingIngredients),done(csch,dealWithMissingIngredients,ba),1622044640772)[artifact_id(cobj_6),artifact_name(cobj_6,csch),norm(ngoal,[["A",ba],["S",csch],["D","1971-0-5 1:0:0"],["G",dealWithMissingIngredients],["M",mBaker],["What",done(csch,dealWithMissingIngredients,ba)]]),percept_type(obs_prop),source(percept),workspace(cobj_6,o1,cobj_2)] <- ... releaseGoal(provideIngredients); goalAchieved(dealWithMissingIngredients) / {_1=enabled(csch,dealWithMissingIngredients), _2=csch, _3=1622044640772, _4=csch, Ag=ba}
+	Trigger: +obligation(ba,enabled(csch,dealWithMissingIngredients),done(csch,dealWithMissingIngredients,ba),1622044640772)[artifact_id(cobj_6),artifact_name(cobj_6,csch),code(releaseGoal(provideIngredients)),code_line(7),code_src("ba.asl"),env_failure_reason(env_failure(action_failed(releaseGoal,op(default,"( releaseGoal provideIngredients )")))),error(action_failed),error_msg("Action failed: releaseGoal(provideIngredients), in namespace default, operation ( releaseGoal provideIngredients )"),norm(ngoal,[["A",ba],["S",csch],["D","1971-0-5 1:0:0"],["G",dealWithMissingIngredients],["M",mBaker],["What",done(csch,dealWithMissingIngredients,ba)]]),percept_type(obs_prop),source(percept),workspace(cobj_6,o1,cobj_2)]
