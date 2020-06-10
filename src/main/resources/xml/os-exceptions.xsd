@@ -49,7 +49,8 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
-                        <xsd:element maxOccurs="unbounded" minOccurs="1" name="goal" type="moise:goalDefType"/>
+                        <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
+                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="recovery-strategy" type="moise:recoveryStrategyType"/>
                         <xsd:element maxOccurs="unbounded" minOccurs="0" name="mission" type="moise:missionType"/>
                     </xsd:sequence>
 
@@ -60,6 +61,18 @@
         </xsd:sequence>
     </xsd:complexType>
 
+    <xsd:complexType name="recoveryStrategyType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
+            <xsd:element maxOccurs="1" minOccurs="1" name="exception" type="moise:exceptionType"/>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" name="handler" type="moise:handlerType"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="when" type="xsd:string" use="required" />
+        <xsd:attribute name="min" type="xsd:nonNegativeInteger"/>
+        <xsd:attribute name="max" type="xsd:nonNegativeInteger"/>
+    </xsd:complexType>
+
     <xsd:complexType name="missionType">
         <xsd:sequence>
             <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
@@ -68,8 +81,6 @@
                     <xsd:attribute name="id" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
-            <xsd:element maxOccurs="unbounded" minOccurs="0" name="exception" type="moise:exceptionType"/>
-            <xsd:element maxOccurs="unbounded" minOccurs="0" name="handler" type="moise:handlerType"/>
             <xsd:element maxOccurs="unbounded" minOccurs="0" name="preferred">
                 <xsd:complexType>
                     <xsd:attribute name="mission" type="xsd:string" use="required"/>
@@ -239,26 +250,16 @@
 
     <xsd:complexType name="exceptionType">
         <xsd:sequence>
-          <xsd:element maxOccurs="1" minOccurs="0" name="goal">
-            <xsd:complexType>
-              <xsd:attribute name="id" type="xsd:string" use="required"/>
-            </xsd:complexType>
-          </xsd:element>
+          <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required" />
-        <xsd:attribute name="when" type="xsd:string" use="required" />
     </xsd:complexType>
 
     <xsd:complexType name="handlerType">
         <xsd:sequence>
-          <xsd:element maxOccurs="1" minOccurs="0" name="goal">
-            <xsd:complexType>
-              <xsd:attribute name="id" type="xsd:string" use="required"/>
-            </xsd:complexType>
-          </xsd:element>
+          <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
-        <xsd:attribute name="tackles" type="xsd:string" use="required"/>
     </xsd:complexType>
 
     <xsd:complexType name="argumentType">

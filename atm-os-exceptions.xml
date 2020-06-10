@@ -45,57 +45,58 @@
                 </plan>
             </goal>
 
-            <!--
-                POWERS:
-                + fail goal
-                + achieve goal
-                + reset goal
-                + release goal ==> apply policy ==> nel caso delle eccezioni possiamo dire che la policy
-                                                                                         è di default la sostituzione del goal con un altro
-                + add goal ?
-            -->
-
-            <goal id="throwNan" />
-            <goal id="recoverFromNan" />
-            <goal id="throwAmountUnavailable" />
-            <goal id="retryLater" />
+            <recovery-strategy id ="rec1" when="scheme_id(S) &amp; failed(S,parseAmount)">
+                <exception id="nan">
+                    <goal id="throwNan" />
+                </exception>
+                <handler id="handler_nan">
+                    <goal id="recoverFromNan" />
+                </handler>
+            </recovery-strategy>
+            <recovery-strategy id="rec2" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
+                <exception id="amountUnavailable">
+                    <goal id="throwAmountUnavailable" />
+                </exception>
+                <handler id="handler_au">
+                    <goal id="retryLater" />
+                </handler>
+            </recovery-strategy>
 
             <mission id="mGetAmountAsString" min="1" max="1">
                 <goal id="getAmountAsString" />
             </mission>
             <mission id="mParseAmount" min="1" max="1">
                 <goal id="parseAmount" />
-                <exception id="nan" when="scheme_id(S) &amp; failed(S,parseAmount)">
-                    <goal id="throwNan" />
-                </exception>
+                <goal id="throwNan" />
             </mission>
             <mission id="mObtainAmount" min="1" max="1">
                 <goal id="obtainAmount" />
-                <exception id="amountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
-                    <goal id="throwAmountUnavailable" />
-                </exception>
-                <handler id="handler_nan" tackles="nan">
-                    <goal id="recoverFromNan" />
-                </handler>
+                <goal id="throwAmountUnavailable" />
+                <goal id="recoverFromNan" />
             </mission>
             <mission id="mProvideMoney" min="1" max="1">
                 <goal id="provideMoney" />
             </mission>
             <mission id="mWithdraw" min="1" max="1">
                 <goal id="withdraw" />
-                <handler id="handler_au" tackles="amountUnavailable">
-                    <goal id="retryLater" />
-                </handler>
+                <goal id="retryLater" />
             </mission>
+
         </scheme>
+
     </functional-specification>
 
     <normative-specification>
-        <norm id="n1" type="obligation" role="atmHandler" mission="mWithdraw"/>
-        <norm id="n2" type="obligation" role="requestHandler" mission="mObtainAmount" />
-        <norm id="n3" type="obligation" role="reader" mission="mGetAmountAsString" />
-        <norm id="n4" type="obligation" role="parser" mission="mParseAmount" />
-        <norm id="n5" type="obligation" role="moneyKeeper" mission="mProvideMoney" />
+        <norm id="n1" type="obligation" role="atmHandler"
+            mission="mWithdraw" />
+        <norm id="n2" type="obligation" role="requestHandler"
+            mission="mObtainAmount" />
+        <norm id="n3" type="obligation" role="reader"
+            mission="mGetAmountAsString" />
+        <norm id="n4" type="obligation" role="parser"
+            mission="mParseAmount" />
+        <norm id="n5" type="obligation" role="moneyKeeper"
+            mission="mProvideMoney" />
     </normative-specification>
 
 </organisational-specification>

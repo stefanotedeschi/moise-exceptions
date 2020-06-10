@@ -45,25 +45,22 @@
                 </plan>
             </goal>
 
-            <strategy>
-      				<exception id="nan" condition="scheme_id(S) &amp; failed(S,parseAmount)">
-      					<goal id="throwNan" />
-      				</exception>
-              <handler id="handler_nan_1">
-                <goal id="recoverFromNan" />
-              </handler>
-              <handler id="handler_nan_2">
-                <goal id="recoverFromNan_2" />
-              </handler>
-            </strategy>
-            <strategy>
-      				<exception id="amountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
-      					<goal id="throwAmountUnavailable"/>
-      				</exception>
-              <handler id="handler_au" tackles="amountUnavailable">
+            <recovery-strategy id ="rec1" when="scheme_id(S) &amp; failed(S,parseAmount)">
+                <exception id="nan">
+                    <goal id="throwNan" />
+                </exception>
+                <handler id="handler_nan">
+                    <goal id="recoverFromNan" />
+                </handler>
+            </recovery-strategy>
+            <recovery-strategy id="rec2" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
+                <exception id="amountUnavailable">
+                    <goal id="throwAmountUnavailable" />
+                </exception>
+                <handler id="handler_au">
                     <goal id="retryLater" />
-              </handler>
-            </strategy>
+                </handler>
+            </recovery-strategy>
 
             <mission id="mGetAmountAsString" min="1" max="1">
                 <goal id="getAmountAsString" />
@@ -90,11 +87,16 @@
     </functional-specification>
 
     <normative-specification>
-        <norm id="n1" type="obligation" role="atmHandler" mission="mWithdraw"/>
-        <norm id="n2" type="obligation" role="requestHandler" mission="mObtainAmount" />
-        <norm id="n3" type="obligation" role="reader" mission="mGetAmountAsString" />
-        <norm id="n4" type="obligation" role="parser" mission="mParseAmount" />
-        <norm id="n5" type="obligation" role="moneyKeeper" mission="mProvideMoney" />
+        <norm id="n1" type="obligation" role="atmHandler"
+            mission="mWithdraw" />
+        <norm id="n2" type="obligation" role="requestHandler"
+            mission="mObtainAmount" />
+        <norm id="n3" type="obligation" role="reader"
+            mission="mGetAmountAsString" />
+        <norm id="n4" type="obligation" role="parser"
+            mission="mParseAmount" />
+        <norm id="n5" type="obligation" role="moneyKeeper"
+            mission="mProvideMoney" />
     </normative-specification>
 
 </organisational-specification>
