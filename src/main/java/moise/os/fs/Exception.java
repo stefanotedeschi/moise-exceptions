@@ -5,9 +5,11 @@ import org.w3c.dom.Element;
 
 import jason.asSyntax.Literal;
 import jason.asSyntax.LogicalFormula;
+import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
+import moise.xml.ToXML;
 
-public class Exception {
+public class Exception extends moise.common.MoiseElement implements ToXML, ToProlog {
     
     private String id;
     private LogicalFormula condition;
@@ -47,6 +49,7 @@ public class Exception {
             Goal g = sch.getGoal(gEle.getAttribute("id"));
             setGoal(g);
             g.setInException(this);
+            sch.addGoal(g);
         }
     }
     
@@ -66,5 +69,10 @@ public class Exception {
     public String toString() {
         return id;
     }
+	@Override
+	public String getAsProlog() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -3,9 +3,11 @@ package moise.os.fs;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
+import moise.xml.ToXML;
 
-public class Handler {
+public class Handler extends moise.common.MoiseElement implements ToXML, ToProlog  {
 
     private String id;
     private Exception exception;
@@ -47,13 +49,13 @@ public class Handler {
             Goal g = sch.getGoal(gEl.getAttribute("id"));
             setGoal(g);
             g.setInHandler(this);
+            sch.addGoal(g);
         }
     }
     
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        ele.setAttribute("tackles", exception.getId());
         if(goal != null) {
             Element eg = (Element) document.createElement(Goal.getXMLTag());
             eg.setAttribute("id", goal.getId());
@@ -70,5 +72,11 @@ public class Handler {
     public String toString() {
         return id;
     }
+
+	@Override
+	public String getAsProlog() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

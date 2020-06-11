@@ -33,8 +33,6 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
 
     protected Set<Goal>        goals      = new HashSet<>();
     protected Set<Mission>     preferable = new HashSet<>();
-    protected Set<Exception>      exceptions    = new HashSet<>();
-    protected Set<Handler>   handlers = new HashSet<>();
 
     protected Scheme sch = null;
 
@@ -160,18 +158,6 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
                 ele.appendChild(eg);
             }
         }
-        
-        // reports
-        for(Exception e : exceptions) {
-            Element eEle = e.getAsDOM(document);
-            ele.appendChild(eEle);
-        }
-        
-        // handlers
-        for(Handler t : handlers) {
-            Element et = t.getAsDOM(document);
-            ele.appendChild(et);
-        }
 
         // Preferable
         for (Mission misPref: getPreferables()) {
@@ -198,34 +184,6 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
             }
             addGoal(g.getAttribute("id"));
         }
-        
-        for (Element rEle: DOMUtils.getDOMDirectChilds(ele, Exception.getXMLTag())) {
-            String id = rEle.getAttribute("id");
-            LogicalFormula condition;
-            try {
-                condition = ASSyntax.parseFormula(rEle.getAttribute("when"));
-            } catch (ParseException e) {
-                throw new MoiseException(e.getMessage());
-            }
-            Exception r = new Exception(id, condition);
-            r.setFromDOM(rEle, sch);
-            exceptions.add(r);
-            if(r.getGoal() != null) {
-                goals.add(r.getGoal());
-            }
-        }
-        
-        for (Element tEle: DOMUtils.getDOMDirectChilds(ele, Handler.getXMLTag())) {
-            String id = tEle.getAttribute("id");
-            String rep = tEle.getAttribute("tackles");
-            Exception r = sch.getException(rep);
-            Handler t = new Handler(id, r);
-            t.setFromDOM(tEle, sch);
-            handlers.add(t);
-            if(t.getGoal() != null) {
-                goals.add(t.getGoal());
-            }
-        }
 
         for (Element p: DOMUtils.getDOMDirectChilds(ele, "preferred")) {
             addPreferable(p.getAttribute("mission"));
@@ -234,25 +192,6 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
 
     public String toString() {
         return getFullId();
-    }
-    
-    public Exception getException(String repId) throws MoiseException {
-        for(Exception r : exceptions) {
-            if(r.getId().equals(repId)) {
-                return r;
-            }
-        }
-        return null;
-    }
-
-
-    public Set<Exception> getExceptions() {
-        return exceptions;
-    }
-
-
-    public Set<Handler> getHandlers() {
-        return handlers;
     }
     
 }
