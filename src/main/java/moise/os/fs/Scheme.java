@@ -34,13 +34,13 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
     private static final long serialVersionUID = 1L;
 
-    protected CardinalitySet<Mission>  missions 		  = new CardinalitySet<Mission>();
-    protected Set<RecoveryStrategy>    recoveryStrategies = new HashSet<RecoveryStrategy>();
-    protected Set<Plan>                plans    		  = new HashSet<Plan>();
-    protected Map<String,Goal>         goals    		  = new HashMap<String,Goal>();
-    protected Goal                     root     		  = null;
+    protected CardinalitySet<Mission>  	   missions 		  = new CardinalitySet<Mission>();
+    protected Map<String,RecoveryStrategy> recoveryStrategies = new HashMap<>();
+    protected Set<Plan>                	   plans    		  = new HashSet<Plan>();
+    protected Map<String,Goal>             goals    		  = new HashMap<String,Goal>();
+    protected Goal                         root     		  = null;
     //protected String                   monitoring  = null;
-    protected FS                       fs       	   	  = null;
+    protected FS                           fs       	   	  = null;
 
     public Scheme(String id, FS fs) {
         super(id);
@@ -168,12 +168,24 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     }
 
     //
-    // Goal methods
-    //
+    // Recovery strategies methods
     public void addRecoveryStrategy(RecoveryStrategy rs) {
-        recoveryStrategies.add(rs);
+        recoveryStrategies.put(rs.getId(), rs);
     }
     
+    public Collection<RecoveryStrategy> getRecoveryStrategies() {
+        return recoveryStrategies.values();
+    }
+    
+    public Exception getException(String id) throws MoiseException {
+    	for(RecoveryStrategy rs : recoveryStrategies.values()) {
+    		Exception ex = rs.getException();
+    		if(ex.getId().equals(id)) {
+    			return ex;
+    		}
+    	}
+    	throw new MoiseException("Exception " + id + " undefined in scheme " + this.getId());
+    }
     
     /** returns a string representing the goal in Prolog syntax, format:
      *     scheme_specification(id, goals tree starting by root goal, missions, properties)
@@ -218,11 +230,10 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         // goals
         ele.appendChild(getRoot().getAsDOM(document));
         
-//        for(Goal g : goals.values()) {
-//            if(g.isRoot() && g != getRoot()) {
-//                 ele.appendChild(g.getAsDOM(document));
-//            }
-//        }
+        // recovery strategies
+        for (RecoveryStrategy rs: getRecoveryStrategies()) {
+            ele.appendChild(rs.getAsDOM(document));
+        }
         
         // missions
         for (Mission m: getMissions()) {
@@ -245,16 +256,6 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
          rootG.setFromDOM(grEle, this);
          addGoal(rootG);
          setRoot(rootG);
-        
-        // goals
-//        for (Element gEle: DOMUtils.getDOMDirectChilds(ele, Goal.getXMLTag())) {
-//            Goal g = new Goal(gEle.getAttribute("id"));
-//            g.setFromDOM(gEle, this);
-//            addGoal(g);
-//            if(root == null) {
-//                setRoot(g);
-//            }
-//        }
 
          // recovery strategies
          for (Element rsEle: DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {
@@ -285,16 +286,6 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
                 g.setMinAgToSatisfy(0);
             }
         }
-    }
-    
-    public Exception getException(String repId) throws MoiseException {
-        for(Mission m : missions) {
-            Exception r = m.getException(repId);
-            if(r != null) {
-                return r;
-            }
-        }
-        throw new MoiseException("Exception " + repId+ " undefined");
     }
 
 }

@@ -3,6 +3,7 @@ package moise.os.fs;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import moise.common.MoiseException;
 import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
@@ -10,21 +11,21 @@ import moise.xml.ToXML;
 public class Handler extends moise.common.MoiseElement implements ToXML, ToProlog  {
 
     private String id;
-    private Exception exception;
     private Goal goal;
     
-    public Handler(String id, Exception exception) {
+    RecoveryStrategy inStrategy;
+    
+    private Scheme sch;
+    
+    public Handler(String id, RecoveryStrategy rs, Scheme sch) {
         super();
         this.id = id;
-        this.exception = exception;
+        inStrategy = rs;
+        this.sch = sch;
     }
 
     public String getId() {
         return id;
-    }
-
-    public Exception getException() {
-        return exception;
     }
 
     public Goal getGoal() {
@@ -35,21 +36,16 @@ public class Handler extends moise.common.MoiseElement implements ToXML, ToProlo
         this.id = id;
     }
 
-    public void setException(Exception exception) {
-        this.exception = exception;
-    }
-
     public void setGoal(Goal goal) {
         this.goal = goal;
     }
     
-    public void setFromDOM(Element ele, Scheme sch) {
-        Element gEl = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
-        if(gEl != null) {
-            Goal g = sch.getGoal(gEl.getAttribute("id"));
-            setGoal(g);
-            g.setInHandler(this);
-            sch.addGoal(g);
+    public void setFromDOM(Element ele) throws MoiseException {
+        Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
+        if(gEle != null) {
+        	goal = new Goal(gEle.getAttribute("id"));
+            goal.setFromDOM(gEle, sch);
+            sch.addGoal(goal);
         }
     }
     
@@ -57,9 +53,7 @@ public class Handler extends moise.common.MoiseElement implements ToXML, ToProlo
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
         if(goal != null) {
-            Element eg = (Element) document.createElement(Goal.getXMLTag());
-            eg.setAttribute("id", goal.getId());
-            ele.appendChild(eg);
+            ele.appendChild(goal.getAsDOM(document));
         }
         return ele;
     }

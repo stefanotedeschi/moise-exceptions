@@ -40,8 +40,15 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
 
 	@Override
 	public Element getAsDOM(Document document) {
-		// TODO Auto-generated method stub
-		return null;
+		Element ele = (Element) document.createElement(getXMLTag());
+        ele.setAttribute("id", getId());
+        if(exception != null) {
+        	ele.appendChild(exception.getAsDOM(document));
+        }
+        for(Handler h : handlers) {
+        	ele.appendChild(h.getAsDOM(document));
+        }
+        return ele;
 	}
 	
 	public void setFromDOM(Element ele) throws MoiseException {
@@ -56,19 +63,41 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
         } catch (ParseException e) {
             throw new MoiseException(e.getMessage());
         }
-        exception = new Exception(id, condition);
-        exception.setFromDOM(exEle, sch);
+        exception = new Exception(id, condition, this, sch);
+        exception.setFromDOM(exEle);
         
         for (Element hEle: DOMUtils.getDOMDirectChilds(ele, Handler.getXMLTag())) {
             id = hEle.getAttribute("id");
-            String rep = hEle.getAttribute("tackles");
-            Exception r = sch.getException(rep);
-            Handler h = new Handler(id, r);
-            h.setFromDOM(hEle, sch);
+            Handler h = new Handler(id, this, sch);
+            h.setFromDOM(hEle);
             handlers.add(h);
         }
         
 		
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public Exception getException() {
+		return exception;
+	}
+
+	public Set<Handler> getHandlers() {
+		return handlers;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setException(Exception exception) {
+		this.exception = exception;
+	}
+
+	public void setHandlers(Set<Handler> handlers) {
+		this.handlers = handlers;
 	}
 	
 }

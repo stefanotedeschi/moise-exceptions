@@ -52,33 +52,37 @@
                     <goal id="provideMoney" type="performance"/>
                 </plan>
             </goal>
-            <goal id="recoverFromNan" type="performance"/>
-            <goal id="throwAmountUnavailable" type="performance"/>
-            <goal id="throwNan" type="performance"/>
-            <goal id="retryLater" type="performance"/>
-            <mission id="mWithdraw" max="1" min="1">
-                <goal id="withdraw"/>
-                <handler id="handler_au" tackles="amountUnavailable">
-                    <goal id="retryLater"/>
+            <recovery-strategy id="rec1">
+                <exception id="nan" when="(scheme_id(S) &amp; failed(S,parseAmount))">
+                    <goal id="throwNan" type="performance"/>
+                </exception>
+                <handler id="handler_nan">
+                    <goal id="recoverFromNan" type="performance"/>
                 </handler>
+            </recovery-strategy>
+            <recovery-strategy id="rec2">
+                <exception id="amountUnavailable" when="(scheme_id(S) &amp; failed(S,recoverFromNan))">
+                    <goal id="throwAmountUnavailable" type="performance"/>
+                </exception>
+                <handler id="handler_au">
+                    <goal id="retryLater" type="performance"/>
+                </handler>
+            </recovery-strategy>
+            <mission id="mWithdraw" max="1" min="1">
+                <goal id="retryLater"/>
+                <goal id="withdraw"/>
             </mission>
             <mission id="mProvideMoney" max="1" min="1">
                 <goal id="provideMoney"/>
             </mission>
             <mission id="mObtainAmount" max="1" min="1">
+                <goal id="recoverFromNan"/>
+                <goal id="throwAmountUnavailable"/>
                 <goal id="obtainAmount"/>
-                <exception id="amountUnavailable" when="(scheme_id(S) &amp; failed(S,recoverFromNan))">
-                    <goal id="throwAmountUnavailable"/>
-                </exception>
-                <handler id="handler_nan" tackles="nan">
-                    <goal id="recoverFromNan"/>
-                </handler>
             </mission>
             <mission id="mParseAmount" max="1" min="1">
+                <goal id="throwNan"/>
                 <goal id="parseAmount"/>
-                <exception id="nan" when="(scheme_id(S) &amp; failed(S,parseAmount))">
-                    <goal id="throwNan"/>
-                </exception>
             </mission>
             <mission id="mGetAmountAsString" max="1" min="1">
                 <goal id="getAmountAsString"/>

@@ -45,16 +45,16 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id ="rec1" when="scheme_id(S) &amp; failed(S,parseAmount)">
-                <exception id="nan">
+            <recovery-strategy id="rec1">
+                <exception id="nan" when="scheme_id(S) &amp; failed(S,parseAmount)">
                     <goal id="throwNan" />
                 </exception>
                 <handler id="handler_nan">
                     <goal id="recoverFromNan" />
                 </handler>
             </recovery-strategy>
-            <recovery-strategy id="rec2" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
-                <exception id="amountUnavailable">
+            <recovery-strategy id="rec2">
+                <exception id="amountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
                     <goal id="throwAmountUnavailable" />
                 </exception>
                 <handler id="handler_au">

@@ -3,8 +3,8 @@ package moise.os.fs;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import jason.asSyntax.Literal;
 import jason.asSyntax.LogicalFormula;
+import moise.common.MoiseException;
 import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
@@ -15,10 +15,16 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
     private LogicalFormula condition;
     private Goal goal;
     
-    public Exception(String id, LogicalFormula condition) {
+    RecoveryStrategy inStrategy;
+    
+    private Scheme sch;
+    
+    public Exception(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
         super();
         this.id = id;
         this.condition = condition;
+        inStrategy = rs;
+        this.sch = sch;
     }
     public String getId() {
         return id;
@@ -43,13 +49,12 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
         return "exception";
     }
     
-    public void setFromDOM(Element ele, Scheme sch) {
+    public void setFromDOM(Element ele) throws MoiseException {
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
-            Goal g = sch.getGoal(gEle.getAttribute("id"));
-            setGoal(g);
-            g.setInException(this);
-            sch.addGoal(g);
+        	goal = new Goal(gEle.getAttribute("id"));
+            goal.setFromDOM(gEle, sch);
+            sch.addGoal(goal);
         }
     }
     
@@ -58,9 +63,7 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
         ele.setAttribute("id", getId());
         ele.setAttribute("when", condition.toString());
         if(goal != null) {
-            Element eg = (Element) document.createElement(Goal.getXMLTag());
-            eg.setAttribute("id", goal.getId());
-            ele.appendChild(eg);
+            ele.appendChild(goal.getAsDOM(document));
         }
         return ele;
     }
@@ -69,6 +72,7 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
     public String toString() {
         return id;
     }
+    
 	@Override
 	public String getAsProlog() {
 		// TODO Auto-generated method stub
