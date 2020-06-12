@@ -15,10 +15,6 @@ import moise.xml.ToXML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import jason.asSyntax.ASSyntax;
-import jason.asSyntax.LogicalFormula;
-import jason.asSyntax.parser.ParseException;
-
 /**
  Represents a Mission. The mission id is prefixed by the scheme id.
 
@@ -31,8 +27,8 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
 
     private static final long serialVersionUID = 1L;
 
-    protected Set<Goal>        goals      = new HashSet<>();
-    protected Set<Mission>     preferable = new HashSet<>();
+    protected Set<Goal>     goals      = new HashSet<>();
+    protected Set<Mission>  preferable = new HashSet<>();
 
     protected Scheme sch = null;
 
@@ -152,11 +148,9 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
         }
         // goals
         for (Goal gs: getGoals()) {
-            if(gs.getInException() == null && gs.getInHandler() == null) {
-                Element eg = (Element) document.createElement(Goal.getXMLTag());
-                eg.setAttribute("id", gs.getId());
-                ele.appendChild(eg);
-            }
+            Element eg = (Element) document.createElement(Goal.getXMLTag());
+            eg.setAttribute("id", gs.getId());
+            ele.appendChild(eg);
         }
 
         // Preferable
@@ -193,5 +187,4 @@ public class Mission extends moise.common.MoiseElement implements ToXML, ToProlo
     public String toString() {
         return getFullId();
     }
-    
 }

@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm_exceptions'
-    on maggio 21, 2020 - 16:08:49
+    on giugno 12, 2020 - 19:32:18
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -121,30 +121,6 @@ scope scheme(atm_sch) {
    mission_goal(mParseAmount,parseAmount).
    mission_goal(mGetAmountAsString,getAmountAsString).
 
-   // exception(exception id, condition)
-   exception(amountUnavailable,(scheme_id(S) & failed(S,recoverFromNan))).
-   exception(nan,(scheme_id(S) & failed(S,parseAmount))).
-
-   // handler(handler id, exception id)
-   handler(handler_au,amountUnavailable).
-   handler(handler_nan,nan).
-
-   // mission_exception(mission id, exception id)
-   mission_exception(mObtainAmount,amountUnavailable).
-   mission_exception(mParseAmount,nan).
-
-   // exception_goal(exception id, goal id)
-   exception_goal(amountUnavailable,throwAmountUnavailable).
-   exception_goal(nan,throwNan).
-
-   // mission_handler(mission id, handler id)
-   mission_handler(mWithdraw,handler_au).
-   mission_handler(mObtainAmount,handler_nan).
-
-   // handler_goal(handler id, goal id)
-   handler_goal(handler_au,retryLater).
-   handler_goal(handler_nan,recoverFromNan).
-
    // goal(missions, goal id, dependence (on goal statisfaction), type, #ags to satisfy, ttf)
    goal([mObtainAmount],recoverFromNan,dep(and,[]),performance,all,`1 year`).
    goal([mObtainAmount],throwAmountUnavailable,dep(and,[]),performance,all,`1 year`).
@@ -159,6 +135,34 @@ scope scheme(atm_sch) {
    super_goal(obtainAmount, getAmountAsString).
    super_goal(obtainAmount, parseAmount).
    super_goal(withdraw, obtainAmount).
+
+   // recovery_strategy(id)
+   recovery_strategy(rec1).
+   recovery_strategy(rec2).
+
+   // exception(exception id, condition)
+   exception(nan,(scheme_id(S) & failed(S,parseAmount))).
+   exception(amountUnavailable,(scheme_id(S) & failed(S,recoverFromNan))).
+
+   // strategy_exception(strategy id, exception id)
+   strategy_exception(rec1,nan).
+   strategy_exception(rec2,amountUnavailable).
+
+   // exception_goal(exception id, goal id)
+   exception_goal(nan,throwNan).
+   exception_goal(amountUnavailable,throwAmountUnavailable).
+
+   // handler(handler id)
+   handler(handler_nan).
+   handler(handler_au).
+
+   // strategy_handler(strategy id, handler id)
+   strategy_handler(rec1,handler_nan).
+   strategy_handler(rec2,handler_au).
+
+   // handler_goal(handler id, goal id)
+   handler_goal(handler_nan,recoverFromNan).
+   handler_goal(handler_au,retryLater).
 
    // ** Rules
    mplayers(M,S,V) :- .count(committed(_,M,S),V).
