@@ -43,7 +43,7 @@ public class Handler extends moise.common.MoiseElement implements ToXML, ToProlo
     public void setFromDOM(Element ele) throws MoiseException {
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
-        	goal = new Goal(gEle.getAttribute("id"));
+            goal = new Goal(gEle.getAttribute("id"));
             goal.setFromDOM(gEle, sch);
             sch.addGoal(goal);
         }
@@ -67,10 +67,10 @@ public class Handler extends moise.common.MoiseElement implements ToXML, ToProlo
         return id;
     }
 
-	@Override
-	public String getAsProlog() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getAsProlog() {
+        // TODO Auto-generated method stub
+        return null;
+    }
     
 }

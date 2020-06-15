@@ -34,13 +34,13 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
     private static final long serialVersionUID = 1L;
 
-    protected CardinalitySet<Mission>  	   missions 		  = new CardinalitySet<Mission>();
+    protected CardinalitySet<Mission>      missions           = new CardinalitySet<Mission>();
     protected Map<String,RecoveryStrategy> recoveryStrategies = new HashMap<>();
-    protected Set<Plan>                	   plans    		  = new HashSet<Plan>();
-    protected Map<String,Goal>             goals    		  = new HashMap<String,Goal>();
-    protected Goal                         root     		  = null;
+    protected Set<Plan>                    plans              = new HashSet<Plan>();
+    protected Map<String,Goal>             goals              = new HashMap<String,Goal>();
+    protected Goal                         root               = null;
     //protected String                   monitoring  = null;
-    protected FS                           fs       	   	  = null;
+    protected FS                           fs                 = null;
 
     public Scheme(String id, FS fs) {
         super(id);
@@ -178,13 +178,13 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     }
     
     public Exception getException(String id) throws MoiseException {
-    	for(RecoveryStrategy rs : recoveryStrategies.values()) {
-    		Exception ex = rs.getException();
-    		if(ex.getId().equals(id)) {
-    			return ex;
-    		}
-    	}
-    	throw new MoiseException("Exception " + id + " undefined in scheme " + this.getId());
+        for(RecoveryStrategy rs : recoveryStrategies.values()) {
+            Exception ex = rs.getException();
+            if(ex.getId().equals(id)) {
+                return ex;
+            }
+        }
+        throw new MoiseException("Exception " + id + " undefined in scheme " + this.getId());
     }
     
     /** returns a string representing the goal in Prolog syntax, format:

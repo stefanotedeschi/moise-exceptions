@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm_exceptions'
-    on giugno 12, 2020 - 19:32:18
+    on giugno 15, 2020 - 11:06:05
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -193,7 +193,10 @@ scope scheme(atm_sch) {
                  ).
    enabled(S,CG) :- handler_goal(H,CG) &
                  not failed(S,CG) &
-                 handler(H,E) &
+                 handler(H) &
+                 recovery_strategy(ST) &
+                 strategy_handler(ST,H) &
+                 strategy_exception(ST,E) &
                  thrown(S,E,_) &
                  exception_goal(E,TG) &
                  satisfied(S,TG) &
@@ -241,13 +244,15 @@ scope scheme(atm_sch) {
    norm exc_agent_not_allowed:  
            thrown(S,E,Ag) &
            exception(E,_) &
-           mission_exception(M,E) &
+           mission_goal(M,G) &
+           exception_goal(E,G) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
            thrown(S,E,Ag) &
            exception(E,Condition) &
-           mission_exception(M,E) &
+           mission_goal(M,G) &
+           exception_goal(E,G) &
            committed(Ag,M,S) &
            not Condition
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
