@@ -7,9 +7,11 @@
 +problemInOrderDelivery
 	<- goalFailed(receiveItems).
 	
-+obligation(Ag,_,thrown(_,throwReceiveItems),_)[artifact_id(ArtId)]
++obligation(Ag,_,done(_,raiseItemsNotReceived,Ag),_)[artifact_id(ArtId)]
+     : .my_name(Ag)
 	<- println("Throwing exception for receive items... Items not received!");
-	   exceptionThrown(throwReceiveItems,itemsNotReceived)[artifact_id(ArtId)].
+	   throwException(itemsNotReceived,[])[artifact_id(ArtId)];
+	   goalAchieved(raiseItemsNotReceived).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

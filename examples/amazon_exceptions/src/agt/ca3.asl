@@ -13,10 +13,12 @@ problem.
 	<- println("Problem in delivering items!");
 	   goalFailed(deliverItems)[artifact_id(ArtId)].
 
-+obligation(Ag,_,thrown(_,throwDeliverItems),_)[artifact_id(ArtId)]
-     : goalArgument(_,shipOrder,"recipient",Recipient)
++obligation(Ag,_,done(_,raiseItemsLost,Ag),_)[artifact_id(ArtId)]
+     : .my_name(Ag) &
+       goalArgument(_,shipOrder,"recipient",Recipient)
 	<- println("Throwing exception for deliver items... Items lost!");
-	   exceptionThrown(throwDeliverItems,itemsLost,[recipient(Recipient)])[artifact_id(ArtId)].
+	   throwException(itemsLost,[recipient(Recipient)])[artifact_id(ArtId)];
+	   goalAchieved(raiseItemsLost).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
