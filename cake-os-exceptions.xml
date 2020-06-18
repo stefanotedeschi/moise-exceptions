@@ -2,10 +2,8 @@
 
 <?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
 
-<organisational-specification
-	id="cake" os-version="0.8"
-
-	xmlns='http://moise.sourceforge.net/os'
+<organisational-specification id="cake"
+	os-version="0.8" xmlns='http://moise.sourceforge.net/os'
 	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 
 	<structural-specification>
@@ -45,50 +43,60 @@
 				</plan>
 			</goal>
 
-			<goal id="notifyIngredientsUnavailability" />
-			<goal id="dealWithMissingIngredints" />
-			<goal id="notifyProblemWithOven" />
-			<goal id="checkOven" />
+			<recovery-strategy id="r1">
+				<exception id="ingredientsUnavailable" when="scheme_id(S) &amp; failed(S,provideIngredients)">
+					<goal id="notifyIngredientsUnavailability" />
+				</exception>
+				<handler id="handlerIngredientsUnavailable">
+					<goal id="dealWithMissingIngredients" />
+				</handler>
+			</recovery-strategy>
+			<recovery-strategy id="r2">
+				<exception id="ovenBroken" when="scheme_id(S) &amp; failed(S,switchOnOven)">
+					<goal id="notifyProblemWithOven" />
+				</exception>
+				<handler id="handlerOvenProblem">
+					<goal id="checkOven" />
+				</handler>
+			</recovery-strategy>
+			<recovery-strategy id="r3">
+				<exception id="workspaceSetupFailure" when="scheme_id(S) &amp; failed(S,provideIngredients)">
+					<goal id="notifyWorkspaceSetupFailure" />
+				</exception>
+				<handler id="handlerWorkspaceSetupFailure">
+					<goal id="handleSetupFailure" />
+				</handler>
+			</recovery-strategy>
 
 			<mission id="mApprentice" min="1" max="1">
 				<goal id="switchOnOven" />
 				<goal id="bakeCake" />
-				<exception id="ovenBroken" when="scheme_id(S) & failed(S,switchOnOven)" >
-				  <goal id="notifyProblemWithOven" />
-				</exception>
+				<goal id="notifyProblemWithOven" />
 			</mission>
 			<mission id="mSupplier" min="1" max="1">
 				<goal id="provideIngredients" />
-				<exception id="ingredientsUnavailable" when="scheme_id(S) & failed(S,provideIngredients)" >
-				  <goal id="notifyIngredientsUnavailability" />
-				</exception>
+				<goal id="notifyIngredientsUnavailability" />
 			</mission>
 			<mission id="mBaker" min="1" max="1">
 				<goal id="workspaceSetup" />
 				<goal id="mixIngredients" />
-				<exception id="workspaceSetupFailure" when="scheme_id(S) & failed(S,provideIngredients)">
-					<goal id="notifyWorkspaceSetupFailure" />
-				</exception>
-				<handler id="handlerIngredientsUnavailable" tackles="ingredientsUnavailble">
-						<goal id="dealWithMissingIngredients" />
-				</handler>
-				<handler id="handlerOvenProblem" tackles="ovenBroken">
-						<goal id="checkOven" />
-				</handler>
+				<goal id="notifyWorkspaceSetupFailure" />
+				<goal id="dealWithMissingIngredients" />
+				<goal id="checkOven" />
 			</mission>
 			<mission id="mBoss" min="1" max="1">
 				<goal id="haveCake" />
-				<handler id="handlerWorkspaceSetupFailure" tackles="workspaceSetupFailure">
-						<goal id="handleSetupFailure" />
-				</handler>
+				<goal id="handleSetupFailure" />
 			</mission>
 
 		</scheme>
 	</functional-specification>
 
 	<normative-specification>
-		<norm id="n1" type="obligation" role="supplier" mission="mSupplier" />
-		<norm id="n2" type="obligation" role="apprentice" mission="mApprentice" />
+		<norm id="n1" type="obligation" role="supplier"
+			mission="mSupplier" />
+		<norm id="n2" type="obligation" role="apprentice"
+			mission="mApprentice" />
 		<norm id="n3" type="obligation" role="baker" mission="mBaker" />
 		<norm id="n4" type="obligation" role="boss" mission="mBoss" />
 	</normative-specification>
