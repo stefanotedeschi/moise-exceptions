@@ -92,12 +92,32 @@
                 </plan>
             </goal>
 
-            <goal id="raisePaymentRefused" />
-            <goal id="raiseCheckoutFailed" />
-            <goal id="raiseItemsNotReceived" />
-            <goal id="retry" />
-            <goal id="cancelOrder" />
-            <goal id="requestRefund" />
+			<recovery-strategy id="r1">
+	            <exception id="paymentRefused" when="scheme_id(S) &amp; failed(S,payOrder)">
+	                <goal id="raisePaymentRefused" />
+	            </exception>
+	            <handler id="handlerPaymentRefused">
+	                <goal id="retry" />
+	            </handler>
+            </recovery-strategy>
+            
+            <recovery-strategy id="r2">
+	            <exception id="checkoutFailed" when="scheme_id(S) &amp; failed(S,retry)">
+	                <goal id="raiseCheckoutFailed" />
+	            </exception>
+	            <handler id="handlerCheckoutFailed">
+	                <goal id="cancelOrder" />
+	            </handler>
+            </recovery-strategy>
+			
+			<recovery-strategy id="r3">
+	            <exception id="itemsNotReceived" when="scheme_id(S) &amp; failed(S,receiveItems)">
+	                <goal id="raiseItemsNotReceived" />
+	            </exception>
+	            <handler id="handlerItemsNotReceived">
+	                <goal id="requestRefund" />
+	            </handler>
+            </recovery-strategy>
 
             <mission id="mCustomer1" min="1" max="1">
                 <goal id="browseProducts" />
@@ -105,36 +125,24 @@
             </mission>
             <mission id="mCustomer3" min="1" max="1">
                 <goal id="payOrder" />
-                <exception id="paymentRefused" when="scheme_id(S) &amp; failed(S,payOrder)">
-                    <goal id="raisePaymentRefused" />
-                </exception>
+                <goal id="raisePaymentRefused" />
             </mission>
             <mission id="mCustomer2" min="1" max="1">
                 <goal id="checkout" />
-                <exception id="checkoutFailed" when="scheme_id(S) &amp; failed(S,retry)">
-                    <goal id="raiseCheckoutFailed" />
-                </exception>
-                <handler id="handlerPaymentRefused" tackles="paymentRefused">
-                    <goal id="retry" />
-                </handler>
+                <goal id="raiseCheckoutFailed" />
+                <goal id="retry" />
             </mission>
             <mission id="mCustomer4" min="1" max="1">
                 <goal id="sendOrder" />
             </mission>
             <mission id="mCustomer5" min="1" max="1">
                 <goal id="receiveItems" />
-                <exception id="itemsNotReceived" when="scheme_id(S) &amp; failed(S,receiveItems)">
-                    <goal id="raiseItemsNotReceived" />
-                </exception>
+                <goal id="raiseItemsNotReceived" />
             </mission>
             <mission id="mCustomer6" min="1" max="1">
                 <goal id="placeOrder" />
-                <handler id="handlerCheckoutFailed" tackles="checkoutFailed">
-                    <goal id="cancelOrder" />
-                </handler>
-                <handler id="handlerItemsNotReceived" tackles="itemsNotReceived">
-                    <goal id="requestRefund" />
-                </handler>
+                <goal id="cancelOrder" />
+                <goal id="requestRefund" />
             </mission>
         </scheme>
 
@@ -193,8 +201,14 @@
                 </plan>
             </goal>
 
-            <goal id="raiseItemsLost" />
-            <goal id="notifyCustomer" />
+			<recovery-strategy id="r4">
+	            <exception id="itemsLost" when="scheme_id(S) &amp; failed(S,deliverItems)">
+	                <goal id="raiseItemsLost" />
+	            </exception>
+	            <handler id="handlerItemsLost">
+	                <goal id="notifyCustomer" />
+	            </handler>
+            </recovery-strategy>
 
             <mission id="mCarrier1" min="1" max="1">
                 <goal id="pickItems" />
@@ -204,14 +218,10 @@
             </mission>
             <mission id="mCarrier3" min="1" max="1">
                 <goal id="deliverItems" />
-                <exception id="itemsLost" when="scheme_id(S) &amp; failed(S,deliverItems)">
-                    <goal id="raiseItemsLost" />
-                </exception>
+                <goal id="raiseItemsLost" />
             </mission>
             <mission id="mCarrier4" min="1" max="1">
-                <handler id="handlerItemsLost" tackles="itemsLost">
-                    <goal id="notifyCustomer" />
-                </handler>
+                <goal id="notifyCustomer" />
             </mission>
         </scheme>
 
