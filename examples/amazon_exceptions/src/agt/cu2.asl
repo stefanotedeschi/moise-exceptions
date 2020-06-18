@@ -10,9 +10,10 @@
 	<- println("Failed again!");
 	   goalFailed(retry)[artifact_id(ArtId)].
 	   
-+obligation(Ag,_,thrown(_,throwRetry),_)[artifact_id(ArtId)]
-	<- println("Throwing exception for retry...");
-	   exceptionThrown(throwRetry,checkoutFailed)[artifact_id(ArtId)].
++obligation(Ag,_,done(_,raiseCheckoutFailed,Ag),_)[artifact_id(ArtId)]
+	<- println("Throwing exception checkout failed...");
+	   throwException(checkoutFailed,[])[artifact_id(ArtId)];
+	   goalAchieved(raiseCheckoutFailed).
 	   
 +!checkout
 	<- println("Checkout completed!").
