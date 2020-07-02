@@ -38,6 +38,9 @@ dependencies {
     compile group: 'guru.nidi', name: 'graphviz-java', version: '0.7.0'
 
     //umljavadoc 'org.umlgraph:umlgraph:5.6'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
+
 }
 
 jar {
