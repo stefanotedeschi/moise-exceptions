@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm_exceptions'
-    on giugno 18, 2020 - 12:48:15
+    on luglio 01, 2020 - 19:05:54
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -98,6 +98,7 @@ scope scheme(atm_sch) {
 
    // mission_cardinality(mission id, min, max)
    mission_cardinality(mWithdraw,1,1).
+   mission_cardinality(mThrowNan,2,2).
    mission_cardinality(mProvideMoney,1,1).
    mission_cardinality(mObtainAmount,1,1).
    mission_cardinality(mParseAmount,1,1).
@@ -113,11 +114,11 @@ scope scheme(atm_sch) {
    // mission_goal(mission id, goal id)
    mission_goal(mWithdraw,retryLater).
    mission_goal(mWithdraw,withdraw).
+   mission_goal(mThrowNan,throwNan).
    mission_goal(mProvideMoney,provideMoney).
    mission_goal(mObtainAmount,recoverFromNan).
    mission_goal(mObtainAmount,throwAmountUnavailable).
    mission_goal(mObtainAmount,obtainAmount).
-   mission_goal(mParseAmount,throwNan).
    mission_goal(mParseAmount,parseAmount).
    mission_goal(mGetAmountAsString,getAmountAsString).
 
@@ -125,7 +126,7 @@ scope scheme(atm_sch) {
    goal([mObtainAmount],recoverFromNan,dep(and,[]),performance,all,`1 year`).
    goal([mObtainAmount],throwAmountUnavailable,dep(and,[]),performance,all,`1 year`).
    goal([mProvideMoney],provideMoney,dep(and,[obtainAmount]),performance,all,`1 year`).
-   goal([mParseAmount],throwNan,dep(and,[]),performance,all,`1 year`).
+   goal([mThrowNan],throwNan,dep(and,[]),performance,2,`10 sec`).
    goal([mGetAmountAsString],getAmountAsString,dep(and,[]),performance,all,`1 year`).
    goal([mParseAmount],parseAmount,dep(and,[getAmountAsString]),performance,all,`1 year`).
    goal([mObtainAmount],obtainAmount,dep(and,[parseAmount]),performance,all,`1 year`).
@@ -168,6 +169,7 @@ scope scheme(atm_sch) {
    mplayers(M,S,V) :- .count(committed(_,M,S),V).
    well_formed(S) :- 
       (mission_accomplished(S,mWithdraw) | not mission_accomplished(S,mWithdraw) & mplayers(mWithdraw,S,VmWithdraw) & VmWithdraw >= 1 & VmWithdraw <= 1) &
+      (mission_accomplished(S,mThrowNan) | not mission_accomplished(S,mThrowNan) & mplayers(mThrowNan,S,VmThrowNan) & VmThrowNan >= 2 & VmThrowNan <= 2) &
       (mission_accomplished(S,mProvideMoney) | not mission_accomplished(S,mProvideMoney) & mplayers(mProvideMoney,S,VmProvideMoney) & VmProvideMoney >= 1 & VmProvideMoney <= 1) &
       (mission_accomplished(S,mObtainAmount) | not mission_accomplished(S,mObtainAmount) & mplayers(mObtainAmount,S,VmObtainAmount) & VmObtainAmount >= 1 & VmObtainAmount <= 1) &
       (mission_accomplished(S,mParseAmount) | not mission_accomplished(S,mParseAmount) & mplayers(mParseAmount,S,VmParseAmount) & VmParseAmount >= 1 & VmParseAmount <= 1) &

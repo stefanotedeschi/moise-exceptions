@@ -63,7 +63,6 @@
 
     <xsd:complexType name="recoveryStrategyType">
         <xsd:sequence>
-            <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
             <xsd:element maxOccurs="1" minOccurs="1" name="exception" type="moise:exceptionType"/>
             <xsd:element maxOccurs="unbounded" minOccurs="1" name="handler" type="moise:handlerType"/>
         </xsd:sequence>
@@ -247,6 +246,7 @@
 
     <xsd:complexType name="exceptionType">
         <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
           <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required" />
@@ -255,6 +255,7 @@
 
     <xsd:complexType name="handlerType">
         <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
           <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>

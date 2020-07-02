@@ -54,7 +54,11 @@
             </goal>
             <recovery-strategy id="rec1">
                 <exception id="nan" when="(scheme_id(S) &amp; failed(S,parseAmount))">
-                    <goal id="throwNan" type="performance"/>
+                    <properties>
+                        <property id="type" value="goal-failure"/>
+                        <property id="object" value="parseAmount"/>
+                    </properties>
+                    <goal id="throwNan" min="2" ttf="10 sec" type="performance"/>
                 </exception>
                 <handler id="handler_nan">
                     <goal id="recoverFromNan" type="performance"/>
@@ -72,6 +76,9 @@
                 <goal id="retryLater"/>
                 <goal id="withdraw"/>
             </mission>
+            <mission id="mThrowNan" max="2" min="2">
+                <goal id="throwNan"/>
+            </mission>
             <mission id="mProvideMoney" max="1" min="1">
                 <goal id="provideMoney"/>
             </mission>
@@ -81,7 +88,6 @@
                 <goal id="obtainAmount"/>
             </mission>
             <mission id="mParseAmount" max="1" min="1">
-                <goal id="throwNan"/>
                 <goal id="parseAmount"/>
             </mission>
             <mission id="mGetAmountAsString" max="1" min="1">
