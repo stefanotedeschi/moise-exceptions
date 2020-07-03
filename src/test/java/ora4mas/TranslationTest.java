@@ -67,8 +67,8 @@ public class TranslationTest {
     @Test
     public void testExceptions() throws ParseException, TransformerFactoryConfigurationError, TransformerException, IOException, jason.asSyntax.parser.ParseException {
         
-    	// ATM
-    	OS os = OS.loadOSFromURI("atm-os-exceptions.xml");
+        // ATM
+        OS os = OS.loadOSFromURI("atm-os-exceptions.xml");
         
         Document d = DOMUtils.getAsXmlDocument(os);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();

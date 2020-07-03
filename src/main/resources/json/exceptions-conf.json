@@ -1,0 +1,7 @@
+[
+	{
+		"type" : 	  "goal-failure",
+		"arguments" : ["target"],
+		"expression": "scheme_id(S) &amp; failed(S,$target)"
+	}
+]

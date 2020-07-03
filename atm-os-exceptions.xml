@@ -60,7 +60,7 @@
                     
                     <properties>
                     	<property id="type" value="goal-failure" />
-                    	<property id="object" value="parseAmount" />
+                    	<property id="target" value="parseAmount" />
                     </properties>
                     
                     <goal id="throwNan" ttf="10 sec" min="2" />

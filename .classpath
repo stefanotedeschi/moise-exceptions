@@ -48,6 +48,12 @@
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry sourcepath="C:/Users/ASUS/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.6/1b9adea7bbe0b251818f42fde0bd2988d7e5f20a/gson-2.8.6-sources.jar" kind="lib" path="C:/Users/ASUS/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.6/9180733b7df8542621dc12e21e87557e8c99b8cb/gson-2.8.6.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/ASUS/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.6/6ca9f0d9c6cde89d811e4329c5f0c1225b4a8d0a/gson-2.8.6-javadoc.jar!/"/>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry sourcepath="C:/Users/ASUS/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant/1.10.5/633d7a3e3eccca94ed390e08a6811f97ca6f004c/ant-1.10.5-sources.jar" kind="lib" path="C:/Users/ASUS/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant/1.10.5/4a48332c2df6f535d9dd9d904cd780ab26266e20/ant-1.10.5.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/C:/Users/ASUS/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant/1.10.5/29d565f8304abd436a54735777376b10de7425a5/ant-1.10.5-javadoc.jar!/"/>

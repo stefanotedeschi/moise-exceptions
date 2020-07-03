@@ -50,7 +50,7 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
     }
     
     public void setFromDOM(Element ele) throws MoiseException {
-    	setPropertiesFromDOM(ele);
+        setPropertiesFromDOM(ele);
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
             goal = new Goal(gEle.getAttribute("id"));
@@ -62,7 +62,7 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        ele.setAttribute("when", condition.toString());
+        //ele.setAttribute("when", condition.toString());
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
         }

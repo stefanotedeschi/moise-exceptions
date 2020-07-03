@@ -41,7 +41,7 @@ public class Handler extends moise.common.MoiseElement implements ToXML, ToProlo
     }
     
     public void setFromDOM(Element ele) throws MoiseException {
-    	setPropertiesFromDOM(ele);
+        setPropertiesFromDOM(ele);
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
             goal = new Goal(gEle.getAttribute("id"));

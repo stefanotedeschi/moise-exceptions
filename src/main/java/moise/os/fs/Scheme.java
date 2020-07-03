@@ -1,5 +1,7 @@
 package moise.os.fs;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +13,9 @@ import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
 import jason.asSyntax.parser.ParseException;
 import moise.common.MoiseConsistencyException;
@@ -257,6 +262,14 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
          addGoal(rootG);
          setRoot(rootG);
 
+        JsonReader reader;
+		try {
+			reader = new JsonReader(new FileReader("/json/exceptions-conf.json"));
+		} catch (FileNotFoundException e) {
+			throw new MoiseException("exceptions-conf.json not found!");
+		}
+ 		ExceptionType[] exceptionTypes = new Gson().fromJson(reader, ExceptionType[].class);
+         
          // recovery strategies
          for (Element rsEle: DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {
              RecoveryStrategy rs = new RecoveryStrategy(rsEle.getAttribute("id"), this);
