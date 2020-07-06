@@ -44,7 +44,11 @@
 			</goal>
 
 			<recovery-strategy id="r1">
-				<exception id="ingredientsUnavailable" when="scheme_id(S) &amp; failed(S,provideIngredients)">
+				<exception id="ingredientsUnavailable">
+					<properties>
+                    	<property id="type" value="goal-failure" />
+                    	<property id="target" value="provideIngredients" />
+                    </properties>
 					<goal id="notifyIngredientsUnavailability" />
 				</exception>
 				<handler id="handlerIngredientsUnavailable">
@@ -52,7 +56,11 @@
 				</handler>
 			</recovery-strategy>
 			<recovery-strategy id="r2">
-				<exception id="ovenBroken" when="scheme_id(S) &amp; failed(S,switchOnOven)">
+				<exception id="ovenBroken">
+					<properties>
+                    	<property id="type" value="goal-failure" />
+                    	<property id="target" value="switchOnOven" />
+                    </properties>
 					<goal id="notifyProblemWithOven" />
 				</exception>
 				<handler id="handlerOvenProblem">
@@ -60,7 +68,11 @@
 				</handler>
 			</recovery-strategy>
 			<recovery-strategy id="r3">
-				<exception id="workspaceSetupFailure" when="scheme_id(S) &amp; failed(S,provideIngredients)">
+				<exception id="workspaceSetupFailure">
+					<properties>
+                    	<property id="type" value="goal-failure" />
+                    	<property id="target" value="provideIngredients" />
+                    </properties>
 					<goal id="notifyWorkspaceSetupFailure" />
 				</exception>
 				<handler id="handlerWorkspaceSetupFailure">

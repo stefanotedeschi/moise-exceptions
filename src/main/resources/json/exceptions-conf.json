@@ -2,6 +2,6 @@
 	{
 		"type" : 	  "goal-failure",
 		"arguments" : ["target"],
-		"expression": "scheme_id(S) &amp; failed(S,$target)"
+		"condition": "scheme_id(S) & failed(S,$target)"
 	}
 ]

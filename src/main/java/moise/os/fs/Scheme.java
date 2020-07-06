@@ -1,7 +1,10 @@
 package moise.os.fs;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,30 +31,29 @@ import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
 /**
- Represents a Scheme specification.
-
- @composed - missions * Mission
- @navassoc - goal - Goal
-
- @author Jomi Fred Hubner
-*/
+ * Represents a Scheme specification.
+ * 
+ * @composed - missions * Mission
+ * @navassoc - goal - Goal
+ * 
+ * @author Jomi Fred Hubner
+ */
 public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
     private static final long serialVersionUID = 1L;
 
-    protected CardinalitySet<Mission>      missions           = new CardinalitySet<Mission>();
-    protected Map<String,RecoveryStrategy> recoveryStrategies = new HashMap<>();
-    protected Set<Plan>                    plans              = new HashSet<Plan>();
-    protected Map<String,Goal>             goals              = new HashMap<String,Goal>();
-    protected Goal                         root               = null;
-    //protected String                   monitoring  = null;
-    protected FS                           fs                 = null;
+    protected CardinalitySet<Mission> missions = new CardinalitySet<Mission>();
+    protected Map<String, RecoveryStrategy> recoveryStrategies = new HashMap<>();
+    protected Set<Plan> plans = new HashSet<Plan>();
+    protected Map<String, Goal> goals = new HashMap<String, Goal>();
+    protected Goal root = null;
+    // protected String monitoring = null;
+    protected FS fs = null;
 
     public Scheme(String id, FS fs) {
         super(id);
         this.fs = fs;
     }
-
 
     public void setRoot(Goal g) {
         root = g;
@@ -68,24 +70,17 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     }
 
     /*
-    public void setMonitoringSch(String schId) {
-        monitoring = schId;
-    }
-    public String getMonitoringSch() {
-        return monitoring;
-    }
-    public boolean isMonitorSch() {
-        // search in groups
-        for (Group g: getFS().getOS().getSS().getRootGrSpec().getAllSubGroupsTree())
-            if (g.getMonitoringSch() != null && g.getMonitoringSch().equals( this.getId()) )
-                return true;
-
-        // search in schemes
-        for (Scheme s: getFS().getSchemes())
-            if (s.getMonitoringSch() != null && s.getMonitoringSch().equals( this.getId()) )
-                return true;
-        return false;
-    }*/
+     * public void setMonitoringSch(String schId) { monitoring = schId; } public
+     * String getMonitoringSch() { return monitoring; } public boolean
+     * isMonitorSch() { // search in groups for (Group g:
+     * getFS().getOS().getSS().getRootGrSpec().getAllSubGroupsTree()) if
+     * (g.getMonitoringSch() != null && g.getMonitoringSch().equals( this.getId()) )
+     * return true;
+     * 
+     * // search in schemes for (Scheme s: getFS().getSchemes()) if
+     * (s.getMonitoringSch() != null && s.getMonitoringSch().equals( this.getId()) )
+     * return true; return false; }
+     */
 
     //
     // Plan methods
@@ -109,7 +104,8 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     public void setMissionCardinality(String missionId, Cardinality c) throws MoiseConsistencyException {
         Mission m = getMission(missionId);
         if (m == null) {
-            throw new MoiseConsistencyException("Failed to register the cardinality for the mission "+missionId+", it was not defined!");
+            throw new MoiseConsistencyException(
+                    "Failed to register the cardinality for the mission " + missionId + ", it was not defined!");
         }
         setMissionCardinality(m, c);
     }
@@ -126,12 +122,11 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         return missions.getCardinality(m);
     }
 
-
     /** gets the scheme missions ordered by the preference relation */
     @SuppressWarnings("unchecked")
     public Collection<Mission> getMissions() {
-        List<Mission> l = new ArrayList<Mission>( missions.getAll() );
-        Collections.sort( l );
+        List<Mission> l = new ArrayList<Mission>(missions.getAll());
+        Collections.sort(l);
         return l;
     }
 
@@ -141,7 +136,6 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         }
         return missions.get(id);
     }
-
 
     //
     // Goal methods
@@ -161,12 +155,12 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         return goals.get(id);
     }
 
-    /** 
+    /**
      * returns the missions where goal g is
      */
     public Set<String> getGoalMissionsId(Goal g) {
         Set<String> ms = new HashSet<String>();
-        for (Mission m: missions)
+        for (Mission m : missions)
             if (m.getGoals().contains(g))
                 ms.add(m.getId());
         return ms;
@@ -177,36 +171,38 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     public void addRecoveryStrategy(RecoveryStrategy rs) {
         recoveryStrategies.put(rs.getId(), rs);
     }
-    
+
     public Collection<RecoveryStrategy> getRecoveryStrategies() {
         return recoveryStrategies.values();
     }
-    
+
     public Exception getException(String id) throws MoiseException {
-        for(RecoveryStrategy rs : recoveryStrategies.values()) {
+        for (RecoveryStrategy rs : recoveryStrategies.values()) {
             Exception ex = rs.getException();
-            if(ex.getId().equals(id)) {
+            if (ex.getId().equals(id)) {
                 return ex;
             }
         }
         throw new MoiseException("Exception " + id + " undefined in scheme " + this.getId());
     }
-    
-    /** returns a string representing the goal in Prolog syntax, format:
-     *     scheme_specification(id, goals tree starting by root goal, missions, properties)
+
+    /**
+     * returns a string representing the goal in Prolog syntax, format:
+     * scheme_specification(id, goals tree starting by root goal, missions,
+     * properties)
      */
     public String getAsProlog() {
-        StringBuilder s = new StringBuilder("scheme_specification("+getId()+",");
+        StringBuilder s = new StringBuilder("scheme_specification(" + getId() + ",");
 
         // goals
         s.append(getRoot().getAsProlog());
 
         // missions
         s.append(",[");
-        String v="";
-        for (Mission m: getMissions()) {
-            s.append(v+m.getAsProlog());
-            v=",";
+        String v = "";
+        for (Mission m : getMissions()) {
+            s.append(v + m.getAsProlog());
+            v = ",";
         }
         s.append("],");
 
@@ -224,8 +220,8 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        //if (getMonitoringSch() != null)
-        //    ele.setAttribute("monitoring-scheme", getMonitoringSch());
+        // if (getMonitoringSch() != null)
+        // ele.setAttribute("monitoring-scheme", getMonitoringSch());
 
         // properties
         if (getProperties().size() > 0) {
@@ -234,14 +230,14 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
         // goals
         ele.appendChild(getRoot().getAsDOM(document));
-        
+
         // recovery strategies
-        for (RecoveryStrategy rs: getRecoveryStrategies()) {
+        for (RecoveryStrategy rs : getRecoveryStrategies()) {
             ele.appendChild(rs.getAsDOM(document));
         }
-        
+
         // missions
-        for (Mission m: getMissions()) {
+        for (Mission m : getMissions()) {
             ele.appendChild(m.getAsDOM(document));
         }
 
@@ -252,44 +248,41 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         setPropertiesFromDOM(ele);
 
         // monitoring-scheme
-        //if (ele.getAttribute("monitoring-scheme").length() > 0)
-        //    setMonitoringSch(ele.getAttribute("monitoring-scheme"));
+        // if (ele.getAttribute("monitoring-scheme").length() > 0)
+        // setMonitoringSch(ele.getAttribute("monitoring-scheme"));
 
-         // root goal
-         Element grEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
-         Goal rootG = new Goal(grEle.getAttribute("id"));
-         rootG.setFromDOM(grEle, this);
-         addGoal(rootG);
-         setRoot(rootG);
+        // root goal
+        Element grEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
+        Goal rootG = new Goal(grEle.getAttribute("id"));
+        rootG.setFromDOM(grEle, this);
+        addGoal(rootG);
+        setRoot(rootG);
 
-        JsonReader reader;
-		try {
-			reader = new JsonReader(new FileReader("/json/exceptions-conf.json"));
-		} catch (FileNotFoundException e) {
-			throw new MoiseException("exceptions-conf.json not found!");
-		}
- 		ExceptionType[] exceptionTypes = new Gson().fromJson(reader, ExceptionType[].class);
-         
-         // recovery strategies
-         for (Element rsEle: DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {
-             RecoveryStrategy rs = new RecoveryStrategy(rsEle.getAttribute("id"), this);
-             rs.setFromDOM(rsEle);
-             addRecoveryStrategy(rs);
-         }
-         
+        // get exception types from configuration file
+        InputStream is = getClass().getResourceAsStream("/json/exceptions-conf.json");
+        JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
+        ExceptionType[] exceptionTypes = new Gson().fromJson(reader, ExceptionType[].class);
+
+        // recovery strategies
+        for (Element rsEle : DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {
+            RecoveryStrategy rs = new RecoveryStrategy(rsEle.getAttribute("id"), this);
+            rs.setFromDOM(rsEle, exceptionTypes);
+            addRecoveryStrategy(rs);
+        }
+
         // missions
-        for (Element mEle: DOMUtils.getDOMDirectChilds(ele, Mission.getXMLTag())) {
+        for (Element mEle : DOMUtils.getDOMDirectChilds(ele, Mission.getXMLTag())) {
             Mission m = new Mission(mEle.getAttribute("id"), this);
             m.setFromDOM(mEle);
             addMission(m);
         }
 
         // for goal without missions, set the minToSatisfy as 0
-        for (Goal g: getGoals()) {
+        for (Goal g : getGoals()) {
             if (g.getMinAgToSatisfy() != -1) // ignore goals with explicit cardinality
                 continue;
             boolean hasg = false;
-            for (Mission m: getMissions()) {
+            for (Mission m : getMissions()) {
                 if (m.getGoals().contains(g)) {
                     hasg = true;
                     break;

@@ -50,13 +50,10 @@
 
             <recovery-strategy id="rec1">
             
-                <exception id="nan" when="scheme_id(S) &amp; failed(S,parseAmount)">
+                <exception id="nan" >
                 
                 <!--<exception id="nan" type="goal-failure" object="parseAmount">
-                
-                <exception id="nan" type="goal-deadline" object="parseAmount">
-                
-                <exception id="nan" type="mission-cardinality-failure" object="m...">-->
+                <exception id="nan" type="goal-deadline" object="parseAmount">-->
                     
                     <properties>
                     	<property id="type" value="goal-failure" />
@@ -77,7 +74,11 @@
             </recovery-strategy>
             
             <recovery-strategy id="rec2">
-                <exception id="amountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)">
+                <exception id="amountUnavailable">
+                	<properties>
+                    	<property id="type" value="goal-failure" />
+                    	<property id="target" value="recoverFromNan" />
+                    </properties>
                     <goal id="throwAmountUnavailable" />
                 </exception>
                 <handler id="handler_au">

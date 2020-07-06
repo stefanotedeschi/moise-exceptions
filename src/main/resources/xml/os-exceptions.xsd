@@ -250,7 +250,7 @@
           <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required" />
-        <xsd:attribute name="when" type="xsd:string" use="required" />
+        <!--<xsd:attribute name="when" type="xsd:string" use="required" />-->
     </xsd:complexType>
 
     <xsd:complexType name="handlerType">

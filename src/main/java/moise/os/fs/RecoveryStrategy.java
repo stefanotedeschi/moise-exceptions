@@ -51,20 +51,21 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
         return ele;
     }
     
-    public void setFromDOM(Element ele) throws MoiseException {
+    public void setFromDOM(Element ele, ExceptionType[] et) throws MoiseException {
         
         setPropertiesFromDOM(ele);
         
         Element exEle = DOMUtils.getDOMDirectChild(ele, Exception.getXMLTag());
         String id = exEle.getAttribute("id");
-        LogicalFormula condition;
-        try {
-            condition = ASSyntax.parseFormula(exEle.getAttribute("when"));
-        } catch (ParseException e) {
-            throw new MoiseException(e.getMessage());
-        }
-        exception = new Exception(id, condition, this, sch);
-        exception.setFromDOM(exEle);
+        //LogicalFormula condition;
+        //try {
+        //    condition = ASSyntax.parseFormula(exEle.getAttribute("when"));
+        //} catch (ParseException e) {
+        //    throw new MoiseException(e.getMessage());
+        //}
+        //exception = new Exception(id, condition, this, sch);
+        exception = new Exception(id, this, sch);
+        exception.setFromDOM(exEle, et);
         
         for (Element hEle: DOMUtils.getDOMDirectChilds(ele, Handler.getXMLTag())) {
             id = hEle.getAttribute("id");

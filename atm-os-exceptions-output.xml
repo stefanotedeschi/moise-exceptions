@@ -53,10 +53,10 @@
                 </plan>
             </goal>
             <recovery-strategy id="rec1">
-                <exception id="nan" when="(scheme_id(S) &amp; failed(S,parseAmount))">
+                <exception id="nan">
                     <properties>
                         <property id="type" value="goal-failure"/>
-                        <property id="object" value="parseAmount"/>
+                        <property id="target" value="parseAmount"/>
                     </properties>
                     <goal id="throwNan" min="2" ttf="10 sec" type="performance"/>
                 </exception>
@@ -65,7 +65,11 @@
                 </handler>
             </recovery-strategy>
             <recovery-strategy id="rec2">
-                <exception id="amountUnavailable" when="(scheme_id(S) &amp; failed(S,recoverFromNan))">
+                <exception id="amountUnavailable">
+                    <properties>
+                        <property id="type" value="goal-failure"/>
+                        <property id="target" value="recoverFromNan"/>
+                    </properties>
                     <goal id="throwAmountUnavailable" type="performance"/>
                 </exception>
                 <handler id="handler_au">
