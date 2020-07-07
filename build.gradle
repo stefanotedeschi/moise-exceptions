@@ -173,3 +173,23 @@ task javadoc(overwrite: true, dependsOn: compileJava) {
     }
 }
 */
+
+// transfer local maven artifact to maven2 repository at sourceforge
+task publishMavenSF(dependsOn: [ 'build', 'publishToMavenLocal']) {
+	doLast {
+	    def wdir = System.getProperty("user.home")+'/.m2/repository/com/unito/di/moise-exceptions'
+	    def tdir = project.findProperty("sf.user")+',moise-exceptions@web.sf.net:/home/project-web/moise-exceptions/htdocs/maven2/com/unito/di/moise-exceptions'
+	    exec {
+	        commandLine 'scp', '-r', project.version, tdir
+	        workingDir wdir
+	    }
+	    exec {
+	        commandLine 'cp', 'maven-metadata-local.xml', 'maven-metadata.xml'
+	        workingDir wdir
+	    }
+	    exec {
+	        commandLine 'scp', 'maven-metadata.xml', tdir
+	        workingDir wdir
+	    }
+	}
+}
