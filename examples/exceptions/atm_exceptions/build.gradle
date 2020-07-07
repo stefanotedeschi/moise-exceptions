@@ -21,14 +21,7 @@ repositories {
 
     maven { url "http://jacamo.sourceforge.net/maven2" }
     maven { url "http://jade.tilab.com/maven/" }
-
-    maven {
-        url = uri("https://maven.pkg.github.com/stex93/moise-exceptions")
-        credentials {
-            username = "Stex93"
-            password = "d30caa438ccb61590d6cd6cee3b005c86d0cf503"
-        }
-    }
+    maven { url "http://moise-exceptions.sourceforge.io/maven2" }
 
     flatDir {
        dirs 'lib'

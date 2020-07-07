@@ -56,8 +56,8 @@
                 <exception id="nan" type="goal-deadline" object="parseAmount">-->
 
                     <properties>
-                    	<property id="type" value="goal-failure" />
-                    	<property id="target" value="parseAmount" />
+                        <property id="type" value="goal-failure" />
+                        <property id="target" value="parseAmount" />
                     </properties>
 
                     <goal id="throwNan"/>
@@ -75,9 +75,9 @@
 
             <recovery-strategy id="rec2">
                 <exception id="amountUnavailable">
-                	<properties>
-                    	<property id="type" value="goal-failure" />
-                    	<property id="target" value="recoverFromNan" />
+                    <properties>
+                        <property id="type" value="goal-failure" />
+                        <property id="target" value="recoverFromNan" />
                     </properties>
                     <goal id="throwAmountUnavailable" />
                 </exception>
