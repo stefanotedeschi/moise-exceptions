@@ -17,7 +17,9 @@ import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
 import jason.asSyntax.parser.ParseException;
@@ -261,7 +263,8 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         // get exception types from configuration file
         InputStream is = getClass().getResourceAsStream("/json/exceptions-conf.json");
         JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
-        ExceptionType[] exceptionTypes = new Gson().fromJson(reader, ExceptionType[].class);
+        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
+        ExceptionType[] exceptionTypes = gson.fromJson(reader, ExceptionType[].class);
 
         // recovery strategies
         for (Element rsEle : DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {

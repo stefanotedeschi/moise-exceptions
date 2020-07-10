@@ -5,13 +5,13 @@ public class ExceptionType {
 
     private String type;
     private String[] arguments;
-    private String condition;
+    private String faultState;
     
-    public ExceptionType(String type, String[] arguments, String condition) {
+    public ExceptionType(String type, String[] arguments, String faultState) {
         super();
         this.type = type;
         this.arguments = arguments;
-        this.condition = condition;
+        this.faultState = faultState;
     }
 
     public String getType() {
@@ -22,8 +22,8 @@ public class ExceptionType {
         return arguments;
     }
 
-    public String getCondition() {
-        return condition;
+    public String getFaultState() {
+        return faultState;
     }
 
     public void setType(String type) {
@@ -34,14 +34,14 @@ public class ExceptionType {
         this.arguments = arguments;
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setFaultState(String faultState) {
+        this.faultState = faultState;
     }
 
     @Override
     public String toString() {
-        return "ExceptionType [type=" + type + ", arguments=" + Arrays.toString(arguments) + ", condition="
-                + condition + "]";
+        return "ExceptionType [type=" + type + ", arguments=" + Arrays.toString(arguments) + ", faultState="
+                + faultState + "]";
     }
     
 }

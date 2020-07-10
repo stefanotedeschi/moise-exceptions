@@ -78,7 +78,7 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
             throw new MoiseException("Exception type " + type + " in exception " + id + " undefined!");
         }
         String[] arguments = et.getArguments();
-        String cond = et.getCondition();
+        String cond = et.getFaultState();
         for(String arg : arguments) {
             String argValue = (String) getProperty(arg);
             if(argValue == null) {

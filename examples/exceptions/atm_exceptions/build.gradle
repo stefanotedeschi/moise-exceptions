@@ -32,7 +32,7 @@ repositories {
 dependencies {
     compile group: 'org.jacamo',   name: 'jacamo',           version: '0.8'
     compile group: 'org.jacamo',   name: 'npl' ,             version: '0.5-SNAPSHOT', changing: true, transitive: false
-    compile group: 'com.unito.di', name: 'moise-exceptions', version: '0.1'
+    compile group: 'com.unito.di', name: 'moise-exceptions', version: '0.1', changing: true
 }
 
 configurations {
