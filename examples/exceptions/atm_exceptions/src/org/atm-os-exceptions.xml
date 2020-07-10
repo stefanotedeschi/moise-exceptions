@@ -60,15 +60,12 @@
                         <property id="target" value="parseAmount" />
                     </properties>
 
-                    <goal id="throwNan"/>
-
+                    <goal id="throwNan" />
 
                 </exception>
 
                 <handler id="handler_nan">
-
                     <goal id="recoverFromNan" />
-
                 </handler>
 
             </recovery-strategy>

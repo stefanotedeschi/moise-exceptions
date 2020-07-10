@@ -2,6 +2,11 @@
 	{
 		"type" : 	  "goal-failure",
 		"arguments" : ["target"],
-		"condition": "scheme_id(S) & failed(S,$target)"
+		"condition" : "scheme_id(S) & failed(S,$target)"
+	},
+	{
+		"type" : 	  "goal-deadline",
+		"arguments" : ["target"],
+		"condition" : "scheme_id(S) & unfulfilled(obligation(_,_,done(S,$target,_),_))"
 	}
 ]

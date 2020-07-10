@@ -178,7 +178,7 @@ task javadoc(overwrite: true, dependsOn: compileJava) {
 task publishMavenSF(dependsOn: [ 'build', 'publishToMavenLocal']) {
 	doLast {
 	    def wdir = System.getProperty("user.home")+'/.m2/repository/com/unito/di/moise-exceptions'
-	    def tdir = project.findProperty("sf.user")+',moise-exceptions@web.sf.net:/home/project-web/moise-exceptions/htdocs/maven2/com/unito/di/moise-exceptions'
+	    def tdir = project.findProperty("sf.user")+',moise-exceptions@web.sourceforge.net:/home/project-web/moise-exceptions/htdocs/maven2/com/unito/di/moise-exceptions'
 	    exec {
 	        commandLine 'scp', '-r', project.version, tdir
 	        workingDir wdir
