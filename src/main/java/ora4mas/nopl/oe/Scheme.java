@@ -29,6 +29,7 @@ import jason.asSyntax.VarTerm;
 import jason.asSyntax.parser.ParseException;
 import moise.common.MoiseException;
 import moise.os.fs.Goal;
+import moise.os.fs.Handler;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
 import npl.NPLInterpreter;
@@ -245,12 +246,23 @@ public class Scheme extends CollectiveOE {
                     iThrowns.remove();
                     Goal tg = e.getGoal();
                     resetGoal(tg);
+                    Set<Handler> handlers = e.getInStrategy().getHandlers();
+                    for(Handler h : handlers) {
+                        Goal cg = h.getGoal();
+                        resetGoal(cg);
+                    }
+                    resetExceptions(nengine);
                     changed = true;
                 }
             } catch (MoiseException | npl.parser.ParseException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
+        }
+        if(changed) {
+            // if changed holds, I have reset some more goals (maybe impacting on other exceptions' conditions
+            // I have to check thrown exceptions again
+            resetExceptions(nengine);
         }
         return changed;
     }

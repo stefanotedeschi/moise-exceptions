@@ -17,8 +17,16 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
     private LogicalFormula condition;
     private Goal goal;
     
-    RecoveryStrategy inStrategy;
+    private RecoveryStrategy inStrategy;
     
+    public RecoveryStrategy getInStrategy() {
+        return inStrategy;
+    }
+
+    public void setInStrategy(RecoveryStrategy inStrategy) {
+        this.inStrategy = inStrategy;
+    }
+
     private Scheme sch;
     
     public Exception(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {

@@ -1,12 +1,12 @@
 [
 	{
-		"type" : 	  "goal-failure",
-		"arguments" : ["target"],
+		"type"        : "goal-failure",
+		"arguments"   : ["target"],
 		"fault-state" : "scheme_id(S) & failed(S,$target)"
 	},
 	{
-		"type" : 	  "goal-deadline",
-		"arguments" : ["target"],
+		"type"        : "goal-ttf-expiration",
+		"arguments"   : ["target"],
 		"fault-state" : "scheme_id(S) & unfulfilled(obligation(_,_,done(S,$target,_),_))"
 	}
 ]
