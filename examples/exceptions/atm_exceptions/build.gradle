@@ -39,6 +39,11 @@ configurations {
     compile.exclude group: 'org.jacamo', module: 'moise'
 }
 
+configurations.all {
+    // Check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 sourceSets {
     main {
         java {
