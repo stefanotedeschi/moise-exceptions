@@ -2,11 +2,11 @@
 	{
 		"type"        : "goal-failure",
 		"arguments"   : ["target"],
-		"fault-state" : "scheme_id(S) & Obl = obligation(_,_,done(S,$target,_),_) & unfulfilled(Obl) & failed(S,$target, _) & not thrown(S,E,Obl,_)"
+		"fault-state" : "scheme_id(S) & Obl = obligation(_,_,done(S,$target,_),_) & fault(Obl) & not thrown(S,E,Obl,_)"
 	},
 	{
 		"type"        : "goal-ttf-expiration",
 		"arguments"   : ["target"],
-		"fault-state" : "scheme_id(S) & Obl = obligation(_,_,done(S,$target,_),_) & unfulfilled(Obl) & not failed(S,$target, _) & not thrown(S,E,Obl,_)"
+		"fault-state" : "scheme_id(S) & Obl = obligation(_,_,done(S,$target,_),_) & unfulfilled(Obl) & not thrown(S,E,Obl,_)"
 	}
 ]

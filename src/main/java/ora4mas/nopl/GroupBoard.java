@@ -100,6 +100,7 @@ public class GroupBoard extends OrgArt {
     }
     
     protected Logger logger = Logger.getLogger(GroupBoard.class.getName());
+    @Override protected Logger getLogger() {    return logger;   }
 
     public Group getGrpState() {
         return (Group) orgState;
@@ -159,10 +160,14 @@ public class GroupBoard extends OrgArt {
     }
 
     @OPERATION public void debug(String kind) throws Exception {
-        grBoards.remove(this);
-        super.debug(kind, "Group Board", true);
-        if (gui != null) {
-            gui.setSpecification(specToStr(spec.getSS().getOS(), DOMUtils.getTransformerFactory().newTransformer(DOMUtils.getXSL("ss"))));
+        try {
+            grBoards.remove(this);
+            super.debug(kind, "Group Board", true);
+            if (gui != null) {
+                gui.setSpecification(specToStr(spec.getSS().getOS(), DOMUtils.getTransformerFactory().newTransformer(DOMUtils.getXSL("ss"))));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -171,6 +176,7 @@ public class GroupBoard extends OrgArt {
      *
      */
     @OPERATION @LINK public void destroy() {
+        runningDestroy = true;
         if (parentGroup != null) {
             try {
                 execLinkedOp(parentGroup, "removeSubgroup", getGrpState().getId());
@@ -182,7 +188,7 @@ public class GroupBoard extends OrgArt {
     }
 
     @Override
-    public void agKilled(String agName) {
+    public void agKilled(String agName) throws Exception {
         //logger.info("****** "+agName+" has quit!");
         boolean oldStatus = isWellFormed();
         for (Player p: orgState.getPlayers() ) {
@@ -373,11 +379,30 @@ public class GroupBoard extends OrgArt {
                 execLinkedOp(schAid, "removeResponsibleGroup", orgState.getId());
 
                 getObsProperty(obsPropSchemes).updateValue(getGrpState().getResponsibleForAsProlog());
-
+                listeners.remove(schAid);
                 schemes.remove(schAid);
             }
         }, "Error removing scheme "+schId);
     }
+
+    /*@LINK public void schemeDestroied(final String schId) {
+        try {
+            // copy of method removeScheme, without verification of norms
+            ArtifactId schAid = lookupArtifact(schId);
+            getGrpState().removeResponsibleForScheme(schId);
+            //nengine.verifyNorms();
+            //execLinkedOp(schAid, "removeResponsibleGroup", orgState.getId());
+
+            getObsProperty(obsPropSchemes).updateValue(getGrpState().getResponsibleForAsProlog());
+            listeners.remove(schAid);
+            schemes.remove(schAid);
+            
+            updateGuiOE();
+            notifyListeners();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
 
     @LINK public void addListener(String artId) {
         if (!running) return;

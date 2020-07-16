@@ -131,6 +131,7 @@ public class SchemeBoard extends OrgArt {
 	private List<ObsProperty> exceptionArgumentsObsProps = new ArrayList<>();
 
 	protected static Collection<SchemeBoard> schBoards = new ArrayList<>();
+    @Override protected Logger getLogger() {	return logger;   }
 
 	public static Collection<SchemeBoard> getSchemeBoards() {
 		return schBoards;
@@ -190,55 +191,56 @@ public class SchemeBoard extends OrgArt {
 	}
 
 	protected void reorganise() throws Exception {
-		getNormativeEngine().stop();
+        getNormativeEngine().stop();
 
-		initNormativeEngine(spec.getFS().getOS(), "scheme(" + spec.getId() + ")");
-		installNormativeSignaler();
-		getNormativeEngine().verifyNorms();
+        initNormativeEngine(spec.getFS().getOS(), "scheme("+spec.getId()+")");
+        installNormativeSignaler();
+        getNormativeEngine().verifyNorms();
 
-		if (gui != null) {
-			gui.setSpecification(specToStr(spec.getFS().getOS(),
-					DOMUtils.getTransformerFactory().newTransformer(DOMUtils.getXSL("fsns"))));
-			gui.setNormativeProgram(getNPLSrc());
-			updateGuiOE();
-		}
-		getObsProperty(obsPropSpec).updateValue(new JasonTermWrapper(spec.getAsProlog()));
-	}
+    	if (gui != null) {
+            gui.setSpecification(specToStr(spec.getFS().getOS(), DOMUtils.getTransformerFactory().newTransformer(DOMUtils.getXSL("fsns"))));
+            gui.setNormativeProgram(getNPLSrc());
+            updateGuiOE();
+        }
+        getObsProperty(obsPropSpec).updateValue(new JasonTermWrapper(spec.getAsProlog()));
+    }
 
-	@OPERATION
-	public void debug(String kind) throws Exception {
-		super.debug(kind, "Scheme Board", true);
-		if (gui != null) {
-			gui.setSpecification(specToStr(spec.getFS().getOS(),
-					DOMUtils.getTransformerFactory().newTransformer(DOMUtils.getXSL("fsns"))));
-		}
-	}
 
-	/**
-	 * The agent executing this operation tries to delete the scheme board artifact
-	 */
-	@OPERATION
-	@LINK
-	public void destroy() {
-		schBoards.remove(this);
-		orgState.clearPlayers();
-		for (Group g : getSchState().getGroupsResponsibleFor()) {
-			ArtifactId aid;
-			try {
-				aid = lookupArtifact(g.getId());
-				if (aid != null)
-					execLinkedOp(aid, "removeScheme", getId().getName());
+    @OPERATION public void debug(String kind) {
+    	try {
+	    	super.debug(kind, "Scheme Board", true);
+	    	if (gui != null) {
+	            gui.setSpecification(specToStr(spec.getFS().getOS(), DOMUtils.getTransformerFactory().newTransformer(DOMUtils.getXSL("fsns"))));
+	        }
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
 
-				aid = lookupArtifact(g.getId() + "." + getId());
-				if (aid != null)
-					execLinkedOp(aid, "destroy");
+    /**
+     * The agent executing this operation tries to delete the scheme board artifact
+     */
+    @OPERATION @LINK public void destroy() {
+    	runningDestroy = true;
+    	schBoards.remove(this);
+        orgState.clearPlayers();
+        for (Group g: getSchState().getGroupsResponsibleFor()) {
+		    ArtifactId aid;
+		    try {
+		        aid = lookupArtifact(g.getId());
+		        if (aid != null)
+		            execLinkedOp(aid, "removeScheme", getId().getName());
 
-			} catch (OperationException e) {
-				e.printStackTrace();
-			}
+		        aid = lookupArtifact(g.getId()+"."+getId());
+		        if (aid != null)
+		            execLinkedOp(aid, "destroy");
+
+		    } catch (OperationException e) {
+		        e.printStackTrace();
+		    }
 		}
 		super.destroy();
-	}
+    }
 
 	@Override
 	public void agKilled(String agName) {

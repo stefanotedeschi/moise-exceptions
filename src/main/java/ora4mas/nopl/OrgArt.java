@@ -83,11 +83,14 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
 
     protected String ownerAgent = null; // the name of the agent that created this artifact
 
-    protected List<ArtifactId> listeners = new CopyOnWriteArrayList<>();
+    protected List<ArtifactId> dfpListeners = new CopyOnWriteArrayList<>();
 
     protected String orgBoardName = null;
     
     protected Logger logger = Logger.getLogger(OrgArt.class.getName());
+    protected Logger getLogger() {  return logger;   }
+
+    protected boolean runningDestroy = false;
 
     public static String fixOSFile(String osFile) {
         try {
@@ -99,6 +102,7 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
         } catch (Exception e) { }
         return osFile;
     }
+    
     
     public String getOEId() {
         return oeId;
@@ -151,7 +155,8 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
             failed("you can not destroy the artifact, only the owner can!");
             return;
         }
-
+        runningDestroy = true;
+        
         nengine.removeListener(myNPLListener);
         nengine.stop();
         if (gui != null) {
@@ -304,12 +309,12 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
     // subscribe protocol
 
     @LINK void subscribeDFP(ArtifactId subscriber) throws OperationException {
-        listeners.add(subscriber);
+        dfpListeners.add(subscriber);
         notifyListeners();
     }
 
     void notifyListeners() {
-        for (ArtifactId aid: listeners) {
+        for (ArtifactId aid: dfpListeners) {
             try {
                 execLinkedOp(aid, "updateDFP", getId().getName(), (DynamicFactsProvider)orgState);
             } catch (Exception e) {
@@ -321,6 +326,7 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
 
 
     protected void ora4masOperationTemplate(Operation op, String errorMsg) {
+        if (runningDestroy) return; 
         if (!running) return;
         CollectiveOE bak = orgState.clone();
         try {
@@ -329,7 +335,7 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
             notifyListeners();
         } catch (NormativeFailureException e) {
             orgState = bak; // takes the backup as the current model since the action failed
-            logger.info("error. "+e);
+            getLogger().info("error. "+e);
             if (errorMsg == null)
                 failed(e.getFail().toString());
             else
@@ -408,8 +414,11 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
 
     public String specToStr(ToXML spec, Transformer transformer) throws Exception {
         StringWriter so = new StringWriter();
-        InputSource si = new InputSource(new StringReader(DOMUtils.dom2txt(spec)));
-        transformer.transform(new DOMSource(getParser().parse(si)), new StreamResult(so));
+        String specStr = DOMUtils.dom2txt(spec);
+        if (!specStr.isEmpty()) {
+            InputSource si = new InputSource(new StringReader(specStr));
+            transformer.transform(new DOMSource(getParser().parse(si)), new StreamResult(so));
+        }
         return so.toString();
     }
 
@@ -449,6 +458,8 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
             for (OrgArt o: l) {
                 try {
                     o.agKilled(req.getAgentId().getAgentName());
+                } catch (InterruptedException e) {
+                    // ignore, system going down
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -481,32 +492,36 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
         wspEng.addListener(this);
     }
 
-    public void agKilled(String agName) {
+    public void agKilled(String agName) throws Exception {
 
     }
 
 
-    protected void debug(String kind, String title, boolean hasOE) throws Exception {
-        final String id = getId().getName();
-        if (kind.equals("inspector_gui(on)")) {
-            if (gui != null)
-                gui.remove();
-            gui = GUIInterface.add(id, "... "+title+" "+id+" ...", nengine, hasOE);
-
-            updateGUIThread = new UpdateGuiThread();
-            updateGUIThread.start();
-
-            updateGuiOE();
-
-            gui.setNormativeProgram(getNPLSrc());
-        }
-        if (kind.equals("inspector_gui(off)")) {
-            if (gui != null)
-                gui.remove();
-            try {
-                updateGUIThread.interrupt();
-            } catch (Exception e) {}
-            gui = null;
+    protected void debug(String kind, String title, boolean hasOE) {
+        try {
+            final String id = getId().getName();
+            if (kind.equals("inspector_gui(on)")) {
+                if (gui != null)
+                    gui.remove();
+                gui = GUIInterface.add(id, "... "+title+" "+id+" ...", nengine, hasOE);
+    
+                updateGUIThread = new UpdateGuiThread();
+                updateGUIThread.start();
+    
+                updateGuiOE();
+    
+                gui.setNormativeProgram(getNPLSrc());
+            }
+            if (kind.equals("inspector_gui(off)")) {
+                if (gui != null)
+                    gui.remove();
+                try {
+                    updateGUIThread.interrupt();
+                } catch (Exception e) {}
+                gui = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
