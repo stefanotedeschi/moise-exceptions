@@ -56,13 +56,17 @@
                     </goal>
                     <goal id="consolidateSubdesigns" />
                     <goal id="buildProduct" />
-                    <goal id="deliverProduct" />
+                    <goal id="deliverProduct" ttf="10 seconds" />
                     <goal id="inspection" />
                 </plan>
             </goal>
 
             <recovery-strategy id="r1">
-                <exception id="resourcePoaching" when="scheme_id(S) &amp; failed(S,distributeResources)">
+                <exception id="resourcePoaching">
+                    <properties>
+                        <property id="type" value="goal-failure" />
+                        <property id="target" value="distributeResources" />
+                    </properties>
                     <goal id="raiseResourcePoaching" />
                 </exception>
                 <handler id="hPoaching">
@@ -70,7 +74,11 @@
                 </handler>
             </recovery-strategy>
             <recovery-strategy id="r2">
-                <exception id="designConflict" when="scheme_id(S) &amp; failed(S,consolidateSubdesigns)">
+                <exception id="designConflict">
+                    <properties>
+                        <property id="type" value="goal-failure" />
+                        <property id="target" value="consolidateSubdesigns" />
+                    </properties>
                     <goal id="raiseDesignConflict" />
                 </exception>
                 <handler id="hDesignConflict">
@@ -78,22 +86,31 @@
                 </handler>
             </recovery-strategy>
             <recovery-strategy id="r3">
-                <exception id="itemMisrouted" when="scheme_id(S) &amp; failed(S,deliverProduct)">
+                <exception id="itemMisrouted">
+                    <properties>
+                        <property id="type" value="goal-failure" />
+                        <property id="target" value="deliverProduct" />
+                    </properties>
                     <goal id="raiseItemMisrouted" />
                 </exception>
                 <handler id="hItemMisrouted">
                     <goal id="notifyCustomer" />
                 </handler>
             </recovery-strategy>
-            
+
             <recovery-strategy id="r4">
-                <exception id="itemDelayed" when="???">
+                <exception id="itemDelayed">
+                  <properties>
+                      <property id="type" value="goal-deadline" />
+                      <property id="target" value="deliverProduct" />
+                  </properties>
                     <goal id="raiseItemDelayed" />
                 </exception>
                 <handler id="hItemDelayed">
                     <goal id="updateScheduling" />
                 </handler>
             </recovery-strategy>
+
             <recovery-strategy id="r5">
                 <exception id="agentUnavailable" when="???">
                     <goal id="..." />
