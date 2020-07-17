@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm_exceptions'
-    on luglio 06, 2020 - 12:23:17
+    on luglio 17, 2020 - 17:20:35
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -142,8 +142,8 @@ scope scheme(atm_sch) {
    recovery_strategy(rec2).
 
    // exception(exception id, condition)
-   exception(nan,(scheme_id(S) & failed(S,parseAmount))).
-   exception(amountUnavailable,(scheme_id(S) & failed(S,recoverFromNan))).
+   exception(nan,(scheme_id(S) & ((Obl = obligation(_942,_943,done(S,parseAmount,_944),_945)) & (fault(Obl) & not (thrown(S,E,Obl,_946)))))).
+   exception(amountUnavailable,(scheme_id(S) & ((Obl = obligation(_947,_948,done(S,recoverFromNan,_949),_950)) & (fault(Obl) & not (thrown(S,E,Obl,_951)))))).
 
    // strategy_exception(strategy id, exception id)
    strategy_exception(rec1,nan).
@@ -186,7 +186,6 @@ scope scheme(atm_sch) {
    any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).
 
    enabled(S,TG) :- exception_goal(E,TG) &
-                 not failed(S,TG) &
                  exception(E,Condition) &
                  Condition &
                  goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
@@ -194,7 +193,6 @@ scope scheme(atm_sch) {
                   (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
                  ).
    enabled(S,CG) :- handler_goal(H,CG) &
-                 not failed(S,CG) &
                  handler(H) &
                  recovery_strategy(ST) &
                  strategy_handler(ST,H) &
@@ -208,10 +206,14 @@ scope scheme(atm_sch) {
                  ).
 
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not failed(_,G) & not released(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not failed(_,G) & not released(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not released(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not released(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
    super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).
+   fault(O) :- O = obligation(A,enabled(S,G),What,D) & active(O) & ((goal(_,G,_,achievement,_,_) & What = satisfied(S,G)) | (goal(_,G,_,performance,_,_) & What = done(S,G,A))) & failed(S,G).
+
+   normal(O) :- O = obligation(A,enabled(S,G),What,D) & active(O) & ((goal(_,G,_,achievement,_,_) & What = satisfied(S,G)) | (goal(_,G,_,performance,_,_) & What = done(S,G,A))) & not failed(S,G).
+
 
    // ** Norms
 
