@@ -18,7 +18,7 @@ count(1).
     : .my_name(Ag) &
       count(N) & N >= 3
    <- //goalReleased(obtainAmount);
-      goalFailed(recoverFromNan).
+      goalInFault(recoverFromNan).
    
 +obligation(Ag,_,done(_,throwAmountUnavailable,Ag),_)
 	 : .my_name(Ag)

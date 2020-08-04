@@ -30,12 +30,12 @@
 
     </structural-specification>
 
-	
+
 
     <functional-specification>
-    
+
         <scheme id="atm_sch">
-			
+
             <goal id="withdraw">
                 <plan operator="sequence">
                     <goal id="obtainAmount">
@@ -49,34 +49,34 @@
             </goal>
 
             <recovery-strategy id="rec1">
-            
+
                 <exception id="nan" >
-                
+
                 <!--<exception id="nan" type="goal-failure" object="parseAmount">
                 <exception id="nan" type="goal-deadline" object="parseAmount">-->
-                    
+
                     <properties>
-                    	<property id="type" value="goal-failure" />
+                    	<property id="type" value="goal-fault" />
                     	<property id="target" value="parseAmount" />
                     </properties>
-                    
+
                     <goal id="throwNan" ttf="10 sec" min="2" />
-                    
-                    
+
+
                 </exception>
-                
+
                 <handler id="handler_nan">
-                    
+
                     <goal id="recoverFromNan" />
-                
+
                 </handler>
-            
+
             </recovery-strategy>
-            
+
             <recovery-strategy id="rec2">
                 <exception id="amountUnavailable">
                 	<properties>
-                    	<property id="type" value="goal-failure" />
+                    	<property id="type" value="goal-fault" />
                     	<property id="target" value="recoverFromNan" />
                     </properties>
                     <goal id="throwAmountUnavailable" />

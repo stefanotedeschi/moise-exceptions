@@ -3,7 +3,7 @@
 	   parseAmount.
 
 -!parseAmount
-	<- goalFailed(parseAmount);
+	<- goalInFault(parseAmount);
 	   .fail.
 
 +!throwNan

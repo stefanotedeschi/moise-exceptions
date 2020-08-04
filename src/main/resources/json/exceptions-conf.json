@@ -1,8 +1,8 @@
 [
 	{
-		"type"        : "goal-failure",
+		"type"        : "goal-fault",
 		"arguments"   : ["target"],
-		"fault-state" : "scheme_id(S) & failed(S,$target)"
+		"fault-state" : "scheme_id(S) & fault(S,$target)"
 	},
 	{
 		"type"        : "goal-ttf-expiration",

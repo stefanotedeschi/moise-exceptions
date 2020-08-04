@@ -55,7 +55,7 @@
             <recovery-strategy id="rec1">
                 <exception id="nan">
                     <properties>
-                        <property id="type" value="goal-failure"/>
+                        <property id="type" value="goal-fault"/>
                         <property id="target" value="parseAmount"/>
                     </properties>
                     <goal id="throwNan" min="2" ttf="10 sec" type="performance"/>
@@ -67,7 +67,7 @@
             <recovery-strategy id="rec2">
                 <exception id="amountUnavailable">
                     <properties>
-                        <property id="type" value="goal-failure"/>
+                        <property id="type" value="goal-fault"/>
                         <property id="target" value="recoverFromNan"/>
                     </properties>
                     <goal id="throwAmountUnavailable" type="performance"/>

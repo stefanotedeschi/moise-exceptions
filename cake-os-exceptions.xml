@@ -46,7 +46,7 @@
 			<recovery-strategy id="r1">
 				<exception id="ingredientsUnavailable">
 					<properties>
-                    	<property id="type" value="goal-failure" />
+                    	<property id="type" value="goal-fault" />
                     	<property id="target" value="provideIngredients" />
                     </properties>
 					<goal id="notifyIngredientsUnavailability" />
@@ -58,7 +58,7 @@
 			<recovery-strategy id="r2">
 				<exception id="ovenBroken">
 					<properties>
-                    	<property id="type" value="goal-failure" />
+                    	<property id="type" value="goal-fault" />
                     	<property id="target" value="switchOnOven" />
                     </properties>
 					<goal id="notifyProblemWithOven" />
@@ -70,7 +70,7 @@
 			<recovery-strategy id="r3">
 				<exception id="workspaceSetupFailure">
 					<properties>
-                    	<property id="type" value="goal-failure" />
+                    	<property id="type" value="goal-fault" />
                     	<property id="target" value="provideIngredients" />
                     </properties>
 					<goal id="notifyWorkspaceSetupFailure" />
