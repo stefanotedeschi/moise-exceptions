@@ -1,5 +1,9 @@
 package ora4mas.nopl;
 
+import static jason.asSyntax.ASSyntax.createAtom;
+import static jason.asSyntax.ASSyntax.createLiteral;
+
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tools.ant.filters.StringInputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,9 +29,12 @@ import jason.asSyntax.Atom;
 import jason.asSyntax.ListTerm;
 import jason.asSyntax.ListTermImpl;
 import jason.asSyntax.Literal;
+import jason.asSyntax.LogicalFormula;
 import jason.asSyntax.NumberTerm;
 import jason.asSyntax.PredicateIndicator;
 import jason.asSyntax.Term;
+import jason.asSyntax.VarTerm;
+import jason.stdlib.literal;
 import jason.util.Config;
 import moise.common.MoiseException;
 import moise.oe.GoalInstance;
@@ -40,7 +48,9 @@ import moise.tools.os2dot;
 import moise.xml.DOMUtils;
 import npl.NPLLiteral;
 import npl.NormativeFailureException;
+import npl.NormativeProgram;
 import npl.parser.ParseException;
+import npl.parser.nplp;
 import ora4mas.nopl.oe.Group;
 import ora4mas.nopl.oe.Pair;
 import ora4mas.nopl.oe.Player;
@@ -103,6 +113,9 @@ public class SchemeBoard extends OrgArt {
     public static final String obsPropCommitment = "commitment";
 
     public static final PredicateIndicator piGoalState = new PredicateIndicator("goalState", 5);
+
+    private List<ObsProperty> exceptionsObsProps = new ArrayList<>();
+	private List<ObsProperty> exceptionArgumentsObsProps = new ArrayList<>();
 
     protected static Collection<SchemeBoard> schBoards = new ArrayList<>();
     public static Collection<SchemeBoard> getSchemeBoards() {
@@ -235,7 +248,7 @@ public class SchemeBoard extends OrgArt {
             }
         }
     }
-    
+
     /**
      * The agent executing this operation tries to commit to a mission in the scheme.
      *
@@ -320,6 +333,53 @@ public class SchemeBoard extends OrgArt {
         },"Error achieving goal "+goal);
     }
 
+    @OPERATION
+    public void goalInFault(String goal) throws CartagoException {
+        ora4masOperationTemplate(new Operation() {
+            public void exec() throws NormativeFailureException, Exception {
+                getSchState().addFaultGoal(goal);
+                nengine.verifyNorms();
+                updateGoalStateObsProp();
+            }
+        }, "Error setting goal " + goal + " as in fault");
+    }
+
+    @OPERATION
+    public void goalReleased(String goal) throws CartagoException {
+        ora4masOperationTemplate(new Operation() {
+            public void exec() throws NormativeFailureException, Exception {
+                getSchState().addReleasedGoal(goal);
+                getSchState().removeFaultGoal(spec.getGoal(goal));
+                getSchState().resetExceptions(nengine);
+                getSchState().computeSatisfiedGoals();
+                nengine.verifyNorms();
+                updateGoalStateObsProp();
+                updateExceptionsObsProp();
+            }
+        }, "Error setting goal " + goal + " as released");
+    }
+
+    @OPERATION
+    public void throwException(String exception, Object[] arguments) throws CartagoException {
+        throwException(getOpUserName(), exception, arguments);
+    }
+
+    @OPERATION
+    public void throwException(final String agent, String exception, Object[] arguments) throws CartagoException {
+        ora4masOperationTemplate(new Operation() {
+            public void exec() throws NormativeFailureException, Exception {
+                getSchState().addThrown(agent, exception);
+                nengine.verifyNorms();
+                exceptionsObsProps.add(defineObsProperty("exceptionThrown", createAtom(getId().getName()),
+                        createAtom(exception), createAtom(agent)));
+                for (Object a : arguments) {
+                    exceptionArgumentsObsProps.add(defineObsProperty("exceptionArgument", createAtom(getId().getName()),
+                            createAtom(exception), ASSyntax.parseLiteral((String) a)));
+                }
+            }
+        }, "Error throwing exception " + exception);
+    }
+
     /** The agent executing this operation sets a value for a goal argument.
      *
      *  @param goal                     The goal to which the value should be added
@@ -361,11 +421,13 @@ public class SchemeBoard extends OrgArt {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
                 if (getSchState().resetGoal(g)) {
+                    getSchState().resetExceptions(nengine);
                     getSchState().computeSatisfiedGoals();
                 }
                 nengine.verifyNorms();
                 getSchState().clearExPlayers(); // and an agent quits a mission accomplished, that was ok, the reset goal will turn this mission unaccomplished and produces a norm failure. so we remove the ex players here
                 updateGoalStateObsProp();
+                updateExceptionsObsProp();
             }
         }, "Error reseting goal "+goal);
     }
@@ -453,7 +515,7 @@ public class SchemeBoard extends OrgArt {
 
     @OPERATION public void setCardinality(String element, String id, int min, int max) throws MoiseException, ParseException {
         if (!isUserAllowed()) {
-            failed("Error: agent '"+getOpUserName()+"' is not allowed to set cardinality","reason",new JasonTermWrapper("not_allowed_to_start(setCardinality)"));           
+            failed("Error: agent '"+getOpUserName()+"' is not allowed to set cardinality","reason",new JasonTermWrapper("not_allowed_to_start(setCardinality)"));
         } else {
             if (element.equals("mission")) {
                 spec.setMissionCardinality(id, new Cardinality(min,max));
@@ -520,12 +582,12 @@ public class SchemeBoard extends OrgArt {
                         out.append(nplProgram);
                         out.append("\n}");
                         execLinkedOp(aid, "load", out.toString());
-                    }                    
+                    }
                 }
             }
         }, null);
     }
-    
+
 
     @LINK void removeResponsibleGroup(final String grId) throws CartagoException {
         ora4masOperationTemplate(new Operation() {
@@ -591,6 +653,27 @@ public class SchemeBoard extends OrgArt {
         }
     }
 
+    protected void updateExceptionsObsProp() {
+        Iterator<ObsProperty> i = exceptionsObsProps.iterator();
+        while (i.hasNext()) {
+            ObsProperty op = i.next();
+            Literal l = createLiteral("thrown", new VarTerm("SID"), ASSyntax.createAtom(op.getValue(1).toString()), new VarTerm("Ag"));
+
+            if (!nengine.holds(new NPLLiteral(l, this))) {
+                Iterator<ObsProperty> iArgs = exceptionArgumentsObsProps.iterator();
+                while (iArgs.hasNext()) {
+                    ObsProperty arg = iArgs.next();
+                    if (arg.getValue(1).toString().equals(op.getValue(1).toString())) {
+                        iArgs.remove();
+                        removeObsPropertyByTemplate(arg.getName(), arg.getValues());
+                    }
+                }
+                i.remove();
+                removeObsPropertyByTemplate(op.getName(), op.getValues());
+            }
+        }
+    }
+
     protected boolean isObsPropEqualsGoal(Literal g, ObsProperty op) {
         if (!g.getFunctor().equals(op.getName()))
             return false;
@@ -635,6 +718,8 @@ public class SchemeBoard extends OrgArt {
     protected static final Atom aWaiting   = new Atom("waiting");
     protected static final Atom aEnabled   = new Atom("enabled");
     protected static final Atom aSatisfied = new Atom("satisfied");
+    protected static final Atom aFault = new Atom("fault");
+    protected static final Atom aReleased = new Atom("released");
 
     List<Literal> getGoalStates() {
         List<Literal> all = new ArrayList<>();
@@ -665,6 +750,12 @@ public class SchemeBoard extends OrgArt {
             Atom aState = aWaiting;
             if (nengine.holds(new NPLLiteral(ASSyntax.createLiteral("satisfied", tSch, aGoal), orgState))) {
                 aState = aSatisfied;
+            } else if (isWellFormed()
+                    && nengine.holds(new NPLLiteral(ASSyntax.createLiteral("fault", tSch, aGoal), orgState))) {
+                aState = aFault;
+            } else if (isWellFormed()
+                    && nengine.holds(new NPLLiteral(ASSyntax.createLiteral("released", tSch, aGoal), orgState))) {
+                aState = aReleased;
             } else if (isWellFormed() &&
                 nengine.holds(ASSyntax.createLiteral("enabled", tSch, aGoal))) {
                 aState = aEnabled;
@@ -817,7 +908,7 @@ public class SchemeBoard extends OrgArt {
 
         // goals
         so.append( os2dot.transform( spec.getRoot(), 0, this));
-        
+
         // missions
         if (addMissionsInDot()) {
             for (Mission m: spec.getMissions()) {
