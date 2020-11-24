@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><organisational-specification xmlns="http://moise.sourceforge.net/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="autoId_188" os-version="0.7" xsi:schemaLocation="http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd">
+<structural-specification>
+<role-definitions>
+<role id="r1">
+<extends role="soc"/>
+</role>
+</role-definitions>
+<link-types>
+<link-type id="authority"/>
+<link-type id="acquaintance"/>
+<link-type id="communication"/>
+</link-types>
+<group-specification id="r">
+<subgroups>
+<group-specification id="g1">
+<roles>
+<role id="r1"/>
+</roles>
+<formation-constraints/>
+</group-specification>
+</subgroups>
+<formation-constraints/>
+</group-specification>
+</structural-specification>
+<functional-specification>
+<scheme id="st">
+<goal id="job_delivered" type="performance">
+<plan operator="parallel">
+<goal id="assist" type="performance">
+<plan operator="sequence">
+<goal id="go_to_buy" type="performance"/>
+<goal id="buy_items" type="performance">
+<argument id="Item"/>
+</goal>
+<goal id="go_to_workshop" type="performance"/>
+<goal id="assist_assemble" type="performance"/>
+</plan>
+</goal>
+<goal id="assemble" type="performance">
+<plan operator="sequence">
+<goal id="go_to_workshop" type="performance"/>
+<goal id="do_assemble" type="performance"/>
+<goal id="stop" type="performance"/>
+<goal id="deliver" type="performance"/>
+</plan>
+</goal>
+</plan>
+</goal>
+<mission id="mag1">
+<goal id="stop"/>
+<goal id="go_to_workshop"/>
+<goal id="go_to_buy"/>
+</mission>
+<mission id="mag2">
+<goal id="do_assemble"/>
+<goal id="buy_items"/>
+</mission>
+</scheme>
+</functional-specification>
+<normative-specification>
+<properties>
+<property id="mission_permission" value="ignore"/>
+</properties>
+</normative-specification>
+</organisational-specification>

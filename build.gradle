@@ -1,5 +1,5 @@
 /*
-   Moise Gradle file
+   Moise Exceptions Gradle file
 
 */
 
@@ -10,8 +10,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
-version '1.0'
-group   'org.jacamo'
+version '0.1'
+group   'it.unito.di'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     compile group: 'org.jason-lang', name: 'jason',    version: '2.5.2', changing: false
-    compile group: 'org.jacamo',     name: 'npl' ,     version: '0.5', changing: true
+    compile group: 'org.jacamo',     name: 'npl' ,     version: '0.5', changing: true, transitive: false
     compile group: 'org.jacamo',     name: 'cartago',  version: '3.0', changing: true
     compile group: 'org.jacamo',     name: 'jaca',     version: '3.0', changing: true
 
@@ -38,10 +38,13 @@ dependencies {
     compile group: 'guru.nidi', name: 'graphviz-java', version: '0.7.0'
 
     //umljavadoc 'org.umlgraph:umlgraph:5.6'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
+
 }
 
 jar {
-    baseName 'moise'
+    baseName 'moise-exceptions'
 }
 
 clean {
@@ -82,7 +85,7 @@ task javadocJar (type: Jar, dependsOn: javadoc) {
 }
 
 task sourceJar (type : Jar) {
-    baseName 'moise'
+    baseName 'moise-exceptions'
     classifier = 'sources'
     from sourceSets.main.allSource
 }
@@ -94,7 +97,7 @@ publishing {
             from components.java
             artifact sourceJar
             artifact javadocJar
-            artifactId 'moise'
+            artifactId 'moise-exceptions'
         }
     }
 }

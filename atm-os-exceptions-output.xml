@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><organisational-specification xmlns="http://moise.sourceforge.net/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="atm_exceptions" os-version="0.7" xsi:schemaLocation="http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd">
+    <structural-specification>
+        <role-definitions>
+            <role id="moneyKeeper">
+                <extends role="soc"/>
+            </role>
+            <role id="requestHandler">
+                <extends role="soc"/>
+            </role>
+            <role id="parser">
+                <extends role="soc"/>
+            </role>
+            <role id="reader">
+                <extends role="soc"/>
+            </role>
+            <role id="atmHandler">
+                <extends role="soc"/>
+            </role>
+        </role-definitions>
+        <link-types>
+            <link-type id="authority"/>
+            <link-type id="acquaintance"/>
+            <link-type id="communication"/>
+        </link-types>
+        <group-specification id="atm_group">
+            <roles>
+                <role id="moneyKeeper"/>
+                <role id="requestHandler"/>
+                <role id="parser"/>
+                <role id="reader"/>
+                <role id="atmHandler"/>
+            </roles>
+            <formation-constraints>
+                <cardinality id="moneyKeeper" max="1" min="1" object="role"/>
+                <cardinality id="requestHandler" max="1" min="1" object="role"/>
+                <cardinality id="parser" max="1" min="1" object="role"/>
+                <cardinality id="reader" max="1" min="1" object="role"/>
+                <cardinality id="atmHandler" max="1" min="1" object="role"/>
+            </formation-constraints>
+        </group-specification>
+    </structural-specification>
+    <functional-specification>
+        <scheme id="atm_sch">
+            <goal id="withdraw" type="performance">
+                <plan operator="sequence">
+                    <goal id="obtainAmount" type="performance">
+                        <plan operator="sequence">
+                            <goal id="getAmountAsString" type="performance"/>
+                            <goal id="parseAmount" type="performance"/>
+                        </plan>
+                    </goal>
+                    <goal id="provideMoney" type="performance"/>
+                </plan>
+            </goal>
+            <recovery-strategy id="rec1">
+                <exception id="nan">
+                    <properties>
+                        <property id="type" value="goal-fault"/>
+                        <property id="target" value="parseAmount"/>
+                    </properties>
+                    <goal id="throwNan" min="2" ttf="10 sec" type="performance"/>
+                </exception>
+                <handler id="handler_nan">
+                    <goal id="recoverFromNan" type="performance"/>
+                </handler>
+            </recovery-strategy>
+            <recovery-strategy id="rec2">
+                <exception id="amountUnavailable">
+                    <properties>
+                        <property id="type" value="goal-fault"/>
+                        <property id="target" value="recoverFromNan"/>
+                    </properties>
+                    <goal id="throwAmountUnavailable" type="performance"/>
+                </exception>
+                <handler id="handler_au">
+                    <goal id="retryLater" type="performance"/>
+                </handler>
+            </recovery-strategy>
+            <mission id="mWithdraw" max="1" min="1">
+                <goal id="retryLater"/>
+                <goal id="withdraw"/>
+            </mission>
+            <mission id="mThrowNan" max="2" min="2">
+                <goal id="throwNan"/>
+            </mission>
+            <mission id="mProvideMoney" max="1" min="1">
+                <goal id="provideMoney"/>
+            </mission>
+            <mission id="mObtainAmount" max="1" min="1">
+                <goal id="recoverFromNan"/>
+                <goal id="throwAmountUnavailable"/>
+                <goal id="obtainAmount"/>
+            </mission>
+            <mission id="mParseAmount" max="1" min="1">
+                <goal id="parseAmount"/>
+            </mission>
+            <mission id="mGetAmountAsString" max="1" min="1">
+                <goal id="getAmountAsString"/>
+            </mission>
+        </scheme>
+    </functional-specification>
+    <normative-specification>
+        <norm id="n1" mission="mWithdraw" role="atmHandler" type="obligation"/>
+        <norm id="n2" mission="mObtainAmount" role="requestHandler" type="obligation"/>
+        <norm id="n3" mission="mGetAmountAsString" role="reader" type="obligation"/>
+        <norm id="n4" mission="mParseAmount" role="parser" type="obligation"/>
+        <norm id="n5" mission="mProvideMoney" role="moneyKeeper" type="obligation"/>
+    </normative-specification>
+</organisational-specification>
