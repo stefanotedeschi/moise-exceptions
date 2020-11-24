@@ -110,6 +110,7 @@ public class SchemeBoard extends OrgArt {
     }
 
     protected Logger logger = Logger.getLogger(SchemeBoard.class.getName());
+    @Override protected Logger getLogger() {	return logger;   }
 
     public Scheme getSchState() {
         return (Scheme)orgState;
@@ -178,17 +179,22 @@ public class SchemeBoard extends OrgArt {
     }
 
 
-    @OPERATION public void debug(String kind) throws Exception {
-    	super.debug(kind, "Scheme Board", true);
-    	if (gui != null) {
-            gui.setSpecification(specToStr(spec.getFS().getOS(), DOMUtils.getTransformerFactory().newTransformer(DOMUtils.getXSL("fsns"))));
-        }
+    @OPERATION public void debug(String kind) {
+    	try {
+	    	super.debug(kind, "Scheme Board", true);
+	    	if (gui != null) {
+	            gui.setSpecification(specToStr(spec.getFS().getOS(), DOMUtils.getTransformerFactory().newTransformer(DOMUtils.getXSL("fsns"))));
+	        }
+    	} catch (Exception e) {
+    		//e.printStackTrace();
+    	}
     }
 
     /**
      * The agent executing this operation tries to delete the scheme board artifact
      */
     @OPERATION @LINK public void destroy() {
+    	runningDestroy = true;
     	schBoards.remove(this);
         orgState.clearPlayers();
         for (Group g: getSchState().getGroupsResponsibleFor()) {
