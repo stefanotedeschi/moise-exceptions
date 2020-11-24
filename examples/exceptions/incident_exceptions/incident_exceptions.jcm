@@ -1,0 +1,74 @@
+/*
+    incident
+    ---------------------------
+
+    JaCaMo Project File
+
+    This file defines the initial state of the MAS (initial agents, environment, organisation, ....)
+
+    (see jacamo/doc/jcm.html for more information about what can be defined in this file)
+
+    JaCaMo <VERSION>
+    <DATE>
+*/
+
+mas incident_exceptions {
+
+	agent ag1 {
+		beliefs: description(hard_problem)
+				 //description(easy_problem)
+		roles: customer in g1
+	}
+
+    agent ag2 {
+    	roles: key_account_manager in g1
+    }
+    agent ag3 {
+    	roles: key_account_worker1 in g1
+    }
+	agent ag4 {
+    	roles: key_account_worker2 in g1, first_level_manager in g2
+    }
+    agent ag5 {
+    	roles: key_account_worker3 in g1
+    }
+    agent ag6 {
+    	roles: key_account_worker4 in g1
+    }
+
+    agent ag7 {
+    	beliefs: result(unsolved)
+    	roles: first_level_worker1 in g2
+    }
+	agent ag8 {
+    	roles: first_level_worker2 in g2, developer_manager in g3
+    }
+    agent ag9 {
+    	roles: first_level_worker3 in g2
+    }
+    agent ag10 {
+    	roles: first_level_worker4 in g2
+    }
+
+
+    agent ag11 {
+    	roles: developer_worker1 in g3
+    }
+	agent ag12 {
+    	roles: developer_worker2 in g3
+    }
+
+
+	organisation o1 : incident-exceptions.xml {
+		group g1 : key_account_management_group {
+			debug
+		}
+		group g2 : first_level_support_group {
+			debug
+		}
+		group g3 : developer_group {
+			debug
+		}
+	}
+
+}
