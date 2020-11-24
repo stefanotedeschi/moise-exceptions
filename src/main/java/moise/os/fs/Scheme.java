@@ -1,5 +1,7 @@
 package moise.os.fs;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,11 +14,19 @@ import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+
 import moise.common.MoiseConsistencyException;
 import moise.common.MoiseElement;
 import moise.common.MoiseException;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
+import moise.os.fs.exceptions.Exception;
+import moise.os.fs.exceptions.ExceptionType;
+import moise.os.fs.exceptions.RecoveryStrategy;
 import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
@@ -39,6 +49,8 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     protected Goal                     root     = null;
     //protected String                   monitoring  = null;
     protected FS                       fs       = null;
+
+    protected Map<String, RecoveryStrategy> recoveryStrategies = new HashMap<>();
 
     public Scheme(String id, FS fs) {
         super(id);
@@ -154,7 +166,7 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         return goals.get(id);
     }
 
-    /** 
+    /**
      * returns the missions where goal g is
      */
     public Set<String> getGoalMissionsId(Goal g) {
@@ -164,6 +176,28 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
                 ms.add(m.getId());
         return ms;
     }
+
+    //
+    // Recovery strategies methods
+    //
+    public void addRecoveryStrategy(RecoveryStrategy rs) {
+        recoveryStrategies.put(rs.getId(), rs);
+    }
+
+    public Collection<RecoveryStrategy> getRecoveryStrategies() {
+        return recoveryStrategies.values();
+    }
+
+    public Exception getException(String id) throws MoiseException {
+        for (RecoveryStrategy rs : recoveryStrategies.values()) {
+            Exception ex = rs.getException();
+            if (ex.getId().equals(id)) {
+                return ex;
+            }
+        }
+        throw new MoiseException("Exception " + id + " undefined in scheme " + this.getId());
+    }
+
 
     /** returns a string representing the goal in Prolog syntax, format:
      *     scheme_specification(id, goals tree starting by root goal, missions, properties)
@@ -208,6 +242,11 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         // goals
         ele.appendChild(getRoot().getAsDOM(document));
 
+        // recovery strategies
+        for (RecoveryStrategy rs : getRecoveryStrategies()) {
+            ele.appendChild(rs.getAsDOM(document));
+        }
+
         // missions
         for (Mission m: getMissions()) {
             ele.appendChild(m.getAsDOM(document));
@@ -229,6 +268,19 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         rootG.setFromDOM(grEle, this);
         addGoal(rootG);
         setRoot(rootG);
+
+        // get exception types from configuration file
+        InputStream is = getClass().getResourceAsStream("/json/exceptions-conf.json");
+        JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
+        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
+        ExceptionType[] exceptionTypes = gson.fromJson(reader, ExceptionType[].class);
+
+        // recovery strategies
+        for (Element rsEle : DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {
+            RecoveryStrategy rs = new RecoveryStrategy(rsEle.getAttribute("id"), this);
+            rs.setFromDOM(rsEle, exceptionTypes);
+            addRecoveryStrategy(rs);
+        }
 
         // missions
         for (Element mEle: DOMUtils.getDOMDirectChilds(ele, Mission.getXMLTag())) {

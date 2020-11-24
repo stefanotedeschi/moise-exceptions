@@ -10,6 +10,7 @@ import jason.asSyntax.ASSyntax;
 import jason.asSyntax.LogicalFormula;
 import jason.asSyntax.parser.ParseException;
 import moise.common.MoiseException;
+import moise.os.fs.Scheme;
 import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
