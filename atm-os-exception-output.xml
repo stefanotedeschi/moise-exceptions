@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><organisational-specification xmlns="http://moise.sourceforge.net/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="atm_exceptions" os-version="0.7" xsi:schemaLocation="http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd">
+<?xml version="1.0" encoding="UTF-8"?><organisational-specification xmlns="http://moise.sourceforge.net/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="atm_exceptions" os-version="1.0" xsi:schemaLocation="http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd">
     <structural-specification>
         <role-definitions>
             <role id="moneyKeeper">
@@ -53,28 +53,33 @@
                 </plan>
             </goal>
             <recovery-strategy id="rec1">
-                <exception id="nan">
+                <notification-policy condition="(scheme_id(S) &amp; fault(S,parseAmount))" id="np1">
                     <properties>
                         <property id="type" value="goal-fault"/>
                         <property id="target" value="parseAmount"/>
                     </properties>
-                    <goal id="throwNan" min="2" ttf="10 sec" type="performance"/>
-                </exception>
-                <handler id="handler_nan">
+                    <exception id="nan"/>
+                    <goal id="throwNan" type="performance"/>
+                </notification-policy>
+                <handling-policy condition="(scheme_id(S) &amp; fault(S,parseAmount))" id="hp1">
+                    <properties>
+                        <property id="applicability" value="always"/>
+                    </properties>
                     <goal id="recoverFromNan" type="performance"/>
-                </handler>
+                </handling-policy>
             </recovery-strategy>
             <recovery-strategy id="rec2">
-                <exception id="amountUnavailable">
+                <notification-policy condition="(scheme_id(S) &amp; fault(S,parseAmount))" id="np2">
                     <properties>
                         <property id="type" value="goal-fault"/>
                         <property id="target" value="recoverFromNan"/>
                     </properties>
+                    <exception id="amountUnavailable"/>
                     <goal id="throwAmountUnavailable" type="performance"/>
-                </exception>
-                <handler id="handler_au">
+                </notification-policy>
+                <handling-policy condition="(scheme_id(S) &amp; fault(S,parseAmount))" id="hp2">
                     <goal id="retryLater" type="performance"/>
-                </handler>
+                </handling-policy>
             </recovery-strategy>
             <mission id="mWithdraw" max="1" min="1">
                 <goal id="retryLater"/>

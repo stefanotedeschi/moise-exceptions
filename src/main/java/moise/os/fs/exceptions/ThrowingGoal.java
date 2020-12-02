@@ -8,7 +8,6 @@ public class ThrowingGoal extends Goal {
 	
 	public ThrowingGoal(String goal) {
 		super(goal);
-		// TODO Auto-generated constructor stub
 	}
 
 	public NotificationPolicy getInNotificationPolicy() {

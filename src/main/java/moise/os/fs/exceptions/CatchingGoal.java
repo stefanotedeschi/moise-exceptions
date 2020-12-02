@@ -8,7 +8,6 @@ public class CatchingGoal extends Goal {
 	
 	public CatchingGoal(String goal) {
 		super(goal);
-		// TODO Auto-generated constructor stub
 	}
 
     public HandlingPolicy getInHandlingPolicy() {

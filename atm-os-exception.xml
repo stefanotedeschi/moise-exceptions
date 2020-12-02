@@ -50,7 +50,7 @@
 
             <recovery-strategy id="rec1">
 
-                <notification-policy> <!-- probabilmente potrebbe essere necessario assegnare un id anche alle policy -->
+                <notification-policy id="np1" condition="scheme_id(S) &amp; fault(S,parseAmount)">
 
                     <!-- CONDITION -->
                     <properties>
@@ -66,7 +66,7 @@
 
                 </notification-policy>
 
-                <handling-policy>
+                <handling-policy id="hp1" condition="true">
 
                     <!-- CONDITION -->
                     <properties>
@@ -82,7 +82,7 @@
 
             <recovery-strategy id="rec2">
 
-                <notification-policy>
+                <notification-policy id="np2" condition="scheme_id(S) &amp; fault(S,parseAmount)">
 
                     <properties>
                     	<property id="type" value="goal-fault" />
@@ -95,7 +95,7 @@
 
                 </notification-policy>
 
-                <handling-policy id="handler_au">
+                <handling-policy id="hp2" condition="true">
                     <goal id="retryLater" />
                 </handling-policy>
 

@@ -18,7 +18,7 @@ import moise.xml.ToXML;
 public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML, ToProlog {
     
     private String id;
-    private Exception exception = null;
+    private NotificationPolicy notificationPolicy;
     private Set<HandlingPolicy> handlingPolicies = new HashSet<>();
     
     protected Scheme sch = null;
@@ -43,11 +43,11 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        if(exception != null) {
-            ele.appendChild(exception.getAsDOM(document));
+        if(notificationPolicy != null) {
+            ele.appendChild(notificationPolicy.getAsDOM(document));
         }
-        for(HandlingPolicy h : handlingPolicies) {
-            ele.appendChild(h.getAsDOM(document));
+        for(HandlingPolicy hp : handlingPolicies) {
+            ele.appendChild(hp.getAsDOM(document));
         }
         return ele;
     }
@@ -56,23 +56,27 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
         
         setPropertiesFromDOM(ele);
         
-        Element exEle = DOMUtils.getDOMDirectChild(ele, Exception.getXMLTag());
-        String id = exEle.getAttribute("id");
-        //LogicalFormula condition;
-        //try {
-        //    condition = ASSyntax.parseFormula(exEle.getAttribute("when"));
-        //} catch (ParseException e) {
-        //    throw new MoiseException(e.getMessage());
-        //}
-        //exception = new Exception(id, condition, this, sch);
-        exception = new Exception(id, this, sch);
-        exception.setFromDOM(exEle, et);
+        Element npEle = DOMUtils.getDOMDirectChild(ele, NotificationPolicy.getXMLTag());
+        String id = npEle.getAttribute("id");
+        LogicalFormula condition;
+        try {
+            condition = ASSyntax.parseFormula(npEle.getAttribute("condition"));
+        } catch (ParseException e) {
+            throw new MoiseException(e.getMessage());
+        }
+        notificationPolicy = new NotificationPolicy(id, condition, this, sch);
+        notificationPolicy.setFromDOM(npEle);
         
-        for (Element hEle: DOMUtils.getDOMDirectChilds(ele, HandlingPolicy.getXMLTag())) {
-            id = hEle.getAttribute("id");
-            HandlingPolicy h = new HandlingPolicy(id, this, sch);
-            h.setFromDOM(hEle);
-            handlingPolicies.add(h);
+        for (Element hpEle: DOMUtils.getDOMDirectChilds(ele, HandlingPolicy.getXMLTag())) {
+            id = hpEle.getAttribute("id");
+            try {
+                condition = ASSyntax.parseFormula(npEle.getAttribute("condition"));
+            } catch (ParseException e) {
+                throw new MoiseException(e.getMessage());
+            }
+            HandlingPolicy hp = new HandlingPolicy(id, condition, this, sch);
+            hp.setFromDOM(hpEle);
+            handlingPolicies.add(hp);
         }
         
         
@@ -80,10 +84,6 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
 
     public String getId() {
         return id;
-    }
-
-    public Exception getException() {
-        return exception;
     }
 
     public Set<HandlingPolicy> getHandlingPolicies() {
@@ -94,12 +94,13 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
         this.id = id;
     }
 
-    public void setException(Exception exception) {
-        this.exception = exception;
-    }
-
     public void setHandlingPolicies(Set<HandlingPolicy> handlingPolicies) {
         this.handlingPolicies = handlingPolicies;
     }
+
+	public Exception getException() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

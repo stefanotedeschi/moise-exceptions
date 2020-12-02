@@ -3,6 +3,7 @@ package moise.os.fs.exceptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import jason.asSyntax.LogicalFormula;
 import moise.common.MoiseException;
 import moise.os.fs.Goal;
 import moise.os.fs.Scheme;
@@ -13,15 +14,15 @@ import moise.xml.ToXML;
 public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, ToProlog  {
 
     private String id;
+    private LogicalFormula condition;
+    private RecoveryStrategy inStrategy;
     private Goal goal;
-    
-    RecoveryStrategy inStrategy;
-    
     private Scheme sch;
     
-    public HandlingPolicy(String id, RecoveryStrategy rs, Scheme sch) {
+    public HandlingPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
         super();
         this.id = id;
+        this.condition = condition;
         inStrategy = rs;
         this.sch = sch;
     }
@@ -29,20 +30,36 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
     public String getId() {
         return id;
     }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Goal getGoal() {
         return goal;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public void setGoal(Goal goal) {
         this.goal = goal;
     }
     
-    public void setFromDOM(Element ele) throws MoiseException {
+    public LogicalFormula getCondition() {
+		return condition;
+	}
+
+	public RecoveryStrategy getInStrategy() {
+		return inStrategy;
+	}
+
+	public void setCondition(LogicalFormula condition) {
+		this.condition = condition;
+	}
+
+	public void setInStrategy(RecoveryStrategy inStrategy) {
+		this.inStrategy = inStrategy;
+	}
+
+	public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
@@ -55,6 +72,7 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
+        ele.setAttribute("condition", condition.toString());
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
         }
@@ -65,7 +83,7 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
     }
     
     public static String getXMLTag() {
-        return "handler";
+        return "handling-policy";
     }
     
     @Override
