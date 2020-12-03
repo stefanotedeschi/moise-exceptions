@@ -1,5 +1,6 @@
 package ora4mas.nopl.tools;
 
+import java.security.interfaces.RSAKey;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,9 @@ import moise.os.OS;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
+import moise.os.fs.exceptions.Exception;
+import moise.os.fs.exceptions.HandlingPolicy;
+import moise.os.fs.exceptions.RecoveryStrategy;
 import moise.os.fs.Scheme;
 import moise.os.ns.NS;
 import moise.os.ns.NS.OpTypes;
@@ -43,13 +47,17 @@ public class os2nopl {
     public static final String PROP_AchNotEnabledGoal     = "ach_not_enabled_goal";
     public static final String PROP_AchNotCommGoal        = "ach_not_committed_goal";
 
+    public static final String PROP_ExcAgNotAllowed = "exc_agent_not_allowed";
+    public static final String PROP_ExcCondNotHolding = "exc_condition_not_holding";
+    public static final String PROP_AchThGoalExcNotThrown = "ach_th_goal_exc_not_thrown";
+
     //public static final String PROP_NotCompGoal           = "goal_non_compliance";
 
     // properties for groups
     public static final String[] NOP_GR_PROPS  = new String[] { PROP_RoleInGroup, PROP_RoleCardinality, PROP_RoleCompatibility, PROP_WellFormedResponsible, PROP_SubgroupInGroup, PROP_SubgroupCardinality};
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { //PROP_NotCompGoal,
-            PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission, PROP_MissionCardinality };
+            PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission, PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThGoalExcNotThrown };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {  };
 
@@ -71,6 +79,12 @@ public class os2nopl {
         condCode.put(PROP_MissionCardinality,    "scheme_id(S) & mission_cardinality(M,_,MMax) & mplayers(M,S,MP) & MP > MMax");
         condCode.put(PROP_AchNotEnabledGoal,     "done(S,G,Agt) & mission_goal(M,G) & not mission_accomplished(S,M) & not enabled(S,G)");
         condCode.put(PROP_AchNotCommGoal,        "done(S,G,Agt) & .findall(M, mission_goal(M,G) & (committed(Agt,M,S) | mission_accomplished(S,M)), [])");
+        condCode.put(PROP_ExcAgNotAllowed,
+                "thrown(S,E,Ag) & exception(E,_) & mission_goal(M,G) & exception_goal(E,G) & not committed(Ag,M,S)");
+        condCode.put(PROP_ExcCondNotHolding,
+                "thrown(S,E,Ag) & exception(E,Condition) & mission_goal(M,G) & exception_goal(E,G) & committed(Ag,M,S) & not Condition");
+        condCode.put(PROP_AchThGoalExcNotThrown,
+                "done(S,G,Ag) & exception_goal(E,G) & not super_goal(SG,G) & not thrown(S,E,_)");
         //condCode.put(PROP_NotCompGoal,           "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF) & not Obj & `now` > TTF");
     }
     // arguments that 'explains' the property
@@ -89,6 +103,11 @@ public class os2nopl {
         argsCode.put(PROP_MissionCardinality,    "M,S,MP,MMax");
         argsCode.put(PROP_AchNotEnabledGoal,     "S,G,Agt");
         argsCode.put(PROP_AchNotCommGoal,        "S,G,Agt");
+        
+        argsCode.put(PROP_ExcAgNotAllowed, "S,E,Ag");
+        argsCode.put(PROP_ExcCondNotHolding, "S,E,Ag,Condition");
+        argsCode.put(PROP_AchThGoalExcNotThrown, "S,G,E,Ag");
+        
         //argsCode.put(PROP_NotCompGoal   ,        "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF)");
     }
 
@@ -252,7 +271,7 @@ public class os2nopl {
         for (Goal g: sch.getGoals()) {
             try {
                 superGoal.append("   super_goal("+g.getInPlan().getTargetGoal().getId()+", "+g.getId()+").\n");
-            } catch (Exception e) {}
+            } catch (java.lang.Exception e) {}
 
             StringBuilder smis = new StringBuilder("[");
             String com = "";
@@ -281,6 +300,45 @@ public class os2nopl {
             np.append(".\n");
         }
         np.append(superGoal.toString());
+        
+        String recoveryStrategy = "\n   // recovery_strategy(id)\n";
+        String exception = "\n   // exception(exception id, condition)\n";
+        String handler = "\n   // handler(handler id)\n";
+        String strategyException = "\n   // strategy_exception(strategy id, exception id)\n";
+        String exceptionGoal = "\n   // exception_goal(exception id, goal id)\n";
+        String strategyHandler = "\n   // strategy_handler(strategy id, handler id)\n";
+        String handlerGoal = "\n   // handler_goal(handler id, goal id)\n";
+
+        for (RecoveryStrategy rs : sch.getRecoveryStrategies()) {
+            recoveryStrategy += "   recovery_strategy(" + rs.getId() + ").\n";
+            Exception ex = rs.getException();
+            if(ex != null) {
+                exception += "   exception("+ex.getId()+","+ex.getCondition()+").\n";
+                strategyException += "   strategy_exception("+rs.getId()+","+ex.getId()+").\n";
+                if(ex.getGoal() != null) {
+                      exceptionGoal += "   exception_goal("+ex.getId()+","+ex.getGoal().getId()+").\n";
+                      for(Goal sg : ex.getGoal().getSubGoals()) {
+                          exceptionGoal += "   exception_goal("+ex.getId()+","+sg.getId()+").\n";
+                      }
+                  }
+            }
+            for(HandlingPolicy h : rs.getHandlingPolicies()) {
+                handler += "   handler("+h.getId()+").\n";
+                  strategyHandler += "   strategy_handler("+rs.getId()+","+h.getId()+").\n";
+                  if(h.getGoal() != null) {
+                      handlerGoal += "   handler_goal("+h.getId()+","+h.getGoal().getId()+").\n";
+                  }
+            }
+            
+        }
+        
+        np.append(recoveryStrategy);
+        np.append(exception);
+        np.append(strategyException);
+        np.append(exceptionGoal);
+        np.append(handler);
+        np.append(strategyHandler);
+        np.append(handlerGoal);
 
         np.append("\n   // ** Rules\n");
 
