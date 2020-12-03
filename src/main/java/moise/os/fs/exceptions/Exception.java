@@ -28,17 +28,9 @@ public class Exception extends moise.common.MoiseElement implements ToXML, ToPro
     public String getId() {
         return id;
     }
-    
-    public void setId(String id) {
-        this.id = id;
-    }
-    
+
     public NotificationPolicy getInPolicy() {
         return inPolicy;
-    }
-
-    public void setInPolicy(NotificationPolicy inPolicy) {
-        this.inPolicy = inPolicy;
     }
     
     public static String getXMLTag() {

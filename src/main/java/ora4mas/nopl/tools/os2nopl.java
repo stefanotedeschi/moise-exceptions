@@ -1,6 +1,5 @@
 package ora4mas.nopl.tools;
 
-import java.security.interfaces.RSAKey;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +17,7 @@ import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
 import moise.os.fs.exceptions.Exception;
 import moise.os.fs.exceptions.HandlingPolicy;
+import moise.os.fs.exceptions.NotificationPolicy;
 import moise.os.fs.exceptions.RecoveryStrategy;
 import moise.os.fs.Scheme;
 import moise.os.ns.NS;
@@ -302,43 +302,50 @@ public class os2nopl {
         np.append(superGoal.toString());
         
         String recoveryStrategy = "\n   // recovery_strategy(id)\n";
-        String exception = "\n   // exception(exception id, condition)\n";
-        String handler = "\n   // handler(handler id)\n";
-        String strategyException = "\n   // strategy_exception(strategy id, exception id)\n";
-        String exceptionGoal = "\n   // exception_goal(exception id, goal id)\n";
-        String strategyHandler = "\n   // strategy_handler(strategy id, handler id)\n";
-        String handlerGoal = "\n   // handler_goal(handler id, goal id)\n";
+        String notificationPolicy = "\n   // notification_policy(policy id, condition)\n";
+        String handlingPolicy = "\n   // handling_policy(policy id, condition)\n";
+        String exception = "\n   // exception(exception id)\n";
+        String strategyPolicy = "\n   // strategy_policy(strategy id, policy id)\n";
+        String policyGoal = "\n   // policy_goal(policy id, goal id)\n";
+        String policyException = "\n   // policy_exception(policy id, exception id)\n";
 
         for (RecoveryStrategy rs : sch.getRecoveryStrategies()) {
             recoveryStrategy += "   recovery_strategy(" + rs.getId() + ").\n";
-            Exception ex = rs.getException();
-            if(ex != null) {
-                exception += "   exception("+ex.getId()+","+ex.getCondition()+").\n";
-                strategyException += "   strategy_exception("+rs.getId()+","+ex.getId()+").\n";
-                if(ex.getGoal() != null) {
-                      exceptionGoal += "   exception_goal("+ex.getId()+","+ex.getGoal().getId()+").\n";
-                      for(Goal sg : ex.getGoal().getSubGoals()) {
-                          exceptionGoal += "   exception_goal("+ex.getId()+","+sg.getId()+").\n";
+            NotificationPolicy npol = rs.getNotificationPolicy();
+            if(npol != null) {
+                notificationPolicy += "   notification_policy("+npol.getId()+","+npol.getCondition()+").\n";
+                strategyPolicy += "   strategy_policy("+rs.getId()+","+npol.getId()+").\n";
+                if(npol.getException() != null) {
+                    exception += "   exception("+npol.getException().getId()+").\n";
+                    policyException += "   policy_exception("+npol.getId()+","+npol.getException().getId()+").\n";
+                }
+                if(npol.getGoal() != null) {
+                      policyGoal += "   policy_goal("+npol.getId()+","+npol.getGoal().getId()+").\n";
+                      for(Goal sg : npol.getGoal().getSubGoals()) {
+                          policyGoal += "   policy_goal("+npol.getId()+","+sg.getId()+").\n";
                       }
-                  }
+                }
             }
-            for(HandlingPolicy h : rs.getHandlingPolicies()) {
-                handler += "   handler("+h.getId()+").\n";
-                  strategyHandler += "   strategy_handler("+rs.getId()+","+h.getId()+").\n";
-                  if(h.getGoal() != null) {
-                      handlerGoal += "   handler_goal("+h.getId()+","+h.getGoal().getId()+").\n";
+            for(HandlingPolicy hp : rs.getHandlingPolicies()) {
+                handlingPolicy += "   handlingPolicy("+hp.getId()+","+hp.getCondition()+").\n";
+                  strategyPolicy += "   strategy_policy("+rs.getId()+","+hp.getId()+").\n";
+                  if(hp.getGoal() != null) {
+                      policyGoal += "   policy_goal("+hp.getId()+","+hp.getGoal().getId()+").\n";
+                      for(Goal sg : hp.getGoal().getSubGoals()) {
+                          policyGoal += "   policy_goal("+hp.getId()+","+sg.getId()+").\n";
+                      }
                   }
             }
             
         }
         
         np.append(recoveryStrategy);
+        np.append(notificationPolicy);
+        np.append(handlingPolicy);
+        np.append(strategyPolicy);
         np.append(exception);
-        np.append(strategyException);
-        np.append(exceptionGoal);
-        np.append(handler);
-        np.append(strategyHandler);
-        np.append(handlerGoal);
+        np.append(policyException);
+        np.append(policyGoal);
 
         np.append("\n   // ** Rules\n");
 
@@ -361,9 +368,16 @@ public class os2nopl {
         np.append("   any_satisfied(S,[G|_]) :- satisfied(S,G).\n");
         np.append("   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).\n\n");
 
+        np.append("   all_released(_,[]).\n");
+        np.append("   all_released(S,[G|T]) :- released(S,G) & all_released(S,T).\n");
+        np.append("   all_satisfied_released(_,[]).\n");
+        np.append("   all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).\n");
+        
         np.append("   // enabled goals (i.e. dependence between goals)\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & NP \\== 0 & all_satisfied(S,PCG).\n");
+        //np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
+        //np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & NP \\== 0 & all_satisfied(S,PCG).\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
 
         np.append("   super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).\n");
 

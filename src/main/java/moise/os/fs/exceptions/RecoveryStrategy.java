@@ -52,7 +52,7 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
         return ele;
     }
     
-    public void setFromDOM(Element ele, ExceptionType[] et) throws MoiseException {
+    public void setFromDOM(Element ele) throws MoiseException {
         
         setPropertiesFromDOM(ele);
         
@@ -79,28 +79,18 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
             handlingPolicies.add(hp);
         }
         
-        
     }
 
     public String getId() {
         return id;
     }
 
-    public Set<HandlingPolicy> getHandlingPolicies() {
+    public NotificationPolicy getNotificationPolicy() {
+		return notificationPolicy;
+	}
+
+	public Set<HandlingPolicy> getHandlingPolicies() {
         return handlingPolicies;
     }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setHandlingPolicies(Set<HandlingPolicy> handlingPolicies) {
-        this.handlingPolicies = handlingPolicies;
-    }
-
-	public Exception getException() {
-		// TODO Auto-generated method stub
-		return null;
-	}
     
 }

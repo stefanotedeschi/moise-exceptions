@@ -6,16 +6,13 @@ public class CatchingGoal extends Goal {
 
 	private HandlingPolicy inHandlingPolicy;
 	
-	public CatchingGoal(String goal) {
+	public CatchingGoal(String goal, HandlingPolicy inHandlingPolicy) {
 		super(goal);
+		this.inHandlingPolicy = inHandlingPolicy;
 	}
 
     public HandlingPolicy getInHandlingPolicy() {
         return inHandlingPolicy;
-    }
-
-    public void setInHandlingPolicy(HandlingPolicy inHandlingPolicy) {
-        this.inHandlingPolicy = inHandlingPolicy;
     }
 
 }

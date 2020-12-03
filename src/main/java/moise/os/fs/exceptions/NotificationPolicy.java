@@ -17,7 +17,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
     private LogicalFormula condition;
     private Exception exception;
     private RecoveryStrategy inStrategy;
-    private Goal goal;
+    private ThrowingGoal goal;
     private Scheme sch;
     
     public NotificationPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
@@ -32,39 +32,27 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         return id;
     }
     
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Goal getGoal() {
-        return goal;
-    }
-
-    public void setGoal(Goal goal) {
-        this.goal = goal;
-    }
-    
     public LogicalFormula getCondition() {
 		return condition;
+	}
+    
+    public Exception getException() {
+		return exception;
 	}
 
 	public RecoveryStrategy getInStrategy() {
 		return inStrategy;
 	}
-
-	public void setCondition(LogicalFormula condition) {
-		this.condition = condition;
-	}
-
-	public void setInStrategy(RecoveryStrategy inStrategy) {
-		this.inStrategy = inStrategy;
+	
+	public ThrowingGoal getGoal() {
+		return goal;
 	}
 
 	public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
-            goal = new Goal(gEle.getAttribute("id"));
+            goal = new ThrowingGoal(gEle.getAttribute("id"), this);
             goal.setFromDOM(gEle, sch);
             sch.addGoal(goal);
         }
@@ -74,8 +62,8 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
             exception.setFromDOM(exEle);
         }
     }
-    
-    public Element getAsDOM(Document document) {
+
+	public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
         ele.setAttribute("condition", condition.toString());

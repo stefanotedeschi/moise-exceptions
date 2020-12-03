@@ -191,7 +191,7 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
     public Exception getException(String id) throws MoiseException {
         for (RecoveryStrategy rs : recoveryStrategies.values()) {
-            Exception ex = rs.getException();
+            Exception ex = rs.getNotificationPolicy().getException();
             if (ex.getId().equals(id)) {
                 return ex;
             }
@@ -279,7 +279,7 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         // recovery strategies
         for (Element rsEle : DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {
             RecoveryStrategy rs = new RecoveryStrategy(rsEle.getAttribute("id"), this);
-            rs.setFromDOM(rsEle, exceptionTypes);
+            rs.setFromDOM(rsEle);
             addRecoveryStrategy(rs);
         }
 

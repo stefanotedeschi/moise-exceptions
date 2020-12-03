@@ -16,7 +16,7 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
     private String id;
     private LogicalFormula condition;
     private RecoveryStrategy inStrategy;
-    private Goal goal;
+    private CatchingGoal goal;
     private Scheme sch;
     
     public HandlingPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
@@ -31,18 +31,6 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
         return id;
     }
     
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Goal getGoal() {
-        return goal;
-    }
-
-    public void setGoal(Goal goal) {
-        this.goal = goal;
-    }
-    
     public LogicalFormula getCondition() {
 		return condition;
 	}
@@ -51,21 +39,20 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
 		return inStrategy;
 	}
 
-	public void setCondition(LogicalFormula condition) {
-		this.condition = condition;
-	}
-
-	public void setInStrategy(RecoveryStrategy inStrategy) {
-		this.inStrategy = inStrategy;
+	public CatchingGoal getGoal() {
+		return goal;
 	}
 
 	public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
-            goal = new Goal(gEle.getAttribute("id"));
+            goal = new CatchingGoal(gEle.getAttribute("id"), this);
             goal.setFromDOM(gEle, sch);
             sch.addGoal(goal);
+        }
+        else {
+        	throw new MoiseException("Catching goal missinf in handling policy " + id);
         }
     }
     

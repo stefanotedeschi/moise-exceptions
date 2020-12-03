@@ -6,16 +6,13 @@ public class ThrowingGoal extends Goal {
 
 	private NotificationPolicy inNotificationPolicy;
 	
-	public ThrowingGoal(String goal) {
+	public ThrowingGoal(String goal, NotificationPolicy inNotificationPolicy) {
 		super(goal);
+		this.inNotificationPolicy = inNotificationPolicy;
 	}
 
 	public NotificationPolicy getInNotificationPolicy() {
 		return inNotificationPolicy;
-	}
-
-	public void setInNotificationPolicy(NotificationPolicy inNotificationPolicy) {
-		this.inNotificationPolicy = inNotificationPolicy;
 	}
 
 }

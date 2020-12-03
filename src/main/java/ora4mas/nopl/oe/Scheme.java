@@ -238,16 +238,16 @@ public class Scheme extends CollectiveOE {
             Literal l = iThrowns.next();
             try {
                 moise.os.fs.exceptions.Exception e = spec.getException(l.getTerm(1).toString());
-                LogicalFormula condition = e.getCondition();
+                LogicalFormula condition = e.getInPolicy().getCondition();
 
                 nplp parser = new nplp(new StringReader(condition.toString()));
                 parser.setDFP(this);
                 LogicalFormula formula = (LogicalFormula)parser.log_expr();
                 if(!nengine.holds(formula)) {
                     iThrowns.remove();
-                    Goal tg = e.getGoal();
+                    Goal tg = e.getInPolicy().getGoal();
                     resetGoal(tg);
-                    Set<HandlingPolicy> handlingPolicies = e.getInStrategy().getHandlingPolicies();
+                    Set<HandlingPolicy> handlingPolicies = e.getInPolicy().getInStrategy().getHandlingPolicies();
                     for(HandlingPolicy h : handlingPolicies) {
                         Goal cg = h.getGoal();
                         resetGoal(cg);

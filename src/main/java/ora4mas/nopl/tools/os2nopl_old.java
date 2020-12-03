@@ -30,7 +30,7 @@ import moise.os.ss.RoleRel.RoleRelScope;
 import moise.os.ss.SS;
 
 /** translate an OS to a NP */
-public class os2nopl {
+public class os2nopl_old {
 
     // constants for properties
     public static final String PROP_RoleInGroup = "role_in_group";

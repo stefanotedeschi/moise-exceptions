@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on agosto 04, 2020 - 18:45:04
+    on dicembre 03, 2020 - 18:58:45
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -111,9 +111,7 @@ scope scheme(cake_sch) {
    mission_goal(mBaker,dealWithMissingIngredients).
    mission_goal(mBaker,workspaceSetup).
    mission_goal(mBaker,checkOven).
-   mission_goal(mBaker,notifyWorkspaceSetupFailure).
    mission_goal(mBoss,haveCake).
-   mission_goal(mBoss,handleSetupFailure).
    mission_goal(mSupplier,notifyIngredientsUnavailability).
    mission_goal(mSupplier,provideIngredients).
    mission_goal(mApprentice,bakeCake).
@@ -130,8 +128,6 @@ scope scheme(cake_sch) {
    goal([mApprentice],notifyProblemWithOven,dep(and,[]),performance,all,`1 year`).
    goal([mSupplier],notifyIngredientsUnavailability,dep(and,[]),performance,all,`1 year`).
    goal([mSupplier],provideIngredients,dep(and,[]),performance,all,`1 year`).
-   goal([mBoss],handleSetupFailure,dep(and,[]),performance,all,`1 year`).
-   goal([mBaker],notifyWorkspaceSetupFailure,dep(and,[]),performance,all,`1 year`).
    goal([mApprentice],switchOnOven,dep(and,[]),performance,all,`1 year`).
    super_goal(haveCake, mixIngredients).
    super_goal(haveCake, bakeCake).
@@ -141,38 +137,35 @@ scope scheme(cake_sch) {
 
    // recovery_strategy(id)
    recovery_strategy(r2).
-   recovery_strategy(r3).
    recovery_strategy(r1).
 
-   // exception(exception id, condition)
-   exception(ovenBroken,(scheme_id(S) & fault(S,switchOnOven))).
-   exception(workspaceSetupFailure,(scheme_id(S) & fault(S,provideIngredients))).
-   exception(ingredientsUnavailable,(scheme_id(S) & fault(S,provideIngredients))).
+   // notification_policy(policy id, condition)
+   notification_policy(np2,(scheme(S) & fault(S,switchOnOven))).
+   notification_policy(np1,(scheme(S) & fault(S,provideIngredients))).
 
-   // strategy_exception(strategy id, exception id)
-   strategy_exception(r2,ovenBroken).
-   strategy_exception(r3,workspaceSetupFailure).
-   strategy_exception(r1,ingredientsUnavailable).
+   // handling_policy(policy id, condition)
+   handlingPolicy(handlerOvenProblem,(scheme(S) & fault(S,switchOnOven))).
+   handlingPolicy(handlerIngredientsUnavailable,(scheme(S) & fault(S,provideIngredients))).
 
-   // exception_goal(exception id, goal id)
-   exception_goal(ovenBroken,notifyProblemWithOven).
-   exception_goal(workspaceSetupFailure,notifyWorkspaceSetupFailure).
-   exception_goal(ingredientsUnavailable,notifyIngredientsUnavailability).
+   // strategy_policy(strategy id, policy id)
+   strategy_policy(r2,np2).
+   strategy_policy(r2,handlerOvenProblem).
+   strategy_policy(r1,np1).
+   strategy_policy(r1,handlerIngredientsUnavailable).
 
-   // handler(handler id)
-   handler(handlerOvenProblem).
-   handler(handlerWorkspaceSetupFailure).
-   handler(handlerIngredientsUnavailable).
+   // exception(exception id)
+   exception(ovenBroken).
+   exception(ingredientsUnavailable).
 
-   // strategy_handler(strategy id, handler id)
-   strategy_handler(r2,handlerOvenProblem).
-   strategy_handler(r3,handlerWorkspaceSetupFailure).
-   strategy_handler(r1,handlerIngredientsUnavailable).
+   // policy_exception(policy id, exception id)
+   policy_exception(np2,ovenBroken).
+   policy_exception(np1,ingredientsUnavailable).
 
-   // handler_goal(handler id, goal id)
-   handler_goal(handlerOvenProblem,checkOven).
-   handler_goal(handlerWorkspaceSetupFailure,handleSetupFailure).
-   handler_goal(handlerIngredientsUnavailable,dealWithMissingIngredients).
+   // policy_goal(policy id, goal id)
+   policy_goal(np2,notifyProblemWithOven).
+   policy_goal(handlerOvenProblem,checkOven).
+   policy_goal(np1,notifyIngredientsUnavailability).
+   policy_goal(handlerIngredientsUnavailable,dealWithMissingIngredients).
 
    // ** Rules
    mplayers(M,S,V) :- .count(committed(_,M,S),V).
@@ -185,38 +178,16 @@ scope scheme(cake_sch) {
    mission_accomplished(S,M) :- .findall(Goal, mission_goal(M,Goal), MissionGoals) & all_satisfied(S,MissionGoals).
    all_satisfied(_,[]).
    all_satisfied(S,[G|T]) :- satisfied(S,G) & all_satisfied(S,T).
+   any_satisfied(S,[G|_]) :- satisfied(S,G).
+   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).
+
    all_released(_,[]).
    all_released(S,[G|T]) :- released(S,G) & all_released(S,T).
    all_satisfied_released(_,[]).
    all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).
-   any_satisfied(S,[G|_]) :- satisfied(S,G).
-   any_satisfied(S,[G|T]) :- not satisfied(S,G) & any_satisfied(S,T).
-
-   enabled(S,TG) :- exception_goal(E,TG) &
-                 not fault(S,TG) &
-                 exception(E,Condition) &
-                 Condition &
-                 goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
-                 ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
-                  (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
-                 ).
-   enabled(S,CG) :- handler_goal(H,CG) &
-                 not fault(S,CG) &
-                 handler(H) &
-                 recovery_strategy(ST) &
-                 strategy_handler(ST,H) &
-                 strategy_exception(ST,E) &
-                 thrown(S,E,_) &
-                 exception_goal(E,TG) &
-                 satisfied(S,TG) &
-                 goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
-                 ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
-                  (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
-                 ).
-
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not exception_goal(_,G) & not handler_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
    super_satisfied(S,G) :- super_goal(SG,G) & satisfied(S,SG).
 
@@ -281,7 +252,6 @@ scope scheme(cake_sch) {
            not satisfied(S,G) & 
            not super_satisfied(S,G)
         -> obligation(A,enabled(S,G),What,`now` + D).
-
 } // end of scheme cake_sch
 
 } // end of organisation cake

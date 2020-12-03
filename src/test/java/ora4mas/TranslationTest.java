@@ -48,7 +48,7 @@ public class TranslationTest {
         out.close();
         NormativeProgram p = new NormativeProgram();
         new nplp(new StringReader(np)).program(p, null);
-        assertEquals(6, p.getRoot().getScope(ASSyntax.parseLiteral("scheme(writePaperSch)")).getNorms().size());
+        assertEquals(9, p.getRoot().getScope(ASSyntax.parseLiteral("scheme(writePaperSch)")).getNorms().size());
     }
 
     @Test
@@ -78,22 +78,22 @@ public class TranslationTest {
         Source input = new DOMSource(d);
         transformer.transform(input, output);
         
-//        String np = os2nopl.transform(os);
-//        BufferedWriter out = new BufferedWriter(new FileWriter("atm-os-exceptions.npl"));
-//        out.write(np);
-//        out.close();
-//        
-//        // Cake
-//        os = OS.loadOSFromURI("cake-os-exceptions.xml");
-//        d = DOMUtils.getAsXmlDocument(os);
-//        output = new StreamResult(new File("cake-os-exceptions-output.xml"));
-//        input = new DOMSource(d);
-//        transformer.transform(input, output);
-//        
-//        np = os2nopl.transform(os);
-//        out = new BufferedWriter(new FileWriter("cake-os-exceptions.npl"));
-//        out.write(np);
-//        out.close();
+        String np = os2nopl.transform(os);
+        BufferedWriter out = new BufferedWriter(new FileWriter("atm-os-exception.npl"));
+        out.write(np);
+        out.close();
+        
+        // Cake
+        os = OS.loadOSFromURI("cake-os-exception.xml");
+        d = DOMUtils.getAsXmlDocument(os);
+        output = new StreamResult(new File("cake-os-exception-output.xml"));
+        input = new DOMSource(d);
+        transformer.transform(input, output);
+        
+        np = os2nopl.transform(os);
+        out = new BufferedWriter(new FileWriter("cake-os-exception.npl"));
+        out.write(np);
+        out.close();
         
     }
 
