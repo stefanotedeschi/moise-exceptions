@@ -26,11 +26,13 @@ import cartago.AbstractWSPRuleEngine;
 import cartago.AgentQuitRequestInfo;
 import cartago.Artifact;
 import cartago.ArtifactId;
-import cartago.CartagoEnvironment;
 import cartago.CartagoException;
+import cartago.CartagoService;
 import cartago.LINK;
 import cartago.OPERATION;
+import cartago.Op;
 import cartago.OperationException;
+import cartago.util.agent.CartagoBasicContext;
 import jason.asSemantics.Unifier;
 import jason.asSyntax.ASSyntax;
 import jason.asSyntax.Atom;
@@ -81,14 +83,11 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
 
     protected String ownerAgent = null; // the name of the agent that created this artifact
 
-    protected List<ArtifactId> dfpListeners = new CopyOnWriteArrayList<>();
+    protected List<ArtifactId> listeners = new CopyOnWriteArrayList<>();
 
     protected String orgBoardName = null;
     
     protected Logger logger = Logger.getLogger(OrgArt.class.getName());
-    protected Logger getLogger() {  return logger;   }
-
-    protected boolean runningDestroy = false;
 
     public static String fixOSFile(String osFile) {
         try {
@@ -100,7 +99,6 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
         } catch (Exception e) { }
         return osFile;
     }
-    
     
     public String getOEId() {
         return oeId;
@@ -153,8 +151,7 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
             failed("you can not destroy the artifact, only the owner can!");
             return;
         }
-        runningDestroy = true;
-        
+
         nengine.removeListener(myNPLListener);
         nengine.stop();
         if (gui != null) {
@@ -186,56 +183,56 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
         // version that works (using internal op)
         myNPLListener = new NormativeListener() {
             public void created(DeonticModality o) {
-                beginExtSession();
+                beginExternalSession();
                 try {
                     defineObsProperty(o.getFunctor(), getTermsAsProlog(o)).addAnnot( getNormIdTerm(o) );
                 } finally {
-                    endExtSession();                   
+                    endExternalSession(true);                   
                 }
                 //signalsQueue.offer(new Pair<String, Structure>(sglOblCreated, o));
             }
             public void fulfilled(DeonticModality o) {
                 try {
-                    beginExtSession();
+                    beginExternalSession();
                     removeObsPropertyByTemplate(o.getFunctor(), getTermsAsProlog(o)); // cause concurrent modification on cartago
                     signal(sglOblFulfilled, new JasonTermWrapper(o));
                 } catch (java.lang.IllegalArgumentException e) {
                     // ignore, the obligations was not there anymore
                 } finally {
-                    endExtSession();                   
+                    endExternalSession(true);                   
                 }
                 //execInternalOp("NPISignals", sglOblFulfilled, o);
             }
             public void unfulfilled(DeonticModality o) {
                 try {
-                    beginExtSession();
+                    beginExternalSession();
                     removeObsPropertyByTemplate(o.getFunctor(), getTermsAsProlog(o));
                     signal(sglOblUnfulfilled, new JasonTermWrapper(o));
                 } catch (Exception e) {
                     logger.log(Level.FINE, "error removing obs prop for "+o, e);
                 } finally {
-                    endExtSession();                   
+                    endExternalSession(true);                   
                 }
                 //execInternalOp("NPISignals", sglOblUnfulfilled, o);
             }
             public void inactive(DeonticModality o) {
                 try {
-                    beginExtSession();
+                    beginExternalSession();
                     removeObsPropertyByTemplate(o.getFunctor(), getTermsAsProlog(o));
                 } catch (java.lang.IllegalArgumentException e) {
                     // ignore, the obligations was not there anymore
                 } finally {
-                    endExtSession();                   
+                    endExternalSession(true);                   
                 }
             }
 
             public void failure(Structure f) {
                 try {
-                    beginExtSession();
+                    beginExternalSession();
                     //execInternalOp("NPISignals", sglNormFailure, f);
                     signal(sglNormFailure, new JasonTermWrapper(f));                    
                 } finally {
-                    endExtSession();                   
+                    endExternalSession(true);                   
                 }
             }
         };
@@ -307,12 +304,12 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
     // subscribe protocol
 
     @LINK void subscribeDFP(ArtifactId subscriber) throws OperationException {
-        dfpListeners.add(subscriber);
+        listeners.add(subscriber);
         notifyListeners();
     }
 
     void notifyListeners() {
-        for (ArtifactId aid: dfpListeners) {
+        for (ArtifactId aid: listeners) {
             try {
                 execLinkedOp(aid, "updateDFP", getId().getName(), (DynamicFactsProvider)orgState);
             } catch (Exception e) {
@@ -324,7 +321,6 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
 
 
     protected void ora4masOperationTemplate(Operation op, String errorMsg) {
-        if (runningDestroy) return; 
         if (!running) return;
         CollectiveOE bak = orgState.clone();
         try {
@@ -333,7 +329,7 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
             notifyListeners();
         } catch (NormativeFailureException e) {
             orgState = bak; // takes the backup as the current model since the action failed
-            getLogger().info("error. "+e);
+            logger.info("error. "+e);
             if (errorMsg == null)
                 failed(e.getFail().toString());
             else
@@ -411,14 +407,9 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
 
 
     public String specToStr(ToXML spec, Transformer transformer) throws Exception {
-        if (spec == null)
-            return "";
         StringWriter so = new StringWriter();
-        String specStr = DOMUtils.dom2txt(spec);
-        if (!specStr.isEmpty()) {
-            InputSource si = new InputSource(new StringReader(specStr));
-            transformer.transform(new DOMSource(getParser().parse(si)), new StreamResult(so));
-        }
+        InputSource si = new InputSource(new StringReader(DOMUtils.dom2txt(spec)));
+        transformer.transform(new DOMSource(getParser().parse(si)), new StreamResult(so));
         return so.toString();
     }
 
@@ -458,8 +449,6 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
             for (OrgArt o: l) {
                 try {
                     o.agKilled(req.getAgentId().getAgentName());
-                } catch (InterruptedException e) {
-                    // ignore, system going down
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -470,19 +459,20 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
     private static Ora4masWSPRuleEngine wspEng = null;
 
     public synchronized void initWspRuleEngine() {
+        /*ICartagoController ctrl = CartagoService.getController("default");
+        for (ArtifactId aid: ctrl.getCurrentArtifacts()) {
+            System.out.println("*** "+aid);
+        }*/
+
         if (wspEng == null) {
             wspEng = new Ora4masWSPRuleEngine();
-            String wks = getId().getWorkspaceId().getFullName();
             new Thread() {
                 public void run() {
                     try {
                         // TODO: use new cartago API
-                        //CartagoBasicContext cartagoCtx = new CartagoBasicContext("OrgArt setup", CartagoEnvironment.ROOT_WSP_DEFAULT_NAME);
-                        //cartagoCtx.doAction(new Op("setWSPRuleEngine", wspEng), -1);
-                         
-                        CartagoEnvironment.getInstance().resolveWSP(wks).getWorkspace().setWSPRuleEngine(wspEng);
+                        CartagoBasicContext cartagoCtx = new CartagoBasicContext("OrgArt setup", CartagoService.MAIN_WSP_NAME);
+                        cartagoCtx.doAction(new Op("setWSPRuleEngine", wspEng), -1);
                     } catch (CartagoException e) {
-                        logger.warning("Error setting up setWSPRuleEngine: "+e.getMessage());
                         e.printStackTrace();
                     }
                 };
@@ -491,36 +481,32 @@ public abstract class OrgArt extends Artifact implements ToXML, DynamicFactsProv
         wspEng.addListener(this);
     }
 
-    public void agKilled(String agName) throws Exception {
+    public void agKilled(String agName) {
 
     }
 
 
-    protected void debug(String kind, String title, boolean hasOE) {
-        try {
-            final String id = getId().getName();
-            if (kind.equals("inspector_gui(on)")) {
-                if (gui != null)
-                    gui.remove();
-                gui = GUIInterface.add(id, "... "+title+" "+id+" ...", nengine, hasOE);
-    
-                updateGUIThread = new UpdateGuiThread();
-                updateGUIThread.start();
-    
-                updateGuiOE();
-    
-                gui.setNormativeProgram(getNPLSrc());
-            }
-            if (kind.equals("inspector_gui(off)")) {
-                if (gui != null)
-                    gui.remove();
-                try {
-                    updateGUIThread.interrupt();
-                } catch (Exception e) {}
-                gui = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    protected void debug(String kind, String title, boolean hasOE) throws Exception {
+        final String id = getId().getName();
+        if (kind.equals("inspector_gui(on)")) {
+            if (gui != null)
+                gui.remove();
+            gui = GUIInterface.add(id, "... "+title+" "+id+" ...", nengine, hasOE);
+
+            updateGUIThread = new UpdateGuiThread();
+            updateGUIThread.start();
+
+            updateGuiOE();
+
+            gui.setNormativeProgram(getNPLSrc());
+        }
+        if (kind.equals("inspector_gui(off)")) {
+            if (gui != null)
+                gui.remove();
+            try {
+                updateGUIThread.interrupt();
+            } catch (Exception e) {}
+            gui = null;
         }
     }
 

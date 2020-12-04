@@ -3,7 +3,6 @@ package moise.os;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
@@ -124,7 +123,7 @@ public class OS extends MoiseElement implements ToXML {
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        ele.setAttribute("os-version","1.0"); // TODO: get the number from other place
+        ele.setAttribute("os-version","0.7"); // TODO: get the number from other place
         ele.setAttribute("xmlns","http://moise.sourceforge.net/os");
         ele.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
         ele.setAttribute("xsi:schemaLocation","http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd");
@@ -216,7 +215,7 @@ public class OS extends MoiseElement implements ToXML {
 
 
     /** used to convert old format to the new */
-    public static void main(String[] args) throws TransformerException {
+    public static void main(String[] args) {
         if (args.length != 1) {
             System.err.println("pass an URI as argument for the organization specification file (in xml)");
             System.exit(1);

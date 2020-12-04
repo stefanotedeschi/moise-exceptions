@@ -121,7 +121,7 @@ public class NormativeBoard extends OrgArt {
         }
     }
 
-    @OPERATION public void debug(String kind) {
+    @OPERATION public void debug(String kind) throws Exception {
         super.debug(kind, "Norm Board", false);
     }
 
