@@ -11,7 +11,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 
 version '1.0'
-group   'com.unito.di'
+group   'it.unito.di'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -20,7 +20,8 @@ repositories {
     mavenCentral()
 
     maven { url "http://jacamo.sourceforge.net/maven2" }
-    maven { url "http://jade.tilab.com/maven/" }
+    maven { url "https://raw.github.com/jacamo-lang/mvn-repo/master" }
+    //maven { url "http://jade.tilab.com/maven/" }
     //maven { url "https://moise-exceptions.sourceforge.io/maven2" }
     maven { url "http://www.di.unito.it/~tedeschi/maven2" }
 
@@ -30,9 +31,9 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.jacamo',   name: 'jacamo',           version: '0.8'
+    compile group: 'org.jacamo',   name: 'jacamo',           version: '0.9'
     compile group: 'org.jacamo',   name: 'npl' ,             version: '0.5-SNAPSHOT', changing: true, transitive: false
-    compile group: 'com.unito.di', name: 'moise-exceptions', version: '0.1', changing: true
+    compile group: 'it.unito.di', name: 'moise-exceptions', version: '0.2', changing: true
 }
 
 configurations {

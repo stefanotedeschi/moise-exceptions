@@ -4,12 +4,12 @@ import moise.os.fs.Goal;
 
 public class CatchingGoal extends Goal {
 
-	private HandlingPolicy inHandlingPolicy;
-	
-	public CatchingGoal(String goal, HandlingPolicy inHandlingPolicy) {
-		super(goal);
-		this.inHandlingPolicy = inHandlingPolicy;
-	}
+    private HandlingPolicy inHandlingPolicy;
+    
+    public CatchingGoal(String goal, HandlingPolicy inHandlingPolicy) {
+        super(goal);
+        this.inHandlingPolicy = inHandlingPolicy;
+    }
 
     public HandlingPolicy getInHandlingPolicy() {
         return inHandlingPolicy;

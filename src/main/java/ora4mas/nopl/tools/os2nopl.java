@@ -380,17 +380,17 @@ public class os2nopl {
         np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
 
         np.append("   enabled(S,TG) :- policy_goal(P,TG) &\r\n"
-        		+ "                    notification_policy(P,Condition) &\r\n"
-        		+ "                    Condition &\r\n"        		
-        		+ "                    not fault(S,TG) &\r\n"
+                + "                    notification_policy(P,Condition) &\r\n"
+                + "                    Condition &\r\n"             
+                + "                    not fault(S,TG) &\r\n"
                 + "                    not released(S,TG) &\r\n" 
                 + "                    goal(_, TG,  Dep, _, NP, _) & NP \\== 0 & \r\n"
                 + "                    ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n"
                 + "                     (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))\r\n"
                 + "                    ).\r\n");
         np.append("   enabled(S,CG) :- policy_goal(HP,CG) &\r\n" 
-        		+ "                    handling_policy(HP,Condition) &\r\n"
-        		+ "                    Condition &\r\n"
+                + "                    handling_policy(HP,Condition) &\r\n"
+                + "                    Condition &\r\n"
                 + "                    not fault(S,CG) &\r\n"
                 + "                    not released(S,CG) &\r\n"
                 + "                    recovery_strategy(ST) &\r\n"

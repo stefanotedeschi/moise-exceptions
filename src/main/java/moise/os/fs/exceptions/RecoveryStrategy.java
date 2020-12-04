@@ -86,10 +86,10 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
     }
 
     public NotificationPolicy getNotificationPolicy() {
-		return notificationPolicy;
-	}
+        return notificationPolicy;
+    }
 
-	public Set<HandlingPolicy> getHandlingPolicies() {
+    public Set<HandlingPolicy> getHandlingPolicies() {
         return handlingPolicies;
     }
     

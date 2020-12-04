@@ -32,18 +32,18 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
     }
     
     public LogicalFormula getCondition() {
-		return condition;
-	}
+        return condition;
+    }
 
-	public RecoveryStrategy getInStrategy() {
-		return inStrategy;
-	}
+    public RecoveryStrategy getInStrategy() {
+        return inStrategy;
+    }
 
-	public CatchingGoal getGoal() {
-		return goal;
-	}
+    public CatchingGoal getGoal() {
+        return goal;
+    }
 
-	public void setFromDOM(Element ele) throws MoiseException {
+    public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
@@ -52,7 +52,7 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
             sch.addGoal(goal);
         }
         else {
-        	throw new MoiseException("Catching goal missinf in handling policy " + id);
+            throw new MoiseException("Catching goal missinf in handling policy " + id);
         }
     }
     

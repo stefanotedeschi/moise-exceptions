@@ -12,8 +12,8 @@ import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
 public class NotificationPolicy extends moise.common.MoiseElement implements ToXML, ToProlog {
-	
-	private String id;
+    
+    private String id;
     private LogicalFormula condition;
     private Exception exception;
     private RecoveryStrategy inStrategy;
@@ -33,22 +33,22 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
     }
     
     public LogicalFormula getCondition() {
-		return condition;
-	}
+        return condition;
+    }
     
     public Exception getException() {
-		return exception;
-	}
+        return exception;
+    }
 
-	public RecoveryStrategy getInStrategy() {
-		return inStrategy;
-	}
-	
-	public ThrowingGoal getGoal() {
-		return goal;
-	}
+    public RecoveryStrategy getInStrategy() {
+        return inStrategy;
+    }
+    
+    public ThrowingGoal getGoal() {
+        return goal;
+    }
 
-	public void setFromDOM(Element ele) throws MoiseException {
+    public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
@@ -63,7 +63,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         }
     }
 
-	public Element getAsDOM(Document document) {
+    public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
         ele.setAttribute("condition", condition.toString());
@@ -71,7 +71,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
             ele.appendChild(getPropertiesAsDOM(document));
         }
         if(exception != null) {
-        	ele.appendChild(exception.getAsDOM(document));
+            ele.appendChild(exception.getAsDOM(document));
         }
         if(goal != null) {
             ele.appendChild(goal.getAsDOM(document));
