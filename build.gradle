@@ -1,14 +1,16 @@
 /*
-   Moise Exceptions Gradle file
+   moise-exceptions Gradle file
 
 */
 
-defaultTasks 'jar'
+plugins {
+  id 'java'
+  id 'eclipse'
+  id 'maven'
+  id 'maven-publish'
+}
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
+defaultTasks 'jar'
 
 version '0.2'
 group   'it.unito.di'
@@ -19,8 +21,7 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
 
-    maven { url "https://raw.github.com/jacamo-lang/mvn-repo/master" }
-    //maven { url "http://jacamo.sourceforge.net/maven2" }
+    maven { url "http://jacamo.sourceforge.net/maven2" }
 }
 
 /*configurations {
@@ -28,14 +29,10 @@ repositories {
 }*/
 
 dependencies {
-    //compile group: 'org.jason-lang', name: 'jason',    version: '2.5.2', changing: false
-    compile group: 'org.jacamo',     name: 'npl' ,     version: '0.5', changing: true, transitive: false
-    //compile group: 'org.jacamo',     name: 'cartago',  version: '3.0', changing: true
-    //compile group: 'org.jacamo',     name: 'jaca',     version: '3.0', changing: true
-
-    compile group: 'org.jason'      , name: 'jason'   , version: '2.6-SNAPSHOT' , changing: true
-    compile group: 'org.jacamo'     , name: 'cartago' , version: '2.5' , changing: true
-    compile group: 'org.jacamo'     , name: 'jaca'    , version: '2.5' , changing: true
+    compile group: 'org.jason-lang', name: 'jason',    version: '2.4', changing: false
+    compile group: 'org.jacamo',     name: 'npl' ,     version: '0.5-SNAPSHOT', changing: true, transitive: false
+    compile group: 'org.jacamo',     name: 'cartago',  version: '2.4', changing: true
+    compile group: 'org.jacamo',     name: 'jaca',     version: '2.4', changing: true
 
     testCompile group: 'junit',      name: 'junit', version: '4.+'
 
@@ -83,7 +80,7 @@ eclipse {
 }
 
 task javadocJar (type: Jar, dependsOn: javadoc) {
-    baseName 'moise'
+    baseName 'moise-exceptions'
     classifier = 'javadoc'
     from '${docsDir}/../../doc/api'
 }
@@ -94,14 +91,20 @@ task sourceJar (type : Jar) {
     from sourceSets.main.allSource
 }
 
-
 publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/stex93/moise-exceptions")
+            credentials {
+                username = project.findProperty("gpr.user")
+                password = project.findProperty("gpr.key")
+            }
+        }
+    }
     publications {
-        maven(MavenPublication) {
-            from components.java
-            artifact sourceJar
-            artifact javadocJar
-            artifactId 'moise-exceptions'
+        gpr(MavenPublication) {
+            from(components.java)
         }
     }
 }
@@ -110,12 +113,10 @@ task fixTab {
     ant.fixcrlf(eol: 'lf',  includes: '**/*.txt,**/*.bat, **/*.adoc', srcdir: '.')
     ant.fixcrlf(tab: 'remove', tablength: '4', javafiles: 'true', includes: '**/*.java,**/*.xml,**/*.xsl,**/*.xsd', srcdir: 'src')
     ant.fixcrlf(tab: 'remove', tablength: '4', javafiles: 'true', includes: '**/*.java,**/*.xml,**/*.xsl,**/*.xsd', srcdir: 'examples')
-    ant.fixcrlf(tab: 'remove', tablength: '4', javafiles: 'true', includes: '*.gradle', srcdir: '.')
 }
 
 task renderAsciiDocs(type: Exec) {
-    commandLine 'find', '.', '-name', '*.adoc', '-exec', 'asciidoc-docker', '{}', ';'
-    //commandLine 'find', '.', '-name', '*.adoc', '-exec', 'asciidoctor', '{}', ';'
+    commandLine 'find', '.', '-name', '*.adoc', '-exec', 'asciidoctor', '{}', ';'
 }
 
 javadoc {
@@ -173,51 +174,22 @@ task javadoc(overwrite: true, dependsOn: compileJava) {
 }
 */
 
-
-/*task publishMavenSF(dependsOn: [ 'jar', 'build', 'publishToMavenLocal', 'sourceJar', 'javadocJar']) {
-  doLast {
-    description 'transfer local maven artifact to our maven2 repository at sourceforge'
-
-    def wdir = System.getProperty("user.home")+'/.m2/repository/org/jacamo/moise'
-    def tdir = 'jomifred,jacamo@web.sf.net:/home/project-web/jacamo/htdocs/maven2/org/jacamo/moise'
-    exec {
-        commandLine 'scp', '-r', project.version, tdir
-        workingDir wdir
-    }
-    exec {
-        commandLine 'cp', 'maven-metadata-local.xml', 'maven-metadata.xml'
-        workingDir wdir
-    }
-    exec {
-        commandLine 'scp', 'maven-metadata.xml', tdir
-        workingDir wdir
-    }
-  }
-}*/
-
-task publishMavenGitHub(dependsOn: [ 'build', 'publishToMavenLocal']) {
-  doLast {
-    def wdir = System.getProperty("user.home")+'/.m2/repository/org/jacamo/moise'
-    def rdir = '../jacamo-mvn-repo'
-    exec {
-        commandLine 'git', 'pull'
-        workingDir rdir
-    }
-    copy {
-        from wdir
-        into rdir + '/org/jacamo/moise'
-    }
-    exec {
-        commandLine 'git', 'add', '*'
-        workingDir rdir
-    }
-    exec {
-        commandLine 'git', 'commit', '-a', '-m', 'new version of moise '+project.version
-        workingDir rdir
-    }
-    exec {
-        commandLine 'git', 'push'
-        workingDir rdir
-    }
-  }
+// transfer local maven artifact to maven2 repository at sourceforge
+task publishMavenSF(dependsOn: [ 'build', 'publishToMavenLocal']) {
+	doLast {
+	    def wdir = System.getProperty("user.home")+'/.m2/repository/com/unito/di/moise-exceptions'
+	    def tdir = project.findProperty("sf.user")+',moise-exceptions@web.sourceforge.net:/home/project-web/moise-exceptions/htdocs/maven2/com/unito/di/moise-exceptions'
+	    exec {
+	        commandLine 'scp', '-r', project.version, tdir
+	        workingDir wdir
+	    }
+	    exec {
+	        commandLine 'cp', 'maven-metadata-local.xml', 'maven-metadata.xml'
+	        workingDir wdir
+	    }
+	    exec {
+	        commandLine 'scp', 'maven-metadata.xml', tdir
+	        workingDir wdir
+	    }
+	}
 }
