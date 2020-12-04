@@ -70,7 +70,7 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
         for (Element hpEle: DOMUtils.getDOMDirectChilds(ele, HandlingPolicy.getXMLTag())) {
             id = hpEle.getAttribute("id");
             try {
-                condition = ASSyntax.parseFormula(npEle.getAttribute("condition"));
+                condition = ASSyntax.parseFormula(hpEle.getAttribute("condition"));
             } catch (ParseException e) {
                 throw new MoiseException(e.getMessage());
             }

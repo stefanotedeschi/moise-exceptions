@@ -82,7 +82,7 @@
 
             <recovery-strategy id="rec2">
 
-                <notification-policy id="np2" condition="scheme_id(S) &amp; fault(S,parseAmount)">
+                <notification-policy id="np2" condition="scheme_id(S) &amp; fault(S,recoverFromNan)">
 
                     <properties>
                     	<property id="type" value="goal-fault" />
@@ -106,8 +106,6 @@
             </mission>
             <mission id="mParseAmount" min="1" max="1">
                 <goal id="parseAmount" />
-            </mission>
-            <mission id="mThrowNan" min="2" max="2">
                 <goal id="throwNan" />
             </mission>
             <mission id="mObtainAmount" min="1" max="1">

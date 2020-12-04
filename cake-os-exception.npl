@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on dicembre 04, 2020 - 12:39:14
+    on dicembre 04, 2020 - 18:19:11
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -144,8 +144,8 @@ scope scheme(cake_sch) {
    notification_policy(np1,(scheme(S) & fault(S,provideIngredients))).
 
    // handling_policy(policy id, condition)
-   handlingPolicy(handlerOvenProblem,(scheme(S) & fault(S,switchOnOven))).
-   handlingPolicy(handlerIngredientsUnavailable,(scheme(S) & fault(S,provideIngredients))).
+   handling_policy(handlerOvenProblem,true).
+   handling_policy(handlerIngredientsUnavailable,true).
 
    // strategy_policy(strategy id, policy id)
    strategy_policy(r2,np2).
@@ -278,6 +278,7 @@ scope scheme(cake_sch) {
            not satisfied(S,G) & 
            not super_satisfied(S,G)
         -> obligation(A,enabled(S,G),What,`now` + D).
+
 } // end of scheme cake_sch
 
 } // end of organisation cake

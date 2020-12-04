@@ -61,7 +61,7 @@
                     <exception id="nan"/>
                     <goal id="throwNan" type="performance"/>
                 </notification-policy>
-                <handling-policy condition="(scheme_id(S) &amp; fault(S,parseAmount))" id="hp1">
+                <handling-policy condition="true" id="hp1">
                     <properties>
                         <property id="applicability" value="always"/>
                     </properties>
@@ -69,7 +69,7 @@
                 </handling-policy>
             </recovery-strategy>
             <recovery-strategy id="rec2">
-                <notification-policy condition="(scheme_id(S) &amp; fault(S,parseAmount))" id="np2">
+                <notification-policy condition="(scheme_id(S) &amp; fault(S,recoverFromNan))" id="np2">
                     <properties>
                         <property id="type" value="goal-fault"/>
                         <property id="target" value="recoverFromNan"/>
@@ -77,16 +77,13 @@
                     <exception id="amountUnavailable"/>
                     <goal id="throwAmountUnavailable" type="performance"/>
                 </notification-policy>
-                <handling-policy condition="(scheme_id(S) &amp; fault(S,parseAmount))" id="hp2">
+                <handling-policy condition="true" id="hp2">
                     <goal id="retryLater" type="performance"/>
                 </handling-policy>
             </recovery-strategy>
             <mission id="mWithdraw" max="1" min="1">
                 <goal id="retryLater"/>
                 <goal id="withdraw"/>
-            </mission>
-            <mission id="mThrowNan" max="2" min="2">
-                <goal id="throwNan"/>
             </mission>
             <mission id="mProvideMoney" max="1" min="1">
                 <goal id="provideMoney"/>
@@ -97,6 +94,7 @@
                 <goal id="obtainAmount"/>
             </mission>
             <mission id="mParseAmount" max="1" min="1">
+                <goal id="throwNan"/>
                 <goal id="parseAmount"/>
             </mission>
             <mission id="mGetAmountAsString" max="1" min="1">

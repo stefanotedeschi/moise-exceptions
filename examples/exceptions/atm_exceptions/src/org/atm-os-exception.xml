@@ -54,8 +54,8 @@
 
                     <!-- CONDITION -->
                     <properties>
-                    	<property id="type" value="goal-fault" />
-                    	<property id="target" value="parseAmount" />
+                        <property id="type" value="goal-fault" />
+                        <property id="target" value="parseAmount" />
                     </properties>
 
                     <!-- EXCEPTION -->
@@ -70,7 +70,7 @@
 
                     <!-- CONDITION -->
                     <properties>
-                    	<property id="applicability" value="always" />
+                        <property id="applicability" value="always" />
                     </properties>
 
                     <!-- CATCHING GOAL -->
@@ -82,11 +82,11 @@
 
             <recovery-strategy id="rec2">
 
-                <notification-policy id="np2" condition="scheme_id(S) &amp; fault(S,parseAmount)">
+                <notification-policy id="np2" condition="scheme_id(S) &amp; fault(S,recoverFromNan)">
 
                     <properties>
-                    	<property id="type" value="goal-fault" />
-                    	<property id="target" value="recoverFromNan" />
+                        <property id="type" value="goal-fault" />
+                        <property id="target" value="recoverFromNan" />
                     </properties>
 
                     <exception id="amountUnavailable" />
@@ -106,8 +106,6 @@
             </mission>
             <mission id="mParseAmount" min="1" max="1">
                 <goal id="parseAmount" />
-            </mission>
-            <mission id="mThrowNan" min="2" max="2">
                 <goal id="throwNan" />
             </mission>
             <mission id="mObtainAmount" min="1" max="1">

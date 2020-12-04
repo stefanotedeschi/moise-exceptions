@@ -56,7 +56,7 @@
                     <exception id="ovenBroken"/>
                     <goal id="notifyProblemWithOven" type="performance"/>
                 </notification-policy>
-                <handling-policy condition="(scheme(S) &amp; fault(S,switchOnOven))" id="handlerOvenProblem">
+                <handling-policy condition="true" id="handlerOvenProblem">
                     <goal id="checkOven" type="performance"/>
                 </handling-policy>
             </recovery-strategy>
@@ -65,7 +65,7 @@
                     <exception id="ingredientsUnavailable"/>
                     <goal id="notifyIngredientsUnavailability" type="performance"/>
                 </notification-policy>
-                <handling-policy condition="(scheme(S) &amp; fault(S,provideIngredients))" id="handlerIngredientsUnavailable">
+                <handling-policy condition="true" id="handlerIngredientsUnavailable">
                     <goal id="dealWithMissingIngredients" type="performance"/>
                 </handling-policy>
             </recovery-strategy>
