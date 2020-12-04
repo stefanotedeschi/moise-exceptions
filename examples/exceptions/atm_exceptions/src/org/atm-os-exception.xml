@@ -50,37 +50,55 @@
 
             <recovery-strategy id="rec1">
 
-                <exception id="nan" >
+                <notification-policy id="np1" condition="scheme_id(S) &amp; fault(S,parseAmount)">
 
-                <!--<exception id="nan" type="goal-failure" object="parseAmount">
-                <exception id="nan" type="goal-deadline" object="parseAmount">-->
-
+                    <!-- CONDITION -->
                     <properties>
-                        <property id="type" value="goal-fault" />
-                        <property id="target" value="parseAmount" />
+                    	<property id="type" value="goal-fault" />
+                    	<property id="target" value="parseAmount" />
                     </properties>
 
+                    <!-- EXCEPTION -->
+                    <exception id="nan" />
+
+                    <!-- THROWING GOAL -->
                     <goal id="throwNan" />
 
-                </exception>
+                </notification-policy>
 
-                <handler id="handler_nan">
+                <handling-policy id="hp1" condition="true">
+
+                    <!-- CONDITION -->
+                    <properties>
+                    	<property id="applicability" value="always" />
+                    </properties>
+
+                    <!-- CATCHING GOAL -->
                     <goal id="recoverFromNan" />
-                </handler>
+
+                </handling-policy>
 
             </recovery-strategy>
 
             <recovery-strategy id="rec2">
-                <exception id="amountUnavailable">
+
+                <notification-policy id="np2" condition="scheme_id(S) &amp; fault(S,parseAmount)">
+
                     <properties>
-                        <property id="type" value="goal-fault" />
-                        <property id="target" value="recoverFromNan" />
+                    	<property id="type" value="goal-fault" />
+                    	<property id="target" value="recoverFromNan" />
                     </properties>
+
+                    <exception id="amountUnavailable" />
+
                     <goal id="throwAmountUnavailable" />
-                </exception>
-                <handler id="handler_au">
+
+                </notification-policy>
+
+                <handling-policy id="hp2" condition="true">
                     <goal id="retryLater" />
-                </handler>
+                </handling-policy>
+
             </recovery-strategy>
 
             <mission id="mGetAmountAsString" min="1" max="1">
@@ -88,6 +106,8 @@
             </mission>
             <mission id="mParseAmount" min="1" max="1">
                 <goal id="parseAmount" />
+            </mission>
+            <mission id="mThrowNan" min="2" max="2">
                 <goal id="throwNan" />
             </mission>
             <mission id="mObtainAmount" min="1" max="1">
