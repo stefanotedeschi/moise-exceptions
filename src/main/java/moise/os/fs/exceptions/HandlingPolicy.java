@@ -56,35 +56,35 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
         setPropertiesFromDOM(ele);
         
         String type = (String) getProperty("type");
-		PolicyType[] policyTypes = sch.getPolicyTypes();
-		boolean found = false;
-		int i = 0;
-		PolicyType pt = null;
-		while (!found && i < policyTypes.length) {
-			if (policyTypes[i].getType().equals(type)) {
-				pt = policyTypes[i];
-				found = true;
-			}
-			i++;
-		}
-		if (!found) {
-			throw new MoiseException("Policy type " + type + "undefined for policy " + id);
-		}
-		String[] arguments = pt.getArguments();
-		String cond = pt.getFaultState();
-		for (String arg : arguments) {
-			String argValue = (String) getProperty(arg);
-			if (argValue == null) {
-				throw new MoiseException("Missing argument " + arg + "in exception " + id);
-			}
-			cond = cond.replace("$" + arg, argValue);
-		}
+        PolicyType[] policyTypes = sch.getPolicyTypes();
+        boolean found = false;
+        int i = 0;
+        PolicyType pt = null;
+        while (!found && i < policyTypes.length) {
+            if (policyTypes[i].getType().equals(type)) {
+                pt = policyTypes[i];
+                found = true;
+            }
+            i++;
+        }
+        if (!found) {
+            throw new MoiseException("Policy type " + type + "undefined for policy " + id);
+        }
+        String[] arguments = pt.getArguments();
+        String cond = pt.getFaultState();
+        for (String arg : arguments) {
+            String argValue = (String) getProperty(arg);
+            if (argValue == null) {
+                throw new MoiseException("Missing argument " + arg + "in exception " + id);
+            }
+            cond = cond.replace("$" + arg, argValue);
+        }
 
-		try {
-			condition = ASSyntax.parseFormula(cond);
-		} catch (ParseException e) {
-			throw new MoiseException(e.getMessage());
-		}
+        try {
+            condition = ASSyntax.parseFormula(cond);
+        } catch (ParseException e) {
+            throw new MoiseException(e.getMessage());
+        }
         
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {

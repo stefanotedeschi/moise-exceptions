@@ -26,7 +26,6 @@ import moise.common.MoiseException;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
 import moise.os.fs.exceptions.Exception;
-import moise.os.fs.exceptions.ExceptionType;
 import moise.os.fs.exceptions.PolicyType;
 import moise.os.fs.exceptions.RecoveryStrategy;
 import moise.prolog.ToProlog;
@@ -95,10 +94,10 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
      */
 
     public PolicyType[] getPolicyTypes() {
-		return policyTypes;
-	}
+        return policyTypes;
+    }
 
-	//
+    //
     // Plan methods
     //
     public void addPlan(Plan p) {
