@@ -1,5 +1,10 @@
 [
 	{
+		"type"        : "default",
+		"arguments"   : [],
+		"fault-state" : "true"
+	},
+	{
 		"type"        : "goal-fault",
 		"arguments"   : ["target"],
 		"fault-state" : "scheme_id(S) & fault(S,$target)"

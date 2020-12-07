@@ -3,7 +3,9 @@ package moise.os.fs.exceptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import jason.asSyntax.ASSyntax;
 import jason.asSyntax.LogicalFormula;
+import jason.asSyntax.parser.ParseException;
 import moise.common.MoiseException;
 import moise.os.fs.Goal;
 import moise.os.fs.Scheme;
@@ -26,6 +28,13 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
         inStrategy = rs;
         this.sch = sch;
     }
+    
+    public HandlingPolicy(String id, RecoveryStrategy rs, Scheme sch) {
+        super();
+        this.id = id;
+        inStrategy = rs;
+        this.sch = sch;
+    }
 
     public String getId() {
         return id;
@@ -45,6 +54,38 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
 
     public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
+        
+        String type = (String) getProperty("type");
+		PolicyType[] policyTypes = sch.getPolicyTypes();
+		boolean found = false;
+		int i = 0;
+		PolicyType pt = null;
+		while (!found && i < policyTypes.length) {
+			if (policyTypes[i].getType().equals(type)) {
+				pt = policyTypes[i];
+				found = true;
+			}
+			i++;
+		}
+		if (!found) {
+			throw new MoiseException("Policy type " + type + "undefined for policy " + id);
+		}
+		String[] arguments = pt.getArguments();
+		String cond = pt.getFaultState();
+		for (String arg : arguments) {
+			String argValue = (String) getProperty(arg);
+			if (argValue == null) {
+				throw new MoiseException("Missing argument " + arg + "in exception " + id);
+			}
+			cond = cond.replace("$" + arg, argValue);
+		}
+
+		try {
+			condition = ASSyntax.parseFormula(cond);
+		} catch (ParseException e) {
+			throw new MoiseException(e.getMessage());
+		}
+        
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
             goal = new CatchingGoal(gEle.getAttribute("id"), this);
@@ -59,7 +100,7 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        ele.setAttribute("condition", condition.toString());
+        //ele.setAttribute("condition", condition.toString());
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
         }

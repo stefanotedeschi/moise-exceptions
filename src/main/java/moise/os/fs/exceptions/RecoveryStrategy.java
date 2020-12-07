@@ -22,11 +22,13 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
     private Set<HandlingPolicy> handlingPolicies = new HashSet<>();
     
     protected Scheme sch = null;
+    
+    protected static PolicyType[] policyTypes;
 
     public RecoveryStrategy(String id, Scheme sch) {
         super();
         this.id = id;
-        this.sch = sch;
+        this.sch = sch;        
     }
     
     public static String getXMLTag() {
@@ -58,23 +60,25 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
         
         Element npEle = DOMUtils.getDOMDirectChild(ele, NotificationPolicy.getXMLTag());
         String id = npEle.getAttribute("id");
-        LogicalFormula condition;
-        try {
-            condition = ASSyntax.parseFormula(npEle.getAttribute("condition"));
-        } catch (ParseException e) {
-            throw new MoiseException(e.getMessage());
-        }
-        notificationPolicy = new NotificationPolicy(id, condition, this, sch);
+//        LogicalFormula condition;
+//        try {
+//            condition = ASSyntax.parseFormula(npEle.getAttribute("condition"));
+//        } catch (ParseException e) {
+//            throw new MoiseException(e.getMessage());
+//        }
+//        notificationPolicy = new NotificationPolicy(id, condition, this, sch);
+        notificationPolicy = new NotificationPolicy(id, this, sch);
         notificationPolicy.setFromDOM(npEle);
         
         for (Element hpEle: DOMUtils.getDOMDirectChilds(ele, HandlingPolicy.getXMLTag())) {
             id = hpEle.getAttribute("id");
-            try {
-                condition = ASSyntax.parseFormula(hpEle.getAttribute("condition"));
-            } catch (ParseException e) {
-                throw new MoiseException(e.getMessage());
-            }
-            HandlingPolicy hp = new HandlingPolicy(id, condition, this, sch);
+//            try {
+//                condition = ASSyntax.parseFormula(hpEle.getAttribute("condition"));
+//            } catch (ParseException e) {
+//                throw new MoiseException(e.getMessage());
+//            }
+//            HandlingPolicy hp = new HandlingPolicy(id, condition, this, sch);
+            HandlingPolicy hp = new HandlingPolicy(id, this, sch);
             hp.setFromDOM(hpEle);
             handlingPolicies.add(hp);
         }

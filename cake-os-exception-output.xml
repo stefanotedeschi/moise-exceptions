@@ -52,20 +52,50 @@
                 </plan>
             </goal>
             <recovery-strategy id="r2">
-                <notification-policy condition="(scheme(S) &amp; fault(S,switchOnOven))" id="np2">
+                <notification-policy id="np2">
+                    <properties>
+                        <property id="type" value="goal-fault"/>
+                        <property id="target" value="switchOnOven"/>
+                    </properties>
                     <exception id="ovenBroken"/>
                     <goal id="notifyProblemWithOven" type="performance"/>
                 </notification-policy>
-                <handling-policy condition="true" id="handlerOvenProblem">
+                <handling-policy id="handlerOvenProblem">
+                    <properties>
+                        <property id="type" value="default"/>
+                    </properties>
                     <goal id="checkOven" type="performance"/>
                 </handling-policy>
             </recovery-strategy>
+            <recovery-strategy id="r3">
+                <notification-policy id="np3">
+                    <properties>
+                        <property id="type" value="goal-fault"/>
+                        <property id="target" value="provideIngredients"/>
+                    </properties>
+                    <exception id="workspaceSetupFailure"/>
+                    <goal id="notifyWorkspaceSetupFailure" type="performance"/>
+                </notification-policy>
+                <handling-policy id="handlerWorkspaceSetupFailure">
+                    <properties>
+                        <property id="type" value="default"/>
+                    </properties>
+                    <goal id="handleSetupFailure" type="performance"/>
+                </handling-policy>
+            </recovery-strategy>
             <recovery-strategy id="r1">
-                <notification-policy condition="(scheme(S) &amp; fault(S,provideIngredients))" id="np1">
+                <notification-policy id="np1">
+                    <properties>
+                        <property id="type" value="goal-fault"/>
+                        <property id="target" value="provideIngredients"/>
+                    </properties>
                     <exception id="ingredientsUnavailable"/>
                     <goal id="notifyIngredientsUnavailability" type="performance"/>
                 </notification-policy>
-                <handling-policy condition="true" id="handlerIngredientsUnavailable">
+                <handling-policy id="handlerIngredientsUnavailable">
+                    <properties>
+                        <property id="type" value="default"/>
+                    </properties>
                     <goal id="dealWithMissingIngredients" type="performance"/>
                 </handling-policy>
             </recovery-strategy>
@@ -74,9 +104,11 @@
                 <goal id="dealWithMissingIngredients"/>
                 <goal id="workspaceSetup"/>
                 <goal id="checkOven"/>
+                <goal id="notifyWorkspaceSetupFailure"/>
             </mission>
             <mission id="mBoss" max="1" min="1">
                 <goal id="haveCake"/>
+                <goal id="handleSetupFailure"/>
             </mission>
             <mission id="mSupplier" max="1" min="1">
                 <goal id="notifyIngredientsUnavailability"/>

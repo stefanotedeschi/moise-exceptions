@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm_exceptions'
-    on dicembre 04, 2020 - 18:19:11
+    on dicembre 07, 2020 - 13:09:30
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -207,10 +207,10 @@ scope scheme(atm_sch) {
                     not released(S,CG) &
                     recovery_strategy(ST) &
                     strategy_policy(ST,HP) &
-                    strategy_policy(ST,NP) &
-                    policy_exception(NP,E) &
+                    strategy_policy(ST,NPol) &
+                    policy_exception(NPol,E) &
                     thrown(S,E,_) &
-                    policy_goal(NP,TG) &
+                    policy_goal(NPol,TG) &
                     satisfied(S,TG) &
                     goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |

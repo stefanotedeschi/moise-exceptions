@@ -50,7 +50,7 @@
 
             <recovery-strategy id="rec1">
 
-                <notification-policy id="np1" condition="scheme_id(S) &amp; fault(S,parseAmount)">
+                <notification-policy id="np1">
 
                     <!-- CONDITION -->
                     <properties>
@@ -66,11 +66,11 @@
 
                 </notification-policy>
 
-                <handling-policy id="hp1" condition="true">
+                <handling-policy id="hp1">
 
                     <!-- CONDITION -->
-                    <properties>
-                    	<property id="applicability" value="always" />
+                   <properties>
+                    	<property id="type" value="default" />
                     </properties>
 
                     <!-- CATCHING GOAL -->
@@ -82,7 +82,7 @@
 
             <recovery-strategy id="rec2">
 
-                <notification-policy id="np2" condition="scheme_id(S) &amp; fault(S,recoverFromNan)">
+                <notification-policy id="np2">
 
                     <properties>
                     	<property id="type" value="goal-fault" />
@@ -95,7 +95,12 @@
 
                 </notification-policy>
 
-                <handling-policy id="hp2" condition="true">
+                <handling-policy id="hp2">
+                
+                	<properties>
+                    	<property id="type" value="default" />
+                    </properties>
+                	
                     <goal id="retryLater" />
                 </handling-policy>
 

@@ -53,7 +53,7 @@
                 </plan>
             </goal>
             <recovery-strategy id="rec1">
-                <notification-policy condition="(scheme_id(S) &amp; fault(S,parseAmount))" id="np1">
+                <notification-policy id="np1">
                     <properties>
                         <property id="type" value="goal-fault"/>
                         <property id="target" value="parseAmount"/>
@@ -61,15 +61,15 @@
                     <exception id="nan"/>
                     <goal id="throwNan" type="performance"/>
                 </notification-policy>
-                <handling-policy condition="true" id="hp1">
+                <handling-policy id="hp1">
                     <properties>
-                        <property id="applicability" value="always"/>
+                        <property id="type" value="default"/>
                     </properties>
                     <goal id="recoverFromNan" type="performance"/>
                 </handling-policy>
             </recovery-strategy>
             <recovery-strategy id="rec2">
-                <notification-policy condition="(scheme_id(S) &amp; fault(S,recoverFromNan))" id="np2">
+                <notification-policy id="np2">
                     <properties>
                         <property id="type" value="goal-fault"/>
                         <property id="target" value="recoverFromNan"/>
@@ -77,7 +77,10 @@
                     <exception id="amountUnavailable"/>
                     <goal id="throwAmountUnavailable" type="performance"/>
                 </notification-policy>
-                <handling-policy condition="true" id="hp2">
+                <handling-policy id="hp2">
+                    <properties>
+                        <property id="type" value="default"/>
+                    </properties>
                     <goal id="retryLater" type="performance"/>
                 </handling-policy>
             </recovery-strategy>

@@ -44,37 +44,58 @@
 			</goal>
 
 			<recovery-strategy id="r1">
-				<notification-policy id="np1" condition="scheme(S) &amp; fault(S,provideIngredients)">
+				<notification-policy id="np1">
+				<!--<notification-policy id="np1" condition="scheme(S) &amp; fault(S,provideIngredients)">-->
+
+					<properties>
+                    	<property id="type" value="goal-fault" />
+                    	<property id="target" value="provideIngredients" />
+                    </properties>
+
 					<exception id="ingredientsUnavailable" />
 					<goal id="notifyIngredientsUnavailability" />
 				</notification-policy>
-				<handling-policy id="handlerIngredientsUnavailable" condition="true">
+				<handling-policy id="handlerIngredientsUnavailable">
+					<properties>
+                    	<property id="type" value="default" />
+                    </properties>
 					<goal id="dealWithMissingIngredients" />
 				</handling-policy>
 			</recovery-strategy>
 
 			<recovery-strategy id="r2">
-				<notification-policy id="np2" condition="scheme(S) &amp; fault(S,switchOnOven)">
+				<notification-policy id="np2">
+					<properties>
+                    	<property id="type" value="goal-fault" />
+                    	<property id="target" value="switchOnOven" />
+                    </properties>
 					<exception id="ovenBroken" />
 					<goal id="notifyProblemWithOven" />
 				</notification-policy>
-				<handling-policy id="handlerOvenProblem" condition="true">
+				<handling-policy id="handlerOvenProblem">
+					<properties>
+                    	<property id="type" value="default" />
+                    </properties>
 					<goal id="checkOven" />
 				</handling-policy>
 			</recovery-strategy>
 
-			<!--<recovery-strategy id="r3">
-				<exception id="workspaceSetupFailure">
+			<recovery-strategy id="r3">
+				<notification-policy id="np3">
 					<properties>
-                    	<property id="type" value="goal-fault" />
-                    	<property id="target" value="provideIngredients" />
-                    </properties>
+						<property id="type" value="goal-fault" />
+						<property id="target" value="provideIngredients" />
+					</properties>
+					<exception id="workspaceSetupFailure" />
 					<goal id="notifyWorkspaceSetupFailure" />
-				</exception>
-				<handler id="handlerWorkspaceSetupFailure">
+				</notification-policy>
+				<handling-policy id="handlerWorkspaceSetupFailure">
+					<properties>
+                    	<property id="type" value="default" />
+                    </properties>
 					<goal id="handleSetupFailure" />
-				</handler>
-			</recovery-strategy>-->
+				</handling-policy>
+			</recovery-strategy>
 
 			<mission id="mApprentice" min="1" max="1">
 				<goal id="switchOnOven" />
@@ -88,13 +109,13 @@
 			<mission id="mBaker" min="1" max="1">
 				<goal id="workspaceSetup" />
 				<goal id="mixIngredients" />
-				<!--<goal id="notifyWorkspaceSetupFailure" />-->
+				<goal id="notifyWorkspaceSetupFailure" />
 				<goal id="dealWithMissingIngredients" />
 				<goal id="checkOven" />
 			</mission>
 			<mission id="mBoss" min="1" max="1">
 				<goal id="haveCake" />
-				<!--<goal id="handleSetupFailure" />-->
+				<goal id="handleSetupFailure" />
 			</mission>
 
 		</scheme>
