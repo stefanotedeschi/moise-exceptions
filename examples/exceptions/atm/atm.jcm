@@ -36,7 +36,7 @@ mas atm_exceptions {
     	}
 	}
 
-    organisation o1 : atm-os-exception.xml {
+    organisation o1 : atm-os.xml {
 		group g1 : atm_group {
 			responsible-for: atmsch
 		}

@@ -1,5 +1,5 @@
 /*
-   example: atm_exceptions
+   example: atm
 
    Gradle build file for JaCaMo Application
    September 27, 2018 - 15:33:36
@@ -21,9 +21,8 @@ repositories {
     //mavenLocal()
 
     maven { url "http://jacamo.sourceforge.net/maven2" }
-    //maven { url "http://jade.tilab.com/maven/" }
     //maven { url "https://moise-exceptions.sourceforge.io/maven2" }
-    //maven { url "http://www.di.unito.it/~tedeschi/maven2" }
+    maven { url "http://www.di.unito.it/~tedeschi/maven2" }
 
     flatDir {
        dirs 'lib'
@@ -62,7 +61,7 @@ task run (type: JavaExec, dependsOn: 'classes') {
     description 'runs the application'
     group ' JaCaMo'
     main = 'jacamo.infra.JaCaMoLauncher'
-    args 'atm_exceptions.jcm'
+    args 'atm.jcm'
     classpath sourceSets.main.runtimeClasspath
 }
 

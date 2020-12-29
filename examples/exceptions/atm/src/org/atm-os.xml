@@ -56,13 +56,12 @@
                     <properties>
                         <property id="type" value="goal-fault" />
                         <property id="target" value="parseAmount" />
-                    </properties>
-
-                    <!-- EXCEPTION -->
-                    <exception id="nan" />
+                    </properties> 
 
                     <!-- THROWING GOAL -->
-                    <goal id="throwNan" />
+                    <throwing-goal id="throwNan">
+                        <exception id="nan" />
+                    </throwing-goal>
 
                 </notification-policy>
 
@@ -74,7 +73,7 @@
                     </properties>
 
                     <!-- CATCHING GOAL -->
-                    <goal id="recoverFromNan" />
+                    <catching-goal id="recoverFromNan" />
 
                 </handling-policy>
 
@@ -89,9 +88,9 @@
                         <property id="target" value="recoverFromNan" />
                     </properties>
 
-                    <exception id="amountUnavailable" />
-
-                    <goal id="throwAmountUnavailable" />
+                    <throwing-goal id="throwAmountUnavailable">
+                        <exception id="amountUnavailable" />
+                    </throwing-goal>
 
                 </notification-policy>
 
@@ -101,7 +100,7 @@
                         <property id="type" value="default" />
                     </properties>
                     
-                    <goal id="retryLater" />
+                    <catching-goal id="retryLater" />
                 </handling-policy>
 
             </recovery-strategy>
