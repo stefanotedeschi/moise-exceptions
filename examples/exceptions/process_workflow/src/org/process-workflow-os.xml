@@ -62,17 +62,22 @@
             </goal>
 
             <recovery-strategy id="r1">
-                <exception id="resourcePoaching">
+                <properties>
+                    <property id="when" value="goal-fault" />
+                    <property id="target" value="distributeResources" />
+                </properties>
+
+                <exceptionType id="resourcePoaching">
+
+                <goal id="raiseResourcePoaching" />
+                <handling-policy id="hPoaching">
                     <properties>
-                        <property id="type" value="goal-failure" />
-                        <property id="target" value="distributeResources" />
+                        <property id="when" value="always" />
                     </properties>
-                    <goal id="raiseResourcePoaching" />
-                </exception>
-                <handler id="hPoaching">
                     <goal id="redistributeResources" />
-                </handler>
+                </handling-policy>
             </recovery-strategy>
+
             <recovery-strategy id="r2">
                 <exception id="designConflict">
                     <properties>
