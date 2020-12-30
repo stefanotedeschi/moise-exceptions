@@ -11,7 +11,7 @@ problem.
 +obligation(Ag,_,done(_,deliverItems,Ag),_)[artifact_id(ArtId)]
 	 : problem
 	<- println("Problem in delivering items!");
-	   goalFailed(deliverItems)[artifact_id(ArtId)].
+	   goalInFault(deliverItems)[artifact_id(ArtId)].
 
 +obligation(Ag,_,done(_,raiseItemsLost,Ag),_)[artifact_id(ArtId)]
      : .my_name(Ag) &

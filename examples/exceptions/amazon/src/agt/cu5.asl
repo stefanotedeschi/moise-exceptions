@@ -5,7 +5,7 @@
 	   println("Order received!").
 	   
 +problemInOrderDelivery
-	<- goalFailed(receiveItems).
+	<- goalInFault(receiveItems).
 	
 +obligation(Ag,_,done(_,raiseItemsNotReceived,Ag),_)[artifact_id(ArtId)]
      : .my_name(Ag)

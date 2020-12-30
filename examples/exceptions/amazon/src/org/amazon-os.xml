@@ -93,30 +93,57 @@
             </goal>
 
             <recovery-strategy id="r1">
-                <exception id="paymentRefused" when="scheme_id(S) &amp; failed(S,payOrder)">
-                    <goal id="raisePaymentRefused" />
-                </exception>
-                <handler id="handlerPaymentRefused">
-                    <goal id="retry" />
-                </handler>
+                <notification-policy id="np1">
+                    <properties>
+                        <property id="type" value="goal-fault" />
+                        <property id="target" value="payOrder" />
+                    </properties>
+                    <throwing-goal id="raisePaymentRefused">
+                        <exception id="paymentRefused" />
+                    </throwing-goal>
+                </notification-policy>
+                <handling-policy id="handlerPaymentRefused">
+                    <properties>
+                        <property id="type" value="default" />
+                    </properties>
+                    <catching-goal id="retry" />
+                </handling-policy>
             </recovery-strategy>
-            
+
             <recovery-strategy id="r2">
-                <exception id="checkoutFailed" when="scheme_id(S) &amp; failed(S,retry)">
-                    <goal id="raiseCheckoutFailed" />
-                </exception>
-                <handler id="handlerCheckoutFailed">
-                    <goal id="cancelOrder" />
-                </handler>
+                <notification-policy id="np2">
+                    <properties>
+                        <property id="type" value="goal-fault" />
+                        <property id="target" value="retry" />
+                    </properties>
+                    <throwing-goal id="raiseCheckoutFailed">
+                        <exception id="checkoutFailed" />
+                    </throwing-goal>
+                </notification-policy>
+                <handling-policy id="handlerCheckoutFailed">
+                    <properties>
+                        <property id="type" value="default" />
+                    </properties>
+                    <catching-goal id="cancelOrder" />
+                </handling-policy>
             </recovery-strategy>
-            
+
             <recovery-strategy id="r3">
-                <exception id="itemsNotReceived" when="scheme_id(S) &amp; failed(S,receiveItems)">
-                    <goal id="raiseItemsNotReceived" />
-                </exception>
-                <handler id="handlerItemsNotReceived">
-                    <goal id="requestRefund" />
-                </handler>
+                <notification-policy id="np3">
+                    <properties>
+                        <property id="type" value="goal-fault" />
+                        <property id="target" value="receiveItems" />
+                    </properties>
+                    <throwing-goal id="raiseItemsNotReceived">
+                        <exception id="itemsNotReceived" />
+                    </throwing-goal>
+                </notification-policy>
+                <handling-policy id="handlerItemsNotReceived">
+                    <properties>
+                        <property id="type" value="default" />
+                    </properties>
+                    <catching-goal id="requestRefund" />
+                </handling-policy>
             </recovery-strategy>
 
             <mission id="mCustomer1" min="1" max="1">
@@ -202,12 +229,21 @@
             </goal>
 
             <recovery-strategy id="r4">
-                <exception id="itemsLost" when="scheme_id(S) &amp; failed(S,deliverItems)">
-                    <goal id="raiseItemsLost" />
-                </exception>
-                <handler id="handlerItemsLost">
-                    <goal id="notifyCustomer" />
-                </handler>
+                <notification-policy id="np4">
+                    <properties>
+                        <property id="type" value="goal-fault" />
+                        <property id="target" value="deliverItems" />
+                    </properties>
+                    <throwing-goal id="raiseItemsLost">
+                        <exception id="itemsLost" />
+                    </throwing-goal>
+                </notification-policy>
+                <handling-policy id="handlerItemsLost">
+                    <properties>
+                        <property id="type" value="default" />
+                    </properties>
+                    <catching-goal id="notifyCustomer" />
+                </handling-policy>
             </recovery-strategy>
 
             <mission id="mCarrier1" min="1" max="1">

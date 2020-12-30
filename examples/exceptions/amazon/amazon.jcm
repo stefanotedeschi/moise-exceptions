@@ -1,5 +1,5 @@
 /*
-    amazon_exceptions
+    amazon
     ---------------------------
 
     JaCaMo Application File
@@ -82,7 +82,7 @@ mas amazon_exceptions {
 	}
 
 
-    organisation o1 : amazon-os-exceptions.xml {
+    organisation o1 : amazon-os.xml {
 
 		group gcu : customer_group {
 			responsible-for: cusch

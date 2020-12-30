@@ -3,7 +3,7 @@
 	<- println("DONE!").
 
 +!cancelOrder
-	<- println("Order cancelled!").
+	<- println("Order canceled!").
 	
 +!requestRefund
 	<- println("TOO BAD =( I'll request a refund.").
