@@ -34,7 +34,7 @@
 
     <functional-specification>
 
-        <scheme id="production_cell_sch">
+        <scheme id="production_cell_scheme">
 
             <goal id="producePlate">
                 <plan operator="sequence">
@@ -119,7 +119,7 @@
             mission="mRobot" />
         <norm id="n5" type="obligation" role="press"
             mission="mPress" />
-        <norm id="n5" type="obligation" role="depositBelt"
+        <norm id="n6" type="obligation" role="depositBelt"
             mission="mDepositBelt" />
     </normative-specification>
 

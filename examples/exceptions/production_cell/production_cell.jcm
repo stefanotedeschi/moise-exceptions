@@ -13,15 +13,34 @@
 */
 
 mas production_cell {
-
-
-
-    workspace default {
-
+	
+	agent bp {
+		roles: blankProvider in g1
+	}
+	agent fb {
+		roles: feedBelt in g1
+	}
+	agent ert {
+		roles: elevatingRotaryTable in g1
+	}
+	agent r {
+		roles: robot in g1
+	}
+	agent p {
+		roles: press in g1
+	}
+	agent db {
+		roles: depositBelt in g1
 	}
 
-    organisation o1 : production-cell-os.xml {
+    //workspace default {
+	//}
 
+    organisation o1 : production-cell-os.xml {
+		group g1 : production_cell_group {
+			responsible-for: pcsch
+		}
+		scheme pcsch : production_cell_scheme
 	}
 
 	java-path: ., src/env
