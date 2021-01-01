@@ -23,7 +23,7 @@ public class RecoveryStrategy extends moise.common.MoiseElement implements ToXML
     
     protected Scheme sch = null;
     
-    protected static PolicyType[] policyTypes;
+    protected static PolicyConditionTemplate[] policyConditionTemplates;
 
     public RecoveryStrategy(String id, Scheme sch) {
         super();

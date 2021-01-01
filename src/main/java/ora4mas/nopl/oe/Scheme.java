@@ -163,6 +163,7 @@ public class Scheme extends CollectiveOE {
     }
 
     public boolean removeReleasedGoal(Goal goal) {
+    	
         boolean r = false;
         Atom gAtom = createAtom(goal.getId());
         Iterator<Literal> iReleasedGoals = releasedGoals.iterator();
@@ -176,9 +177,9 @@ public class Scheme extends CollectiveOE {
         return r;
     }
 
-    public boolean removeThrown(moise.os.fs.exceptions.Exception exception) {
+    public boolean removeThrown(moise.os.fs.exceptions.ExceptionType exceptionType) {
         boolean r = false;
-        Atom eAtom = createAtom(exception.getId());
+        Atom eAtom = createAtom(exceptionType.getId());
         Iterator<Literal> iThrowns = throwns.iterator();
         while (iThrowns.hasNext()) {
             Literal l = iThrowns.next();
@@ -237,8 +238,8 @@ public class Scheme extends CollectiveOE {
         while (iThrowns.hasNext()) {
             Literal l = iThrowns.next();
             try {
-                moise.os.fs.exceptions.Exception e = spec.getException(l.getTerm(1).toString());
-                LogicalFormula condition = e.getInPolicy().getCondition();
+                moise.os.fs.exceptions.ExceptionType e = spec.getExceptionType(l.getTerm(1).toString());
+                LogicalFormula condition = e.getInPolicy().getCondition().getConditionFormula();
 
                 nplp parser = new nplp(new StringReader(condition.toString()));
                 parser.setDFP(this);

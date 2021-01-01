@@ -1,17 +1,22 @@
 [
 	{
-		"type"        : "default",
-		"arguments"   : [],
-		"fault-state" : "true"
+		"type"             : "always",
+		"argument-names"   : [],
+		"fault-state"      : "true"
 	},
 	{
-		"type"        : "goal-fault",
-		"arguments"   : ["target"],
-		"fault-state" : "scheme_id(S) & fault(S,$target)"
+		"type"             : "goal-fault",
+		"argument-names"   : ["target"],
+		"fault-state"      : "scheme_id(S) & fault(S,$target)"
 	},
 	{
-		"type"        : "goal-ttf-expiration",
-		"arguments"   : ["target"],
-		"fault-state" : "scheme_id(S) & unfulfilled(obligation(_,_,done(S,$target,_),_))"
+		"type"             : "goal-ttf-expiration",
+		"argument-names"   : ["target"],
+		"fault-state"      : "scheme_id(S) & unfulfilled(obligation(_,_,done(S,$target,_),_))"
+	},
+	{	
+		"type"		       : "custom",
+		"argument-names"   : ["formula"],
+		"fault-state"      : "$formula"
 	}
 ]

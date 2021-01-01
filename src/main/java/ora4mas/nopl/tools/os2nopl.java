@@ -339,11 +339,11 @@ public class os2nopl {
             recoveryStrategy += "   recovery_strategy(" + rs.getId() + ").\n";
             NotificationPolicy npol = rs.getNotificationPolicy();
             if(npol != null) {
-                notificationPolicy += "   notification_policy("+npol.getId()+","+npol.getCondition()+").\n";
+                notificationPolicy += "   notification_policy("+npol.getId()+","+npol.getCondition().getConditionFormula()+").\n";
                 strategyPolicy += "   strategy_policy("+rs.getId()+","+npol.getId()+").\n";
-                if(npol.getException() != null) {
-                    exception += "   exception("+npol.getException().getId()+").\n";
-                    policyException += "   policy_exception("+npol.getId()+","+npol.getException().getId()+").\n";
+                if(npol.getExceptionType() != null) {
+                    exception += "   exception("+npol.getExceptionType().getId()+").\n";
+                    policyException += "   policy_exception("+npol.getId()+","+npol.getExceptionType().getId()+").\n";
                 }
                 if(npol.getGoal() != null) {
                       policyGoal += "   policy_goal("+npol.getId()+","+npol.getGoal().getId()+").\n";
@@ -353,7 +353,7 @@ public class os2nopl {
                 }
             }
             for(HandlingPolicy hp : rs.getHandlingPolicies()) {
-                handlingPolicy += "   handling_policy("+hp.getId()+","+hp.getCondition()+").\n";
+                handlingPolicy += "   handling_policy("+hp.getId()+","+hp.getCondition().getConditionFormula()+").\n";
                   strategyPolicy += "   strategy_policy("+rs.getId()+","+hp.getId()+").\n";
                   if(hp.getGoal() != null) {
                       policyGoal += "   policy_goal("+hp.getId()+","+hp.getGoal().getId()+").\n";

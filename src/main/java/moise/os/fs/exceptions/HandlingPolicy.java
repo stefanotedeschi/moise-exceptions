@@ -13,21 +13,21 @@ import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
-public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, ToProlog  {
+public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, ToProlog, Policy  {
 
     private String id;
-    private LogicalFormula condition;
+    private PolicyCondition condition;
     private RecoveryStrategy inStrategy;
     private CatchingGoal goal;
     private Scheme sch;
     
-    public HandlingPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
-        super();
-        this.id = id;
-        this.condition = condition;
-        inStrategy = rs;
-        this.sch = sch;
-    }
+//    public HandlingPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
+//        super();
+//        this.id = id;
+//        this.condition = condition;
+//        inStrategy = rs;
+//        this.sch = sch;
+//    }
     
     public HandlingPolicy(String id, RecoveryStrategy rs, Scheme sch) {
         super();
@@ -40,7 +40,7 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
         return id;
     }
     
-    public LogicalFormula getCondition() {
+    public PolicyCondition getCondition() {
         return condition;
     }
 
@@ -55,36 +55,15 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
     public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
         
-        String type = (String) getProperty("type");
-        PolicyType[] policyTypes = sch.getPolicyTypes();
-        boolean found = false;
-        int i = 0;
-        PolicyType pt = null;
-        while (!found && i < policyTypes.length) {
-            if (policyTypes[i].getType().equals(type)) {
-                pt = policyTypes[i];
-                found = true;
-            }
-            i++;
+        Element condEle = DOMUtils.getDOMDirectChild(ele, "condition");
+        if(condEle != null) {
+        	condition = new PolicyCondition(condEle.getAttribute("id"), sch, this);
+        	condition.setFromDOM(condEle);
         }
-        if (!found) {
-            throw new MoiseException("Policy type " + type + "undefined for policy " + id);
+        else {
+            throw new MoiseException("Condition missing in handling policy " + id);
         }
-        String[] arguments = pt.getArguments();
-        String cond = pt.getFaultState();
-        for (String arg : arguments) {
-            String argValue = (String) getProperty(arg);
-            if (argValue == null) {
-                throw new MoiseException("Missing argument " + arg + "in exception " + id);
-            }
-            cond = cond.replace("$" + arg, argValue);
-        }
-
-        try {
-            condition = ASSyntax.parseFormula(cond);
-        } catch (ParseException e) {
-            throw new MoiseException(e.getMessage());
-        }
+        
         
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
         if(gEle != null) {
@@ -93,7 +72,7 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
             sch.addGoal(goal);
         }
         else {
-            throw new MoiseException("Catching goal missinf in handling policy " + id);
+            throw new MoiseException("Catching goal missing in handling policy " + id);
         }
     }
     
@@ -103,6 +82,9 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
         //ele.setAttribute("condition", condition.toString());
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
+        }
+        if(condition != null) {
+        	ele.appendChild(condition.getAsDOM(document));
         }
         if(goal != null) {
             ele.appendChild(goal.getAsDOM(document));

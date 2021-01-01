@@ -247,7 +247,8 @@
     <xsd:complexType name="notificationPolicyType">
         <xsd:sequence>
           <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
-          <xsd:element maxOccurs="1" minOccurs="1" name="exception" type="moise:exceptionType"/>
+          <xsd:element maxOccurs="1" minOccurs="1" name="condition" type="moise:conditionType"/>
+          <xsd:element maxOccurs="1" minOccurs="1" name="exception-type" type="moise:exceptionType"/>
           <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
@@ -257,19 +258,37 @@
     <xsd:complexType name="handlingPolicyType">
         <xsd:sequence>
           <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
+          <xsd:element maxOccurs="1" minOccurs="1" name="condition" type="moise:conditionType"/>
           <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
         <!-- <xsd:attribute name="condition" type="xsd:string" use="required"/> -->
     </xsd:complexType>
 
-    <xsd:complexType name="exceptionType">
+	<xsd:complexType name="conditionType">
         <xsd:sequence>
-          <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
+        	<xsd:element maxOccurs="unbounded" minOccurs="0" name="condition-argument" type="moise:conditionArgumentType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required" />
     </xsd:complexType>
 
+    <xsd:complexType name="exceptionType">
+        <xsd:sequence>
+           <xsd:element maxOccurs="unbounded" minOccurs="0" name="exception-argument" type="moise:exceptionArgumentType"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string" use="required" />
+    </xsd:complexType>
+	
+	<xsd:complexType name="conditionArgumentType">
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
+    </xsd:complexType>
+	
+	<xsd:complexType name="exceptionArgumentType">
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="arity" type="xsd:integer" use="required"/>
+    </xsd:complexType>
+	
     <xsd:complexType name="argumentType">
         <xsd:attribute name="id" type="xsd:string" use="required"/>
         <xsd:attribute name="value" type="xsd:string" use="optional"/>

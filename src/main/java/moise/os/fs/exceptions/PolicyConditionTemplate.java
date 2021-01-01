@@ -1,16 +1,16 @@
 package moise.os.fs.exceptions;
 import java.util.Arrays;
 
-public class PolicyType {
+public class PolicyConditionTemplate {
 
     private String type;
-    private String[] arguments;
+    private String[] argumentNames;
     private String faultState;
     
-    public PolicyType(String type, String[] arguments, String faultState) {
+    public PolicyConditionTemplate(String type, String[] argumentNames, String faultState) {
         super();
         this.type = type;
-        this.arguments = arguments;
+        this.argumentNames = argumentNames;
         this.faultState = faultState;
     }
 
@@ -18,8 +18,8 @@ public class PolicyType {
         return type;
     }
 
-    public String[] getArguments() {
-        return arguments;
+    public String[] getArgumentNames() {
+        return argumentNames;
     }
 
     public String getFaultState() {
@@ -30,8 +30,8 @@ public class PolicyType {
         this.type = type;
     }
 
-    public void setArguments(String[] arguments) {
-        this.arguments = arguments;
+    public void setArgumentNames(String[] arguments) {
+        this.argumentNames = arguments;
     }
 
     public void setFaultState(String faultState) {
@@ -40,7 +40,7 @@ public class PolicyType {
 
     @Override
     public String toString() {
-        return "PolicyType [type=" + type + ", arguments=" + Arrays.toString(arguments) + ", faultState="
+        return "PolicyType [type=" + type + ", arguments=" + Arrays.toString(argumentNames) + ", faultState="
                 + faultState + "]";
     }
     

@@ -25,8 +25,8 @@ import moise.common.MoiseElement;
 import moise.common.MoiseException;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
-import moise.os.fs.exceptions.Exception;
-import moise.os.fs.exceptions.PolicyType;
+import moise.os.fs.exceptions.ExceptionType;
+import moise.os.fs.exceptions.PolicyConditionTemplate;
 import moise.os.fs.exceptions.RecoveryStrategy;
 import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
@@ -53,7 +53,7 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
     protected Map<String, RecoveryStrategy> recoveryStrategies = new HashMap<>();
     
-    protected PolicyType[] policyTypes;
+    protected PolicyConditionTemplate[] policyConditionTemplates;
 
     public Scheme(String id, FS fs) {
         super(id);
@@ -63,7 +63,7 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         InputStream is = getClass().getResourceAsStream("/json/exceptions-conf.json");
         JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
         Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
-        policyTypes = gson.fromJson(reader, PolicyType[].class);
+        policyConditionTemplates = gson.fromJson(reader, PolicyConditionTemplate[].class);
     }
 
     public void setRoot(Goal g) {
@@ -93,8 +93,8 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
      * return true; return false; }
      */
 
-    public PolicyType[] getPolicyTypes() {
-        return policyTypes;
+    public PolicyConditionTemplate[] getPolicyConditionTemplates() {
+        return policyConditionTemplates;
     }
 
     //
@@ -191,9 +191,9 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         return recoveryStrategies.values();
     }
 
-    public Exception getException(String id) throws MoiseException {
+    public ExceptionType getExceptionType(String id) throws MoiseException {
         for (RecoveryStrategy rs : recoveryStrategies.values()) {
-            Exception ex = rs.getNotificationPolicy().getException();
+            ExceptionType ex = rs.getNotificationPolicy().getExceptionType();
             if (ex.getId().equals(id)) {
                 return ex;
             }
@@ -273,11 +273,11 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         addGoal(rootG);
         setRoot(rootG);
 
-        // get exception types from configuration file
-        InputStream is = getClass().getResourceAsStream("/json/exceptions-conf.json");
-        JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
-        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
-        PolicyType[] exceptionTypes = gson.fromJson(reader, PolicyType[].class);
+//        // get exception types from configuration file
+//        InputStream is = getClass().getResourceAsStream("/json/exceptions-conf.json");
+//        JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
+//        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
+//        policyConditionTemplates = gson.fromJson(reader, PolicyConditionTemplate[].class);
 
         // recovery strategies
         for (Element rsEle : DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {

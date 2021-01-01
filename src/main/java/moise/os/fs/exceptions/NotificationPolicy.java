@@ -1,5 +1,8 @@
 package moise.os.fs.exceptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -13,22 +16,22 @@ import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
-public class NotificationPolicy extends moise.common.MoiseElement implements ToXML, ToProlog {
+public class NotificationPolicy extends moise.common.MoiseElement implements ToXML, ToProlog, Policy {
 
     private String id;
-    private LogicalFormula condition;
-    private Exception exception;
+    private PolicyCondition condition;
+    private ExceptionType exceptionType;
     private RecoveryStrategy inStrategy;
     private ThrowingGoal goal;
     private Scheme sch;
 
-    public NotificationPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
-        super();
-        this.id = id;
-        this.condition = condition;
-        inStrategy = rs;
-        this.sch = sch;
-    }
+//    public NotificationPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
+//        super();
+//        this.id = id;
+//        this.condition = condition;
+//        inStrategy = rs;
+//        this.sch = sch;
+//    }
     
     public NotificationPolicy(String id, RecoveryStrategy rs, Scheme sch) {
         super();
@@ -41,12 +44,12 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         return id;
     }
 
-    public LogicalFormula getCondition() {
+    public PolicyCondition getCondition() {
         return condition;
     }
 
-    public Exception getException() {
-        return exception;
+    public ExceptionType getExceptionType() {
+        return exceptionType;
     }
 
     public RecoveryStrategy getInStrategy() {
@@ -59,36 +62,24 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
 
     public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
-
-        String type = (String) getProperty("type");
-        PolicyType[] policyTypes = sch.getPolicyTypes();
-        boolean found = false;
-        int i = 0;
-        PolicyType pt = null;
-        while (!found && i < policyTypes.length) {
-            if (policyTypes[i].getType().equals(type)) {
-                pt = policyTypes[i];
-                found = true;
-            }
-            i++;
+        
+        Element condEle = DOMUtils.getDOMDirectChild(ele, "condition");
+        if(condEle != null) {
+        	condition = new PolicyCondition(condEle.getAttribute("id"), sch, this);
+        	condition.setFromDOM(condEle);
         }
-        if (!found) {
-            throw new MoiseException("Policy type " + type + "undefined for policy " + id);
+        else {
+            throw new MoiseException("Condition missing in notification policy " + id);
         }
-        String[] arguments = pt.getArguments();
-        String cond = pt.getFaultState();
-        for (String arg : arguments) {
-            String argValue = (String) getProperty(arg);
-            if (argValue == null) {
-                throw new MoiseException("Missing argument " + arg + "in exception " + id);
-            }
-            cond = cond.replace("$" + arg, argValue);
+        
+        
+        Element exEle = DOMUtils.getDOMDirectChild(ele, ExceptionType.getXMLTag());
+        if (exEle != null) {
+            exceptionType = new ExceptionType(exEle.getAttribute("id"), this);
+            exceptionType.setFromDOM(exEle);
         }
-
-        try {
-            condition = ASSyntax.parseFormula(cond);
-        } catch (ParseException e) {
-            throw new MoiseException(e.getMessage());
+        else {
+            throw new MoiseException("Exception type missing in notification policy " + id);
         }
 
         Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
@@ -97,11 +88,10 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
             goal.setFromDOM(gEle, sch);
             sch.addGoal(goal);
         }
-        Element exEle = DOMUtils.getDOMDirectChild(ele, Exception.getXMLTag());
-        if (exEle != null) {
-            exception = new Exception(exEle.getAttribute("id"), this);
-            exception.setFromDOM(exEle);
+        else {
+            throw new MoiseException("Throwing goal missing in notification policy " + id);
         }
+        
     }
 
     public Element getAsDOM(Document document) {
@@ -111,8 +101,11 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
         }
-        if (exception != null) {
-            ele.appendChild(exception.getAsDOM(document));
+        if(condition != null) {
+        	ele.appendChild(condition.getAsDOM(document));
+        }
+        if (exceptionType != null) {
+            ele.appendChild(exceptionType.getAsDOM(document));
         }
         if (goal != null) {
             ele.appendChild(goal.getAsDOM(document));
