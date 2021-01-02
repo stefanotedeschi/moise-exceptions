@@ -16,30 +16,30 @@ import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
 public class PolicyCondition implements ToXML {
-	
-	private Scheme sch;
-	
-	private String type;
-	private Map<String,String> conditionArguments = new HashMap<>();
-	private LogicalFormula conditionFormula;
-	private Policy inPolicy;
-	
-	public PolicyCondition(String type, Scheme scheme, Policy inPolicy) {
-		this.type = type;
-		sch = scheme;
-		this.inPolicy = inPolicy;
-	}
-	
-	public String getType() {
-		return type;
-	}
+    
+    private Scheme sch;
+    
+    private String type;
+    private Map<String,String> conditionArguments = new HashMap<>();
+    private LogicalFormula conditionFormula;
+    private Policy inPolicy;
+    
+    public PolicyCondition(String type, Scheme scheme, Policy inPolicy) {
+        this.type = type;
+        sch = scheme;
+        this.inPolicy = inPolicy;
+    }
+    
+    public String getType() {
+        return type;
+    }
 
-	public void addArgument(String id, String value) {
-		conditionArguments.put(id, value);
-	}
-	
-	public void buildConditionFormula() throws MoiseException {
-		PolicyConditionTemplate[] conditionTemplates = sch.getPolicyConditionTemplates();
+    public void addArgument(String id, String value) {
+        conditionArguments.put(id, value);
+    }
+    
+    public void buildConditionFormula() throws MoiseException {
+        PolicyConditionTemplate[] conditionTemplates = sch.getPolicyConditionTemplates();
         boolean found = false;
         int i = 0;
         PolicyConditionTemplate ct = null;
@@ -67,34 +67,34 @@ public class PolicyCondition implements ToXML {
             conditionFormula = ASSyntax.parseFormula(cond);
         } catch (ParseException e) {
             throw new MoiseException(e.getMessage());
-        }		
-	}
-	
-	public LogicalFormula getConditionFormula() {
-		return conditionFormula;
-	}
+        }       
+    }
+    
+    public LogicalFormula getConditionFormula() {
+        return conditionFormula;
+    }
 
-	public void setFromDOM(Element ele) throws MoiseException {
-		for(Element ca: DOMUtils.getDOMDirectChilds(ele, "condition-argument")) {
-        	addArgument(ca.getAttribute("id"), ca.getAttribute("value"));
+    public void setFromDOM(Element ele) throws MoiseException {
+        for(Element ca: DOMUtils.getDOMDirectChilds(ele, "condition-argument")) {
+            addArgument(ca.getAttribute("id"), ca.getAttribute("value"));
         }
         buildConditionFormula();
-	}
-	
-	@Override
-	public Element getAsDOM(Document document) {
-		Element ele = (Element) document.createElement(getXMLTag());
-        ele.setAttribute("id", getType());
+    }
+    
+    @Override
+    public Element getAsDOM(Document document) {
+        Element ele = (Element) document.createElement(getXMLTag());
+        ele.setAttribute("type", getType());
         for(String arg : conditionArguments.keySet()) {
-        	Element argEle = (Element) document.createElement("condition-argument");
-        	argEle.setAttribute("id", arg);
-        	argEle.setAttribute("value", conditionArguments.get(arg));
-        	ele.appendChild(argEle);
+            Element argEle = (Element) document.createElement("condition-argument");
+            argEle.setAttribute("id", arg);
+            argEle.setAttribute("value", conditionArguments.get(arg));
+            ele.appendChild(argEle);
         }
         return ele;
-	}
-	
-	public static String getXMLTag() {
+    }
+    
+    public static String getXMLTag() {
         return "condition";
     }
 

@@ -47,7 +47,7 @@
 				<notification-policy id="np1">
 				<!--<notification-policy id="np1" condition="scheme(S) &amp; fault(S,provideIngredients)">-->
 
-					<condition id="goal-fault">
+					<condition type="goal-fault">
                     	<condition-argument id="target" value="provideIngredients" />
                     </condition>
 
@@ -55,35 +55,35 @@
 					<goal id="notifyIngredientsUnavailability" />
 				</notification-policy>
 				<handling-policy id="handlerIngredientsUnavailable">
-					<condition id="always" />
+					<condition type="always" />
 					<goal id="dealWithMissingIngredients" />
 				</handling-policy>
 			</recovery-strategy>
 
 			<recovery-strategy id="r2">
 				<notification-policy id="np2">
-					<condition id="goal-fault">
+					<condition type="goal-fault">
                     	<condition-argument id="target" value="switchOnOven" />
                     </condition>
 					<exception-type id="ovenBroken" />
 					<goal id="notifyProblemWithOven" />
 				</notification-policy>
 				<handling-policy id="handlerOvenProblem">
-					<condition id="always" />
+					<condition type="always" />
 					<goal id="checkOven" />
 				</handling-policy>
 			</recovery-strategy>
 
 			<recovery-strategy id="r3">
 				<notification-policy id="np3">
-					<condition id="goal-fault">
+					<condition type="goal-fault">
 						<condition-argument id="target" value="provideIngredients" />
 					</condition>
 					<exception-type id="workspaceSetupFailure" />
 					<goal id="notifyWorkspaceSetupFailure" />
 				</notification-policy>
 				<handling-policy id="handlerWorkspaceSetupFailure">
-					<condition id="always" />
+					<condition type="always" />
 					<goal id="handleSetupFailure" />
 				</handling-policy>
 			</recovery-strategy>

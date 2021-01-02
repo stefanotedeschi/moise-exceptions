@@ -50,12 +50,12 @@ public class ExceptionType extends moise.common.MoiseElement implements ToXML, T
         setPropertiesFromDOM(ele);
         
         for(Element ea: DOMUtils.getDOMDirectChilds(ele, "exception-argument")) {
-        	Literal l = new LiteralImpl(ea.getAttribute("id"));
-        	int nArgs = Integer.parseInt(ea.getAttribute("arity"));
-        	for(int i = 0; i < nArgs; i++) {
-        		l.addTerm(new VarTerm("Arg"+i));
-        	}
-        	exceptionArguments.add(l);
+            Literal l = new LiteralImpl(ea.getAttribute("id"));
+            int nArgs = Integer.parseInt(ea.getAttribute("arity"));
+            for(int i = 0; i < nArgs; i++) {
+                l.addTerm(new VarTerm("Arg"+i));
+            }
+            exceptionArguments.add(l);
         }
         
     }
@@ -67,10 +67,10 @@ public class ExceptionType extends moise.common.MoiseElement implements ToXML, T
             ele.appendChild(getPropertiesAsDOM(document));
         }
         for(Literal arg : exceptionArguments) {
-        	Element argEle = (Element) document.createElement("exception-argument");
-        	argEle.setAttribute("id", arg.getFunctor());
-        	argEle.setAttribute("arity", String.valueOf(arg.getArity()));
-        	ele.appendChild(argEle);
+            Element argEle = (Element) document.createElement("exception-argument");
+            argEle.setAttribute("id", arg.getFunctor());
+            argEle.setAttribute("arity", String.valueOf(arg.getArity()));
+            ele.appendChild(argEle);
         }
         return ele;
     }

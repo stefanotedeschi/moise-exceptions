@@ -54,8 +54,8 @@
             </goal>
             <recovery-strategy id="rec1">
                 <notification-policy id="np1">
-                    <condition id="goal-fault">
-                        <condition-argument id="target" value="parseAmount"/>
+                    <condition type="custom">
+                        <condition-argument id="formula" value="scheme_id(S) &amp; fault(S,parseAmount)"/>
                     </condition>
                     <exception-type id="nan">
                         <exception-argument arity="1" id="index"/>
@@ -63,20 +63,20 @@
                     <goal id="throwNan" type="performance"/>
                 </notification-policy>
                 <handling-policy id="hp1">
-                    <condition id="always"/>
+                    <condition type="always"/>
                     <goal id="recoverFromNan" type="performance"/>
                 </handling-policy>
             </recovery-strategy>
             <recovery-strategy id="rec2">
                 <notification-policy id="np2">
-                    <condition id="goal-fault">
+                    <condition type="goal-fault">
                         <condition-argument id="target" value="recoverFromNan"/>
                     </condition>
                     <exception-type id="amountUnavailable"/>
                     <goal id="throwAmountUnavailable" type="performance"/>
                 </notification-policy>
                 <handling-policy id="hp2">
-                    <condition id="always"/>
+                    <condition type="always"/>
                     <goal id="retryLater" type="performance"/>
                 </handling-policy>
             </recovery-strategy>

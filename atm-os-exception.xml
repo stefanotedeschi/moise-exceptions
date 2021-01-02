@@ -52,8 +52,8 @@
 
                 <notification-policy id="np1">
                 
-                	<condition id="goal-fault"> <!-- must-notify-when -->
-                		<condition-argument id="target" value="parseAmount" />
+                	<condition type="custom"> <!-- must-notify-when -->
+                		<condition-argument id="formula" value="scheme_id(S) &amp; fault(S,parseAmount)" />
 					</condition>
 
                     <exception-type id="nan">
@@ -67,7 +67,7 @@
 
                 <handling-policy id="hp1">
 
-                   <condition id="always" />
+                   <condition type="always" />
                    
                    <!-- CATCHING GOAL -->
                    <goal id="recoverFromNan" />
@@ -80,7 +80,7 @@
 
                 <notification-policy id="np2">
 
-					<condition id="goal-fault"> <!-- must-notify-when -->
+					<condition type="goal-fault"> <!-- must-notify-when -->
                 		<condition-argument id="target" value="recoverFromNan" />
 					</condition>
 
@@ -92,7 +92,7 @@
 
                 <handling-policy id="hp2">
                 
-                	<condition id="always" />
+                	<condition type="always" />
                 	
                     <goal id="retryLater" />
                     

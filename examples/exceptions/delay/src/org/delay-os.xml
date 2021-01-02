@@ -41,7 +41,7 @@
                     </properties>
                     
                     <exceptionType id="delay">
-                    	<argument id="eta" arity="1" />
+                        <argument id="eta" arity="1" />
                     </exceptionType>
 
                     <!-- THROWING GOAL -->

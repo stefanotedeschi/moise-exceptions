@@ -65,8 +65,8 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         
         Element condEle = DOMUtils.getDOMDirectChild(ele, "condition");
         if(condEle != null) {
-        	condition = new PolicyCondition(condEle.getAttribute("id"), sch, this);
-        	condition.setFromDOM(condEle);
+            condition = new PolicyCondition(condEle.getAttribute("type"), sch, this);
+            condition.setFromDOM(condEle);
         }
         else {
             throw new MoiseException("Condition missing in notification policy " + id);
@@ -102,7 +102,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
             ele.appendChild(getPropertiesAsDOM(document));
         }
         if(condition != null) {
-        	ele.appendChild(condition.getAsDOM(document));
+            ele.appendChild(condition.getAsDOM(document));
         }
         if (exceptionType != null) {
             ele.appendChild(exceptionType.getAsDOM(document));

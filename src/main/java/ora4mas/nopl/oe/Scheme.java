@@ -163,7 +163,7 @@ public class Scheme extends CollectiveOE {
     }
 
     public boolean removeReleasedGoal(Goal goal) {
-    	
+        
         boolean r = false;
         Atom gAtom = createAtom(goal.getId());
         Iterator<Literal> iReleasedGoals = releasedGoals.iterator();

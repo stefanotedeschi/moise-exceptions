@@ -57,8 +57,8 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
         
         Element condEle = DOMUtils.getDOMDirectChild(ele, "condition");
         if(condEle != null) {
-        	condition = new PolicyCondition(condEle.getAttribute("id"), sch, this);
-        	condition.setFromDOM(condEle);
+            condition = new PolicyCondition(condEle.getAttribute("type"), sch, this);
+            condition.setFromDOM(condEle);
         }
         else {
             throw new MoiseException("Condition missing in handling policy " + id);
@@ -84,7 +84,7 @@ public class HandlingPolicy extends moise.common.MoiseElement implements ToXML, 
             ele.appendChild(getPropertiesAsDOM(document));
         }
         if(condition != null) {
-        	ele.appendChild(condition.getAsDOM(document));
+            ele.appendChild(condition.getAsDOM(document));
         }
         if(goal != null) {
             ele.appendChild(goal.getAsDOM(document));
