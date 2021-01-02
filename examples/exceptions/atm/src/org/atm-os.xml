@@ -51,29 +51,26 @@
             <recovery-strategy id="rec1">
 
                 <notification-policy id="np1">
+                
+                	<condition id="goal-fault"> <!-- must-notify-when -->
+                		<condition-argument id="target" value="parseAmount" />
+					</condition>
 
-                    <!-- CONDITION -->
-                    <properties>
-                        <property id="type" value="goal-fault" />
-                        <property id="target" value="parseAmount" />
-                    </properties> 
+                    <exception-type id="nan">
+                    	<exception-argument id="index" arity="1" />
+                    </exception-type>
 
                     <!-- THROWING GOAL -->
-                    <throwing-goal id="throwNan">
-                        <exception id="nan" />
-                    </throwing-goal>
+                    <goal id="throwNan" />
 
                 </notification-policy>
 
                 <handling-policy id="hp1">
 
-                    <!-- CONDITION -->
-                   <properties>
-                        <property id="type" value="default" />
-                    </properties>
-
-                    <!-- CATCHING GOAL -->
-                    <catching-goal id="recoverFromNan" />
+                   <condition id="always" />
+                   
+                   <!-- CATCHING GOAL -->
+                   <goal id="recoverFromNan" />
 
                 </handling-policy>
 
@@ -83,24 +80,22 @@
 
                 <notification-policy id="np2">
 
-                    <properties>
-                        <property id="type" value="goal-fault" />
-                        <property id="target" value="recoverFromNan" />
-                    </properties>
+					<condition id="goal-fault"> <!-- must-notify-when -->
+                		<condition-argument id="target" value="recoverFromNan" />
+					</condition>
 
-                    <throwing-goal id="throwAmountUnavailable">
-                        <exception id="amountUnavailable" />
-                    </throwing-goal>
+                    <exception-type id="amountUnavailable" />
+
+                    <goal id="throwAmountUnavailable" />
 
                 </notification-policy>
 
                 <handling-policy id="hp2">
                 
-                    <properties>
-                        <property id="type" value="default" />
-                    </properties>
+                	<condition id="always" />
+                	
+                    <goal id="retryLater" />
                     
-                    <catching-goal id="retryLater" />
                 </handling-policy>
 
             </recovery-strategy>
