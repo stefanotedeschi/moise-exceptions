@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on gennaio 02, 2021 - 11:38:11
+    on gennaio 16, 2021 - 19:07:53
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -199,14 +199,12 @@ scope scheme(cake_sch) {
    all_satisfied_released(_,[]).
    all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
    enabled(S,TG) :- policy_goal(P,TG) &
                     notification_policy(P,Condition) &
                     Condition &
-                    not fault(S,TG) &
-                    not released(S,TG) &
                     goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
                      (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
@@ -214,8 +212,6 @@ scope scheme(cake_sch) {
    enabled(S,CG) :- policy_goal(HP,CG) &
                     handling_policy(HP,Condition) &
                     Condition &
-                    not fault(S,CG) &
-                    not released(S,CG) &
                     recovery_strategy(ST) &
                     strategy_policy(ST,HP) &
                     strategy_policy(ST,NPol) &
@@ -289,6 +285,8 @@ scope scheme(cake_sch) {
             (goal(_,G,_,performance,_,D) & What = done(S,G,A))) &
            well_formed(S) & 
            not satisfied(S,G) & 
+           not fault(_,G) & 
+           not released(_,G) & 
            not super_satisfied(S,G)
         -> obligation(A,enabled(S,G),What,`now` + D).
 

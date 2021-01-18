@@ -75,43 +75,43 @@
             </goal>
             
             <recovery-strategy id="rs1">
-            	<notification-policy id="np1">
-            		<condition type="goal-fault">
-            			<condition-argument id="target" value="turnTableMoveDown" />
-            		</condition>
-            		<exception-type id="motorStop">
-            			<exception argument="motorNumber" arity="1" />
-            		</exception-type>
-            	</notification-policy>
-            	<handling-policy type="always">
-            		<goal id="fixTableMotor">
-            			<plan operator="sequence">
-            				<goal id="performCleaning" />
-            				<goal id="resetSensors" />
-            				<goal id="restartMotor" />
-            			</plan>
-            		</goal>
-            	</handling-policy>
+                <notification-policy id="np1">
+                    <condition type="goal-fault">
+                        <condition-argument id="target" value="turnTableMoveDown" />
+                    </condition>
+                    <exception-type id="motorStop">
+                        <exception argument="motorNumber" arity="1" />
+                    </exception-type>
+                </notification-policy>
+                <handling-policy type="always">
+                    <goal id="fixTableMotor">
+                        <plan operator="sequence">
+                            <goal id="performCleaning" />
+                            <goal id="resetSensors" />
+                            <goal id="restartMotor" />
+                        </plan>
+                    </goal>
+                </handling-policy>
             </recovery-strategy>
             
             <recovery-strategy id="rs2">
-            	<notification-policy id="np2">
-            		<condition type="goal-fault">
-            			<condition-argument id="target" value="turnTableMoveDown" />
-            		</condition>
-            		<exception-type id="motorStop">
-            			<exception argument="motorNumber" arity="1" />
-            		</exception-type>
-            	</notification-policy>
-            	<handling-policy type="always">
-            		<goal id="fixTableMotor">
-            			<plan operator="sequence">
-            				<goal id="performCleaning" />
-            				<goal id="resetSensors" />
-            				<goal id="restartMotor" />
-            			</plan>
-            		</goal>
-            	</handling-policy>
+                <notification-policy id="np2">
+                    <condition type="goal-fault">
+                        <condition-argument id="target" value="turnTableMoveDown" />
+                    </condition>
+                    <exception-type id="motorStop">
+                        <exception argument="motorNumber" arity="1" />
+                    </exception-type>
+                </notification-policy>
+                <handling-policy type="always">
+                    <goal id="fixTableMotor">
+                        <plan operator="sequence">
+                            <goal id="performCleaning" />
+                            <goal id="resetSensors" />
+                            <goal id="restartMotor" />
+                        </plan>
+                    </goal>
+                </handling-policy>
             </recovery-strategy>
 
             <mission id="mBlankProvider" min="1" max="1">

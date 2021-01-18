@@ -92,7 +92,7 @@ public class os2nopl {
         condCode.put(PROP_MissionCardinality,
                 "scheme_id(S) & mission_cardinality(M,_,MMax) & mplayers(M,S,MP) & MP > MMax");
         condCode.put(PROP_AchNotEnabledGoal,
-                "done(S,G,Agt) & mission_goal(M,G) & not mission_accomplished(S,M) & not enabled(S,G)");
+                "done(S,G,Agt) & mission_goal(M,G) & not mission_accomplished(S,M) & not (enabled(S,G) | satisfied(S,G))");
         condCode.put(PROP_AchNotCommGoal,
                 "done(S,G,Agt) & .findall(M, mission_goal(M,G) & (committed(Agt,M,S) | mission_accomplished(S,M)), [])");
 
@@ -405,14 +405,14 @@ public class os2nopl {
         np.append("   // enabled goals (i.e. dependence between goals)\n");
         //np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
         //np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & NP \\== 0 & all_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
 
         np.append("   enabled(S,TG) :- policy_goal(P,TG) &\r\n"
                 + "                    notification_policy(P,Condition) &\r\n"
                 + "                    Condition &\r\n"             
-                + "                    not fault(S,TG) &\r\n"
-                + "                    not released(S,TG) &\r\n" 
+                //+ "                    not fault(S,TG) &\r\n"
+                //+ "                    not released(S,TG) &\r\n" 
                 + "                    goal(_, TG,  Dep, _, NP, _) & NP \\== 0 & \r\n"
                 + "                    ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n"
                 + "                     (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))\r\n"
@@ -420,8 +420,8 @@ public class os2nopl {
         np.append("   enabled(S,CG) :- policy_goal(HP,CG) &\r\n" 
                 + "                    handling_policy(HP,Condition) &\r\n"
                 + "                    Condition &\r\n"
-                + "                    not fault(S,CG) &\r\n"
-                + "                    not released(S,CG) &\r\n"
+                //+ "                    not fault(S,CG) &\r\n"
+                //+ "                    not released(S,CG) &\r\n"
                 + "                    recovery_strategy(ST) &\r\n"
                 + "                    strategy_policy(ST,HP) &\r\n"
                 + "                    strategy_policy(ST,NPol) &\r\n"
@@ -467,6 +467,8 @@ public class os2nopl {
             // (not goal(_,G,_,_,_,_)[location(L)] & WhatL = What)) &\n");
             np.append("           well_formed(S) & \n");
             np.append("           not satisfied(S,G) & \n");
+            np.append("           not fault(_,G) & \n");
+            np.append("           not released(_,G) & \n");
             np.append("           not super_satisfied(S,G)\n");
             np.append("        -> obligation(A,enabled(S,G),What,`now` + D).\n\n");
             // TODO: maintenance goals

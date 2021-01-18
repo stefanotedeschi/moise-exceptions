@@ -12,7 +12,7 @@
     <DATE>
 */
 
-mas atm_exceptions {
+mas atm {
 
     agent bh {
     	roles: atmHandler in g1

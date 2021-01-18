@@ -8,6 +8,7 @@ task_roles("WindowsDoors",     [window_fitter, door_fitter]).
 task_roles("Plumbing",         [plumber]).
 task_roles("ElectricalSystem", [electrician]).
 task_roles("Painting",         [painter]).
+task_roles("Engineering",      [engineer]).
 
 +!contract(Task,GroupName)
     : task_roles(Task,Roles)

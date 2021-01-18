@@ -25,7 +25,12 @@ public class House extends GUIArtifact {
     // Actions that simulate the building progress
 
     @OPERATION void prepareSite(){
-        view.addPart(new Site());
+        view.addPart(new Site(false));
+        failed("Bad weather");
+    }
+    
+    @OPERATION void fixFlooding(){
+        view.addPart(new Site(true));
     }
 
     @OPERATION void layFloors(){

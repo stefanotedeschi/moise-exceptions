@@ -11,18 +11,19 @@ count(1).
       count(N) & N < 3
    <- -count(N);
       +count(N+1);
-      println("Handling exception...");
+      println("Recovering from not a number... Make another attempt");
       resetGoal(obtainAmount).
       
 +obligation(Ag,_,done(_,recoverFromNan,Ag),_)
     : .my_name(Ag) &
       count(N) & N >= 3
    <- //goalReleased(obtainAmount);
+      println("Maximum number of attempts reached");
       goalInFault(recoverFromNan).
    
 +obligation(Ag,_,done(_,throwAmountUnavailable,Ag),_)
 	 : .my_name(Ag)
-	<- println("Throwing exception!");
+	<- println("Throwing exception AMOUNT UNAVAILABLE!");
 	   throwException(amountUnavailable,[parsificationProblem]);
 	   goalAchieved(throwAmountUnavailable).
 

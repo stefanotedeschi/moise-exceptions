@@ -52,12 +52,12 @@
 
                 <notification-policy id="np1">
                 
-                	<condition type="custom"> <!-- must-notify-when -->
-                		<condition-argument id="formula" value="scheme_id(S) &amp; fault(S,parseAmount)" />
-					</condition>
+                    <condition type="custom"> <!-- must-notify-when -->
+                        <condition-argument id="formula" value="scheme_id(S) &amp; fault(S,parseAmount)" />
+                    </condition>
 
                     <exception-type id="nan">
-                    	<exception-argument id="index" arity="1" />
+                        <exception-argument id="index" arity="1" />
                     </exception-type>
 
                     <!-- THROWING GOAL -->
@@ -80,9 +80,9 @@
 
                 <notification-policy id="np2">
 
-					<condition type="goal-fault"> <!-- must-notify-when -->
-                		<condition-argument id="target" value="recoverFromNan" />
-					</condition>
+                    <condition type="goal-fault"> <!-- must-notify-when -->
+                        <condition-argument id="target" value="recoverFromNan" />
+                    </condition>
 
                     <exception-type id="amountUnavailable" />
 
@@ -92,8 +92,8 @@
 
                 <handling-policy id="hp2">
                 
-                	<condition type="always" />
-                	
+                    <condition type="always" />
+                    
                     <goal id="retryLater" />
                     
                 </handling-policy>

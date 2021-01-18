@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm_exceptions'
-    on gennaio 02, 2021 - 11:38:11
+    on gennaio 16, 2021 - 19:07:53
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -56,35 +56,35 @@ scope group(atm_group) {
    all_subgroups_well_formed([]).
    all_subgroups_well_formed([H|T]) :- subgroup_well_formed(H) & all_subgroups_well_formed(T).
 
-   // ** Properties check 
-   norm role_in_group:  
+   // ** Properties check
+   norm role_in_group:
            play(Agt,R,Gr) &
            group_id(Gr) &
            not role_cardinality(R,_,_)
         -> fail(role_in_group(Agt,R,Gr)).
-   norm role_cardinality:  
+   norm role_cardinality:
            group_id(Gr) &
            role_cardinality(R,_,RMax) &
            rplayers(R,Gr,RP) &
            RP > RMax
         -> fail(role_cardinality(R,Gr,RP,RMax)).
-   norm role_compatibility:  
+   norm role_compatibility:
            play(Agt,R1,Gr) &
            play(Agt,R2,Gr) &
            group_id(Gr) &
            R1 < R2 &
            not fcompatible(R1,R2,gr_inst)
         -> fail(role_compatibility(R1,R2,Gr)).
-   norm well_formed_responsible:  
+   norm well_formed_responsible:
            responsible(Gr,S) &
            not well_formed(Gr)
         -> fail(well_formed_responsible(Gr)).
-   norm subgroup_in_group:  
+   norm subgroup_in_group:
            group_id(Gr) &
            subgroup(G,GT,Gr) &
            not subgroup_cardinality(GT,_,_)
         -> fail(subgroup_in_group(G,GT,Gr)).
-   norm subgroup_cardinality:  
+   norm subgroup_cardinality:
            group_id(Gr) &
            subgroup_cardinality(SG,_,SGMax) &
            .count(subgroup(_,SG,Gr),SGP) &
@@ -170,7 +170,7 @@ scope scheme(atm_sch) {
 
    // ** Rules
    mplayers(M,S,V) :- .count(committed(_,M,S),V).
-   well_formed(S) :- 
+   well_formed(S) :-
       (mission_accomplished(S,mWithdraw) | not mission_accomplished(S,mWithdraw) & mplayers(mWithdraw,S,VmWithdraw) & VmWithdraw >= 1 & VmWithdraw <= 1) &
       (mission_accomplished(S,mProvideMoney) | not mission_accomplished(S,mProvideMoney) & mplayers(mProvideMoney,S,VmProvideMoney) & VmProvideMoney >= 1 & VmProvideMoney <= 1) &
       (mission_accomplished(S,mObtainAmount) | not mission_accomplished(S,mObtainAmount) & mplayers(mObtainAmount,S,VmObtainAmount) & VmObtainAmount >= 1 & VmObtainAmount <= 1) &
@@ -188,23 +188,19 @@ scope scheme(atm_sch) {
    all_satisfied_released(_,[]).
    all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not fault(_,G) & not released(_,G) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
    enabled(S,TG) :- policy_goal(P,TG) &
                     notification_policy(P,Condition) &
                     Condition &
-                    not fault(S,TG) &
-                    not released(S,TG) &
-                    goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
+                    goal(_, TG,  Dep, _, NP, _) & NP \== 0 &
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
                      (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
                     ).
    enabled(S,CG) :- policy_goal(HP,CG) &
                     handling_policy(HP,Condition) &
                     Condition &
-                    not fault(S,CG) &
-                    not released(S,CG) &
                     recovery_strategy(ST) &
                     strategy_policy(ST,HP) &
                     strategy_policy(ST,NPol) &
@@ -222,41 +218,41 @@ scope scheme(atm_sch) {
    // ** Norms
 
    // --- Properties check ---
-   norm mission_left:  
+   norm mission_left:
            leaved_mission(Agt,M,S) &
            not mission_accomplished(S,M)
         -> fail(mission_left(Agt,M,S)).
-   norm ach_not_enabled_goal:  
+   norm ach_not_enabled_goal:
            done(S,G,Agt) &
            mission_goal(M,G) &
            not mission_accomplished(S,M) &
            not enabled(S,G)
         -> fail(ach_not_enabled_goal(S,G,Agt)).
-   norm ach_not_committed_goal:  
+   norm ach_not_committed_goal:
            done(S,G,Agt) &
            .findall(M, mission_goal(M,G) &
            (committed(Agt,M,S) | mission_accomplished(S,M)), [])
         -> fail(ach_not_committed_goal(S,G,Agt)).
-   norm mission_permission:  
+   norm mission_permission:
            committed(Agt,M,S) &
            not (mission_role(M,R) &
            responsible(Gr,S) &
            fplay(Agt,R,Gr))
         -> fail(mission_permission(Agt,M,S)).
-   norm mission_cardinality:  
+   norm mission_cardinality:
            scheme_id(S) &
            mission_cardinality(M,_,MMax) &
            mplayers(M,S,MP) &
            MP > MMax
         -> fail(mission_cardinality(M,S,MP,MMax)).
-   norm exc_agent_not_allowed:  
+   norm exc_agent_not_allowed:
            thrown(S,E,Ag) &
            exception(E,_) &
            mission_goal(M,G) &
            exception_goal(E,G) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
-   norm exc_condition_not_holding:  
+   norm exc_condition_not_holding:
            thrown(S,E,Ag) &
            exception(E,Condition) &
            mission_goal(M,G) &
@@ -264,7 +260,7 @@ scope scheme(atm_sch) {
            committed(Ag,M,S) &
            not Condition
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
-   norm ach_th_goal_exc_not_thrown:  
+   norm ach_th_goal_exc_not_thrown:
            done(S,G,Ag) &
            exception_goal(E,G) &
            not super_goal(SG,G) &
@@ -272,12 +268,14 @@ scope scheme(atm_sch) {
         -> fail(ach_th_goal_exc_not_thrown(S,G,E,Ag)).
 
    // agents are obliged to fulfill their enabled goals
-   norm ngoal: 
-           committed(A,M,S) & mission_goal(M,G) & 
-           ((goal(_,G,_,achievement,_,D) & What = satisfied(S,G)) | 
+   norm ngoal:
+           committed(A,M,S) & mission_goal(M,G) &
+           ((goal(_,G,_,achievement,_,D) & What = satisfied(S,G)) |
             (goal(_,G,_,performance,_,D) & What = done(S,G,A))) &
-           well_formed(S) & 
-           not satisfied(S,G) & 
+           well_formed(S) &
+           not satisfied(S,G) &
+           not fault(S,G) &
+           not released(S,G) & 
            not super_satisfied(S,G)
         -> obligation(A,enabled(S,G),What,`now` + D).
 

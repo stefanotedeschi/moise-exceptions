@@ -1,6 +1,7 @@
 // Agent Giacomo, who wants to build a house
 
 { include("common.asl") }
+{ include("org_code.asl") }
 
 /* Initial beliefs and rules */
 
@@ -38,7 +39,8 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
        !create_auction_artifact("WindowsDoors",    2500);
        !create_auction_artifact("Plumbing",         500);
        !create_auction_artifact("ElectricalSystem", 500);
-       !create_auction_artifact("Painting",        1200).
+       !create_auction_artifact("Painting",        1200);
+       !create_auction_artifact("Engineering",     5000);.
 
 +!create_auction_artifact(Task,MaxPrice)
    <- .concat("auction_for_",Task,ArtName);
@@ -81,7 +83,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       makeArtifact(ora4mas, "ora4mas.nopl.OrgBoard", ["src/org/house-os.xml"], OrgArtId)[wid(WOrg)];
       focus(OrgArtId);
       createGroup(hsh_group, house_group, GrArtId);
-      debug(inspector_gui(on))[artifact_id(GrArtId)];
+      //debug(inspector_gui(on))[artifact_id(GrArtId)];
       adoptRole(house_owner)[artifact_id(GrArtId)];
       focus(GrArtId);
 
@@ -92,7 +94,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 
       // create the scheme
       createScheme(bhsch, build_house_sch, SchArtId);
-      debug(inspector_gui(on))[artifact_id(SchArtId)];
+      //debug(inspector_gui(on))[artifact_id(SchArtId)];
       focus(SchArtId);
 
       ?formationStatus(ok)[artifact_id(GrArtId)]; // see plan below to ensure we wait until it is well formed
@@ -120,3 +122,6 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 
 +!house_built // I have an obligation towards the top-level goal of the scheme: finished!
    <- println("*** Finished ***").
+   
++!notify_affected_companies
+   <- println("Notifying the companies that we had a problem in site preparation!").

@@ -364,11 +364,11 @@ public class SchemeBoard extends OrgArt {
             public void exec() throws NormativeFailureException, Exception {
                 getSchState().addReleasedGoal(goal);
                 getSchState().removeFaultGoal(spec.getGoal(goal));
-                getSchState().resetExceptions(nengine);
+                //getSchState().resetExceptions(nengine);
                 getSchState().computeSatisfiedGoals();
-                nengine.verifyNorms();
+                //nengine.verifyNorms();
                 updateGoalStateObsProp();
-                updateExceptionsObsProp();
+                //updateExceptionsObsProp();
             }
         }, "Error setting goal " + goal + " as released");
     }
