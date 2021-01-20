@@ -16,8 +16,9 @@ my_price(2500). // initial belief
    <- //.print("my bid in auction artifact ", Art, " is ",math.max(V-150,P));
       bid( math.max(V-150,P) ).         // place my bid offering a cheaper service
 
-+obligation(Ag,_,done(_,inspect_site,Ag),_)[artifact_id(ArtId)]
-    : .my_name(Ag)
++!inspect_site
+    : .my_name(Ag) &
+      focused(ora4mas,bhsch,ArtId)
    <- println("Inspecting site...");
       .wait(2000);
       println("Done!");

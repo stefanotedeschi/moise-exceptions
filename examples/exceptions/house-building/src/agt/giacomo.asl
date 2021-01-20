@@ -124,4 +124,6 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
    <- println("*** Finished ***").
    
 +!notify_affected_companies
-   <- println("Notifying the companies that we had a problem in site preparation!").
+   <- println("Notifying the companies that we had a problem in site preparation!");
+      // Do something to notify the companies
+      .

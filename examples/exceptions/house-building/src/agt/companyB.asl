@@ -15,13 +15,6 @@ my_price(1500). // initial belief
 
 /* plans for execution phase */
 
-// obligation to achieve a goal
-+obligation(Ag,_,done(_,notify_site_preparation_problem,Ag),_)[artifact_id(ArtId)]
-    : .my_name(Ag)
-   <- println("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE bad_weather!")
-      throwException(site_preparation_exception,[errorCode(bad_weather)])[artifact_id(ArtId)];
-      goalAchieved(notify_site_preparation_problem)[artifact_id(ArtId)].
-
 +!site_prepared
    <- println("Preparing site...");
       .wait(2000);
@@ -30,7 +23,14 @@ my_price(1500). // initial belief
 -!site_prepared
     : focused(ora4mas,bhsch,ArtId)
    <- println("The site is flooded due to bad weather!");
-      goalInFault(site_prepared)[artifact_id(ArtId)];
+      goalFailed(site_prepared)[artifact_id(ArtId)];
    	  .fail.
+   	  
+// obligation to achieve a goal
++!notify_site_preparation_problem
+    : .my_name(Ag) &
+      focused(ora4mas,bhsch,ArtId)
+   <- println("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE bad_weather!")
+      throwException(site_preparation_exception,[errorCode(bad_weather)])[artifact_id(ArtId)].
    	  
  { include("org_code.asl") }
