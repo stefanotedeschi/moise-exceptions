@@ -348,14 +348,14 @@ public class SchemeBoard extends OrgArt {
     }
 
     @OPERATION
-    public void goalInFault(String goal) throws CartagoException {
+    public void goalFailed(String goal) throws CartagoException {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
                 getSchState().addFaultGoal(goal);
                 nengine.verifyNorms();
                 updateGoalStateObsProp();
             }
-        }, "Error setting goal " + goal + " as in fault");
+        }, "Error setting goal " + goal + " as failed");
     }
 
     @OPERATION
