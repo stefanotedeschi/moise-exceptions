@@ -1,8 +1,9 @@
 // Agent sample_agent in project parseInt
 
 +!provideMoney
-	<- giveMoney;
-	   .wait(30000).
+	<- println("Delivering money...")
+	   giveMoney;
+	   .wait(10000).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

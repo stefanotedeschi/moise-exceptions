@@ -11,7 +11,7 @@ count(1).
       count(N) & N < 3
    <- -count(N);
       +count(N+1);
-      println("Recovering from not a number... Make another attempt");
+      println("Attempt ",N," out of 3. Make another attempt");
       resetGoal(obtainAmount).
       
 +obligation(Ag,_,done(_,recoverFromNan,Ag),_)
@@ -19,7 +19,7 @@ count(1).
       count(N) & N >= 3
    <- //goalReleased(obtainAmount);
       println("Maximum number of attempts reached");
-      goalInFault(recoverFromNan).
+      goalFailed(recoverFromNan).
    
 +obligation(Ag,_,done(_,throwAmountUnavailable,Ag),_)
 	 : .my_name(Ag)

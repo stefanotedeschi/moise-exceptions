@@ -165,7 +165,7 @@ public class ATMArtifact extends GUIArtifact {
         }
         
         void giveMoney(int amount) {
-            status.setText("Status: PLEASE WITHDRAW " + amount + "\u20ac WITHIN 30 SECONDS");
+            status.setText("Status: PLEASE WITHDRAW " + amount + "\u20ac WITHIN 10 SECONDS");
         }
         
         void finish() {

@@ -1,14 +1,16 @@
 +!parseAmount
 	<- println("Parsing amount...");
+	   .wait(2000);
 	   parseAmount.
 
 -!parseAmount
 	<- println("The inserted string is not a number!")
-	   goalInFault(parseAmount);
+	   goalFailed(parseAmount);
 	   .fail.
 
 +!throwNan
-	<- println("Throwing exception NAN!");
+	<- .wait(2000);
+	   println("Throwing exception NAN!");
 	   throwException(nan,[index(0)]).
 
 { include("$jacamoJar/templates/common-cartago.asl") }

@@ -4,7 +4,7 @@
 { include("$jacamoJar/templates/common-moise.asl") }
 
 +!getAmountAsString
-	<- .wait(1000);
+	<- .wait(2000);
 	   enableInput;
 	   println("Getting amount...");
 	   .wait({+inputReceived});
