@@ -1,0 +1,22 @@
+[
+	{
+		"type"					: "always",
+		"argument-names"		: [],
+		"condition-formula"		: "true"
+	},
+	{
+		"type"					: "goal-failure",
+		"argument-names"		: ["target"],
+		"condition-formula"		: "scheme_id(S) & failed(S,$target)"
+	},
+	{
+		"type"					: "goal-ttf-expiration",
+		"argument-names"		: ["target"],
+		"condition-formula"		: "scheme_id(S) & unfulfilled(obligation(_,_,done(S,$target,_),_))"
+	},
+	{	
+		"type"					: "custom",
+		"argument-names"		: ["formula"],
+		"condition-formula"		: "$formula"
+	}
+]

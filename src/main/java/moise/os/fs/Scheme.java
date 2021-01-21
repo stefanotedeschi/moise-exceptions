@@ -60,7 +60,7 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         this.fs = fs;
         
         // get policy types from configuration file
-        InputStream is = getClass().getResourceAsStream("/json/policy-conditions-conf.json");
+        InputStream is = getClass().getResourceAsStream("/json/policy-conditions-templates.json");
         JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
         Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
         policyConditionTemplates = gson.fromJson(reader, PolicyConditionTemplate[].class);

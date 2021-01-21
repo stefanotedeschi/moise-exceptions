@@ -351,7 +351,7 @@ public class SchemeBoard extends OrgArt {
     public void goalFailed(String goal) throws CartagoException {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
-                getSchState().addFaultGoal(goal);
+                getSchState().addFailedGoal(goal);
                 nengine.verifyNorms();
                 updateGoalStateObsProp();
             }
@@ -363,7 +363,7 @@ public class SchemeBoard extends OrgArt {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
                 getSchState().addReleasedGoal(goal);
-                getSchState().removeFaultGoal(spec.getGoal(goal));
+                getSchState().removeFailedGoal(spec.getGoal(goal));
                 //getSchState().resetExceptions(nengine);
                 getSchState().computeSatisfiedGoals();
                 //nengine.verifyNorms();
@@ -752,7 +752,7 @@ public class SchemeBoard extends OrgArt {
     protected static final Atom aWaiting = new Atom("waiting");
     protected static final Atom aEnabled = new Atom("enabled");
     protected static final Atom aSatisfied = new Atom("satisfied");
-    protected static final Atom aFault = new Atom("fault");
+    protected static final Atom aFailed = new Atom("failed");
     protected static final Atom aReleased = new Atom("released");
 
     List<Literal> getGoalStates() {
@@ -779,8 +779,8 @@ public class SchemeBoard extends OrgArt {
             if (nengine.holds(new NPLLiteral(ASSyntax.createLiteral("satisfied", tSch, aGoal), orgState))) {
                 aState = aSatisfied;
             } else if (isWellFormed()
-                    && nengine.holds(new NPLLiteral(ASSyntax.createLiteral("fault", tSch, aGoal), orgState))) {
-                aState = aFault;
+                    && nengine.holds(new NPLLiteral(ASSyntax.createLiteral("failed", tSch, aGoal), orgState))) {
+                aState = aFailed;
             } else if (isWellFormed()
                     && nengine.holds(new NPLLiteral(ASSyntax.createLiteral("released", tSch, aGoal), orgState))) {
                 aState = aReleased;

@@ -54,7 +54,7 @@ public class PolicyCondition implements ToXML {
             throw new MoiseException("Policy condition " + type + "undefined for policy " + inPolicy.getId());
         }
         String[] argumentNames = ct.getArgumentNames();
-        String cond = ct.getFaultState();
+        String cond = ct.getConditionFormula();
         for (String arg : argumentNames) {
             String argValue = conditionArguments.get(arg);
             if (argValue == null) {

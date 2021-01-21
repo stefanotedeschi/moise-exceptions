@@ -5,13 +5,13 @@ public class PolicyConditionTemplate {
 
     private String type;
     private String[] argumentNames;
-    private String faultState;
+    private String conditionFormula;
     
-    public PolicyConditionTemplate(String type, String[] argumentNames, String faultState) {
+    public PolicyConditionTemplate(String type, String[] argumentNames, String conditionFormula) {
         super();
         this.type = type;
         this.argumentNames = argumentNames;
-        this.faultState = faultState;
+        this.conditionFormula = conditionFormula;
     }
 
     public String getType() {
@@ -22,8 +22,8 @@ public class PolicyConditionTemplate {
         return argumentNames;
     }
 
-    public String getFaultState() {
-        return faultState;
+    public String getConditionFormula() {
+        return conditionFormula;
     }
 
     public void setType(String type) {
@@ -34,14 +34,14 @@ public class PolicyConditionTemplate {
         this.argumentNames = arguments;
     }
 
-    public void setFaultState(String faultState) {
-        this.faultState = faultState;
+    public void setConditionFormula(String conditionFormula) {
+        this.conditionFormula = conditionFormula;
     }
 
     @Override
     public String toString() {
-        return "PolicyType [type=" + type + ", arguments=" + Arrays.toString(argumentNames) + ", faultState="
-                + faultState + "]";
+        return "PolicyType [type=" + type + ", arguments=" + Arrays.toString(argumentNames) + ", conditionFormula="
+                + conditionFormula + "]";
     }
     
 }
