@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on gennaio 16, 2021 - 19:07:53
+    on gennaio 21, 2021 - 21:21:35
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -145,9 +145,9 @@ scope scheme(cake_sch) {
    recovery_strategy(r1).
 
    // notification_policy(policy id, condition)
-   notification_policy(np2,(scheme_id(S) & fault(S,switchOnOven))).
-   notification_policy(np3,(scheme_id(S) & fault(S,provideIngredients))).
-   notification_policy(np1,(scheme_id(S) & fault(S,provideIngredients))).
+   notification_policy(np2,(scheme_id(S) & failed(S,switchOnOven))).
+   notification_policy(np3,(scheme_id(S) & failed(S,provideIngredients))).
+   notification_policy(np1,(scheme_id(S) & failed(S,provideIngredients))).
 
    // handling_policy(policy id, condition)
    handling_policy(handlerOvenProblem,true).
@@ -162,15 +162,15 @@ scope scheme(cake_sch) {
    strategy_policy(r1,np1).
    strategy_policy(r1,handlerIngredientsUnavailable).
 
-   // exception(exception id)
-   exception(ovenBroken).
-   exception(workspaceSetupFailure).
-   exception(ingredientsUnavailable).
+   // exceptionType(exception type id)
+   exceptionType(ovenBroken).
+   exceptionType(workspaceSetupFailure).
+   exceptionType(ingredientsUnavailable).
 
-   // policy_exception(policy id, exception id)
-   policy_exception(np2,ovenBroken).
-   policy_exception(np3,workspaceSetupFailure).
-   policy_exception(np1,ingredientsUnavailable).
+   // policy_exceptionType(policy id, exception type id)
+   policy_exceptionType(np2,ovenBroken).
+   policy_exceptionType(np3,workspaceSetupFailure).
+   policy_exceptionType(np1,ingredientsUnavailable).
 
    // policy_goal(policy id, goal id)
    policy_goal(np2,notifyProblemWithOven).
@@ -199,7 +199,7 @@ scope scheme(cake_sch) {
    all_satisfied_released(_,[]).
    all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
    enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
    enabled(S,TG) :- policy_goal(P,TG) &
@@ -215,7 +215,7 @@ scope scheme(cake_sch) {
                     recovery_strategy(ST) &
                     strategy_policy(ST,HP) &
                     strategy_policy(ST,NPol) &
-                    policy_exception(NPol,E) &
+                    policy_exceptionType(NPol,E) &
                     thrown(S,E,_) &
                     policy_goal(NPol,TG) &
                     satisfied(S,TG) &
@@ -237,7 +237,7 @@ scope scheme(cake_sch) {
            done(S,G,Agt) &
            mission_goal(M,G) &
            not mission_accomplished(S,M) &
-           not enabled(S,G)
+           not (enabled(S,G) | satisfied(S,G))
         -> fail(ach_not_enabled_goal(S,G,Agt)).
    norm ach_not_committed_goal:  
            done(S,G,Agt) &
@@ -258,14 +258,14 @@ scope scheme(cake_sch) {
         -> fail(mission_cardinality(M,S,MP,MMax)).
    norm exc_agent_not_allowed:  
            thrown(S,E,Ag) &
-           exception(E,_) &
+           exceptionType(E,_) &
            mission_goal(M,G) &
            exception_goal(E,G) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
            thrown(S,E,Ag) &
-           exception(E,Condition) &
+           exceptionType(E,Condition) &
            mission_goal(M,G) &
            exception_goal(E,G) &
            committed(Ag,M,S) &

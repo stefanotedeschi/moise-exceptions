@@ -45,9 +45,9 @@
 
 			<recovery-strategy id="r1">
 				<notification-policy id="np1">
-				<!--<notification-policy id="np1" condition="scheme(S) &amp; fault(S,provideIngredients)">-->
+				<!--<notification-policy id="np1" condition="scheme(S) &amp; failed(S,provideIngredients)">-->
 
-					<condition type="goal-fault">
+					<condition type="goal-failure">
                     	<condition-argument id="target" value="provideIngredients" />
                     </condition>
 
@@ -62,7 +62,7 @@
 
 			<recovery-strategy id="r2">
 				<notification-policy id="np2">
-					<condition type="goal-fault">
+					<condition type="goal-failure">
                     	<condition-argument id="target" value="switchOnOven" />
                     </condition>
 					<exception-type id="ovenBroken" />
@@ -76,7 +76,7 @@
 
 			<recovery-strategy id="r3">
 				<notification-policy id="np3">
-					<condition type="goal-fault">
+					<condition type="goal-failure">
 						<condition-argument id="target" value="provideIngredients" />
 					</condition>
 					<exception-type id="workspaceSetupFailure" />

@@ -53,7 +53,7 @@
             </goal>
             <recovery-strategy id="r2">
                 <notification-policy id="np2">
-                    <condition type="goal-fault">
+                    <condition type="goal-failure">
                         <condition-argument id="target" value="switchOnOven"/>
                     </condition>
                     <exception-type id="ovenBroken"/>
@@ -66,7 +66,7 @@
             </recovery-strategy>
             <recovery-strategy id="r3">
                 <notification-policy id="np3">
-                    <condition type="goal-fault">
+                    <condition type="goal-failure">
                         <condition-argument id="target" value="provideIngredients"/>
                     </condition>
                     <exception-type id="workspaceSetupFailure"/>
@@ -79,7 +79,7 @@
             </recovery-strategy>
             <recovery-strategy id="r1">
                 <notification-policy id="np1">
-                    <condition type="goal-fault">
+                    <condition type="goal-failure">
                         <condition-argument id="target" value="provideIngredients"/>
                     </condition>
                     <exception-type id="ingredientsUnavailable"/>

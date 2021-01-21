@@ -55,7 +55,7 @@
             <recovery-strategy id="rec1">
                 <notification-policy id="np1">
                     <condition type="custom">
-                        <condition-argument id="formula" value="scheme_id(S) &amp; fault(S,parseAmount)"/>
+                        <condition-argument id="formula" value="scheme_id(S) &amp; failed(S,parseAmount)"/>
                     </condition>
                     <exception-type id="nan">
                         <exception-argument arity="1" id="index"/>
@@ -69,7 +69,7 @@
             </recovery-strategy>
             <recovery-strategy id="rec2">
                 <notification-policy id="np2">
-                    <condition type="goal-fault">
+                    <condition type="goal-failure">
                         <condition-argument id="target" value="recoverFromNan"/>
                     </condition>
                     <exception-type id="amountUnavailable"/>

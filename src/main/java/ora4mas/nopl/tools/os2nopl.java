@@ -97,9 +97,9 @@ public class os2nopl {
                 "done(S,G,Agt) & .findall(M, mission_goal(M,G) & (committed(Agt,M,S) | mission_accomplished(S,M)), [])");
 
         condCode.put(PROP_ExcAgNotAllowed,
-                "thrown(S,E,Ag) & exception(E,_) & mission_goal(M,G) & exception_goal(E,G) & not committed(Ag,M,S)");
+                "thrown(S,E,Ag) & exceptionType(E,_) & mission_goal(M,G) & exception_goal(E,G) & not committed(Ag,M,S)");
         condCode.put(PROP_ExcCondNotHolding,
-                "thrown(S,E,Ag) & exception(E,Condition) & mission_goal(M,G) & exception_goal(E,G) & committed(Ag,M,S) & not Condition");
+                "thrown(S,E,Ag) & exceptionType(E,Condition) & mission_goal(M,G) & exception_goal(E,G) & committed(Ag,M,S) & not Condition");
         condCode.put(PROP_AchThGoalExcNotThrown,
                 "done(S,G,Ag) & exception_goal(E,G) & not super_goal(SG,G) & not thrown(S,E,_)");
 
@@ -330,10 +330,10 @@ public class os2nopl {
         String recoveryStrategy = "\n   // recovery_strategy(id)\n";
         String notificationPolicy = "\n   // notification_policy(policy id, condition)\n";
         String handlingPolicy = "\n   // handling_policy(policy id, condition)\n";
-        String exception = "\n   // exception(exception id)\n";
+        String exceptionType = "\n   // exceptionType(exception type id)\n";
         String strategyPolicy = "\n   // strategy_policy(strategy id, policy id)\n";
         String policyGoal = "\n   // policy_goal(policy id, goal id)\n";
-        String policyException = "\n   // policy_exception(policy id, exception id)\n";
+        String policyExceptionType = "\n   // policy_exceptionType(policy id, exception type id)\n";
 
         for (RecoveryStrategy rs : sch.getRecoveryStrategies()) {
             recoveryStrategy += "   recovery_strategy(" + rs.getId() + ").\n";
@@ -342,8 +342,8 @@ public class os2nopl {
                 notificationPolicy += "   notification_policy("+npol.getId()+","+npol.getCondition().getConditionFormula()+").\n";
                 strategyPolicy += "   strategy_policy("+rs.getId()+","+npol.getId()+").\n";
                 if(npol.getExceptionType() != null) {
-                    exception += "   exception("+npol.getExceptionType().getId()+").\n";
-                    policyException += "   policy_exception("+npol.getId()+","+npol.getExceptionType().getId()+").\n";
+                    exceptionType += "   exceptionType("+npol.getExceptionType().getId()+").\n";
+                    policyExceptionType += "   policy_exceptionType("+npol.getId()+","+npol.getExceptionType().getId()+").\n";
                 }
                 if(npol.getGoal() != null) {
                       policyGoal += "   policy_goal("+npol.getId()+","+npol.getGoal().getId()+").\n";
@@ -369,8 +369,8 @@ public class os2nopl {
         np.append(notificationPolicy);
         np.append(handlingPolicy);
         np.append(strategyPolicy);
-        np.append(exception);
-        np.append(policyException);
+        np.append(exceptionType);
+        np.append(policyExceptionType);
         np.append(policyGoal);
 
         np.append("\n   // ** Rules\n");
@@ -425,7 +425,7 @@ public class os2nopl {
                 + "                    recovery_strategy(ST) &\r\n"
                 + "                    strategy_policy(ST,HP) &\r\n"
                 + "                    strategy_policy(ST,NPol) &\r\n"
-                + "                    policy_exception(NPol,E) &\r\n"
+                + "                    policy_exceptionType(NPol,E) &\r\n"
                 + "                    thrown(S,E,_) &\r\n"
                 + "                    policy_goal(NPol,TG) &\r\n" 
                 + "                    satisfied(S,TG) &\r\n"

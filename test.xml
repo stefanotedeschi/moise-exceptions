@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><organisational-specification xmlns="http://moise.sourceforge.net/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="autoId_188" os-version="0.7" xsi:schemaLocation="http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd">
+<?xml version="1.0" encoding="UTF-8"?><organisational-specification xmlns="http://moise.sourceforge.net/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="autoId_291" os-version="0.7" xsi:schemaLocation="http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd">
 <structural-specification>
 <role-definitions>
 <role id="r1">

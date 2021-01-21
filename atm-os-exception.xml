@@ -53,7 +53,7 @@
                 <notification-policy id="np1">
                 
                 	<condition type="custom"> <!-- must-notify-when -->
-                		<condition-argument id="formula" value="scheme_id(S) &amp; fault(S,parseAmount)" />
+                		<condition-argument id="formula" value="scheme_id(S) &amp; failed(S,parseAmount)" />
 					</condition>
 
                     <exception-type id="nan">
@@ -80,7 +80,7 @@
 
                 <notification-policy id="np2">
 
-					<condition type="goal-fault"> <!-- must-notify-when -->
+					<condition type="goal-failure"> <!-- must-notify-when -->
                 		<condition-argument id="target" value="recoverFromNan" />
 					</condition>
 
