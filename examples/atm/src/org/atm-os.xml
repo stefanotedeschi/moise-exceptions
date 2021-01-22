@@ -51,7 +51,7 @@
             <recovery-strategy id="rec1">
 
                 <notification-policy id="np1">
-                
+
                     <condition type="custom"> <!-- must-notify-when -->
                         <condition-argument id="formula" value="scheme_id(S) &amp; failed(S,parseAmount)" />
                     </condition>
@@ -68,7 +68,7 @@
                 <handling-policy id="hp1">
 
                    <condition type="always" />
-                   
+
                    <!-- CATCHING GOAL -->
                    <goal id="recoverFromNan" />
 
@@ -91,11 +91,11 @@
                 </notification-policy>
 
                 <handling-policy id="hp2">
-                
+
                     <condition type="always" />
-                    
+
                     <goal id="retryLater" />
-                    
+
                 </handling-policy>
 
             </recovery-strategy>

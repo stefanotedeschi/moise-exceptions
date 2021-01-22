@@ -405,13 +405,13 @@ public class os2nopl {
         np.append("   // enabled goals (i.e. dependence between goals)\n");
         //np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
         //np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & NP \\== 0 & all_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & not failed(S,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & not failed(S,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
 
         np.append("   enabled(S,TG) :- policy_goal(P,TG) &\r\n"
                 + "                    notificationPolicy(P,Condition) &\r\n"
                 + "                    Condition &\r\n"             
-                //+ "                    not failed(S,TG) &\r\n"
+                + "                    not failed(S,TG) &\r\n"
                 //+ "                    not released(S,TG) &\r\n" 
                 + "                    goal(_, TG,  Dep, _, NP, _) & NP \\== 0 & \r\n"
                 + "                    ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n"
@@ -420,7 +420,7 @@ public class os2nopl {
         np.append("   enabled(S,CG) :- policy_goal(HP,CG) &\r\n" 
                 + "                    handlingPolicy(HP,Condition) &\r\n"
                 + "                    Condition &\r\n"
-                //+ "                    not failed(S,CG) &\r\n"
+                + "                    not failed(S,CG) &\r\n"
                 //+ "                    not released(S,CG) &\r\n"
                 + "                    recoveryStrategy(ST) &\r\n"
                 + "                    strategy_policy(ST,HP) &\r\n"
