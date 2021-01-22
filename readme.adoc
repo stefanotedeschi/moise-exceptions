@@ -1,15 +1,27 @@
-= Moise
+= Moise extended with exception handling
 
-Moise is an organisational platform for MultiAgent Systems based on notions like roles, groups, and missions. It enables an MAS to have an explicit specification of its organisation. This specification is to be used both by the agents to reason about their organisation and by an organisation platform that enforces that the agents follow the specification.
+This is an extension of the Moise organizational model and infrastructure
+(adopted in JaCaMo) that explicitly encompasses the notion
+of exception.
 
-Some papers describing Moise are available in the folder https://github.com/moise-lang/moise/tree/master/doc/publications[publications].
+We propose an exception handling mechanism for
+organization management in multi-agent systems. This mechanism
+relies on abstractions that are seamlessly integrated with organizational
+concepts, such as responsibilities, goals and norms.
 
+Some examples are available in the examples folders
 
-== Installation
+== Installation (requires Gradle)
 
-    git clone https://github.com/moise-lang/moise.git
-    cd moise
+    git clone git clone git://git.code.sf.net/p/moise-exceptions/code moise-exceptions-code
+    cd moise-exceptions-code
     gradle build
 
+== Running the examples (requires Gradle)
+
+    From the root folder of the example execute:
+    gradle run
+
 ---
-Developed by Jomi F. Hubner, Jaime S. Sichman and Olivier Boissier.
+Developed by Matteo Baldoni, Cristina Baroglio, Roberto Micalizio, Stefano Tedeschi.
+Moise id developed and maintained by Jomi F. Hubner, Jaime S. Sichman and Olivier Boissier.
