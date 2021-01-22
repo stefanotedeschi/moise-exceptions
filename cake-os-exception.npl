@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on gennaio 21, 2021 - 21:21:35
+    on gennaio 22, 2021 - 15:58:02
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -139,20 +139,20 @@ scope scheme(cake_sch) {
    super_goal(workspaceSetup, provideIngredients).
    super_goal(workspaceSetup, switchOnOven).
 
-   // recovery_strategy(id)
-   recovery_strategy(r2).
-   recovery_strategy(r3).
-   recovery_strategy(r1).
+   // recoveryStrategy(id)
+   recoveryStrategy(r2).
+   recoveryStrategy(r3).
+   recoveryStrategy(r1).
 
-   // notification_policy(policy id, condition)
-   notification_policy(np2,(scheme_id(S) & failed(S,switchOnOven))).
-   notification_policy(np3,(scheme_id(S) & failed(S,provideIngredients))).
-   notification_policy(np1,(scheme_id(S) & failed(S,provideIngredients))).
+   // notificationPolicy(policy id, condition)
+   notificationPolicy(np2,(scheme_id(S) & failed(S,switchOnOven))).
+   notificationPolicy(np3,(scheme_id(S) & failed(S,provideIngredients))).
+   notificationPolicy(np1,(scheme_id(S) & failed(S,provideIngredients))).
 
-   // handling_policy(policy id, condition)
-   handling_policy(handlerOvenProblem,true).
-   handling_policy(handlerWorkspaceSetupFailure,true).
-   handling_policy(handlerIngredientsUnavailable,true).
+   // handlingPolicy(policy id, condition)
+   handlingPolicy(handlerOvenProblem,true).
+   handlingPolicy(handlerWorkspaceSetupFailure,true).
+   handlingPolicy(handlerIngredientsUnavailable,true).
 
    // strategy_policy(strategy id, policy id)
    strategy_policy(r2,np2).
@@ -203,16 +203,16 @@ scope scheme(cake_sch) {
    enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
    enabled(S,TG) :- policy_goal(P,TG) &
-                    notification_policy(P,Condition) &
+                    notificationPolicy(P,Condition) &
                     Condition &
                     goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
                      (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
                     ).
    enabled(S,CG) :- policy_goal(HP,CG) &
-                    handling_policy(HP,Condition) &
+                    handlingPolicy(HP,Condition) &
                     Condition &
-                    recovery_strategy(ST) &
+                    recoveryStrategy(ST) &
                     strategy_policy(ST,HP) &
                     strategy_policy(ST,NPol) &
                     policy_exceptionType(NPol,E) &
@@ -285,7 +285,7 @@ scope scheme(cake_sch) {
             (goal(_,G,_,performance,_,D) & What = done(S,G,A))) &
            well_formed(S) & 
            not satisfied(S,G) & 
-           not fault(_,G) & 
+           not failed(_,G) & 
            not released(_,G) & 
            not super_satisfied(S,G)
         -> obligation(A,enabled(S,G),What,`now` + D).

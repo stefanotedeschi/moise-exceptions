@@ -327,19 +327,19 @@ public class os2nopl {
         }
         np.append(superGoal.toString());
 
-        String recoveryStrategy = "\n   // recovery_strategy(id)\n";
-        String notificationPolicy = "\n   // notification_policy(policy id, condition)\n";
-        String handlingPolicy = "\n   // handling_policy(policy id, condition)\n";
+        String recoveryStrategy = "\n   // recoveryStrategy(id)\n";
+        String notificationPolicy = "\n   // notificationPolicy(policy id, condition)\n";
+        String handlingPolicy = "\n   // handlingPolicy(policy id, condition)\n";
         String exceptionType = "\n   // exceptionType(exception type id)\n";
         String strategyPolicy = "\n   // strategy_policy(strategy id, policy id)\n";
         String policyGoal = "\n   // policy_goal(policy id, goal id)\n";
         String policyExceptionType = "\n   // policy_exceptionType(policy id, exception type id)\n";
 
         for (RecoveryStrategy rs : sch.getRecoveryStrategies()) {
-            recoveryStrategy += "   recovery_strategy(" + rs.getId() + ").\n";
+            recoveryStrategy += "   recoveryStrategy(" + rs.getId() + ").\n";
             NotificationPolicy npol = rs.getNotificationPolicy();
             if(npol != null) {
-                notificationPolicy += "   notification_policy("+npol.getId()+","+npol.getCondition().getConditionFormula()+").\n";
+                notificationPolicy += "   notificationPolicy("+npol.getId()+","+npol.getCondition().getConditionFormula()+").\n";
                 strategyPolicy += "   strategy_policy("+rs.getId()+","+npol.getId()+").\n";
                 if(npol.getExceptionType() != null) {
                     exceptionType += "   exceptionType("+npol.getExceptionType().getId()+").\n";
@@ -353,7 +353,7 @@ public class os2nopl {
                 }
             }
             for(HandlingPolicy hp : rs.getHandlingPolicies()) {
-                handlingPolicy += "   handling_policy("+hp.getId()+","+hp.getCondition().getConditionFormula()+").\n";
+                handlingPolicy += "   handlingPolicy("+hp.getId()+","+hp.getCondition().getConditionFormula()+").\n";
                   strategyPolicy += "   strategy_policy("+rs.getId()+","+hp.getId()+").\n";
                   if(hp.getGoal() != null) {
                       policyGoal += "   policy_goal("+hp.getId()+","+hp.getGoal().getId()+").\n";
@@ -409,7 +409,7 @@ public class os2nopl {
         np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
 
         np.append("   enabled(S,TG) :- policy_goal(P,TG) &\r\n"
-                + "                    notification_policy(P,Condition) &\r\n"
+                + "                    notificationPolicy(P,Condition) &\r\n"
                 + "                    Condition &\r\n"             
                 //+ "                    not failed(S,TG) &\r\n"
                 //+ "                    not released(S,TG) &\r\n" 
@@ -418,11 +418,11 @@ public class os2nopl {
                 + "                     (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))\r\n"
                 + "                    ).\r\n");
         np.append("   enabled(S,CG) :- policy_goal(HP,CG) &\r\n" 
-                + "                    handling_policy(HP,Condition) &\r\n"
+                + "                    handlingPolicy(HP,Condition) &\r\n"
                 + "                    Condition &\r\n"
                 //+ "                    not failed(S,CG) &\r\n"
                 //+ "                    not released(S,CG) &\r\n"
-                + "                    recovery_strategy(ST) &\r\n"
+                + "                    recoveryStrategy(ST) &\r\n"
                 + "                    strategy_policy(ST,HP) &\r\n"
                 + "                    strategy_policy(ST,NPol) &\r\n"
                 + "                    policy_exceptionType(NPol,E) &\r\n"
@@ -467,7 +467,7 @@ public class os2nopl {
             // (not goal(_,G,_,_,_,_)[location(L)] & WhatL = What)) &\n");
             np.append("           well_formed(S) & \n");
             np.append("           not satisfied(S,G) & \n");
-            np.append("           not fault(_,G) & \n");
+            np.append("           not failed(_,G) & \n");
             np.append("           not released(_,G) & \n");
             np.append("           not super_satisfied(S,G)\n");
             np.append("        -> obligation(A,enabled(S,G),What,`now` + D).\n\n");

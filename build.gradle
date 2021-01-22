@@ -95,24 +95,6 @@ task sourceJar (type : Jar) {
     from sourceSets.main.allSource
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/stex93/moise-exceptions")
-            credentials {
-                username = project.findProperty("gpr.user")
-                password = project.findProperty("gpr.key")
-            }
-        }
-    }
-    publications {
-        gpr(MavenPublication) {
-            from(components.java)
-        }
-    }
-}
-
 task fixTab {
     ant.fixcrlf(eol: 'lf',  includes: '**/*.txt,**/*.bat, **/*.adoc', srcdir: '.')
     ant.fixcrlf(tab: 'remove', tablength: '4', javafiles: 'true', includes: '**/*.java,**/*.xml,**/*.xsl,**/*.xsd', srcdir: 'src')
@@ -148,74 +130,29 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
 }
 
-/*
-task javadoc(overwrite: true, dependsOn: compileJava) {
-    setDescription('Generates Javadoc API documentation with UMLGraph diagrams')
-    setGroup(JavaBasePlugin.DOCUMENTATION_GROUP)
 
-    doLast {
-        ant.javadoc(classpath: (configurations.runtime + configurations.compile).asPath,
-                    sourcepath: file('src/main/java'),
-                    packagenames: '*',
-                    destdir: "${docsDir}/../../doc/api",
-                    private: 'true',
-                    docletpath: configurations.umljavadoc.asPath) {
-            doclet(name: 'org.umlgraph.doclet.UmlGraphDoc') {
-                //param(name: '-inferrel')
-                //param(name: '-inferdep')
-                param(name: '-qualify')
-                //param(name: '-T', value: 'svg')
-                param(name: '-postfixpackage')
-                param(name: '-hide', value: 'java.*')
-                //param(name: '-collpackages', value: 'java.util.*')
-                //param(name: '-nodefontsize', value: '9')
-                //param(name: '-nodefontpackagesize', value: '7')
-                //param(name: '-link', value: 'http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec')
-                //param(name: '-link', value: 'http://java.sun.com/j2se/1.5/docs/api')
-            }
-        }
-    }
-}
-*/
-
-// transfer local maven artifact to maven2 repository at sourceforge
-/*task publishMavenSF(dependsOn: [ 'build', 'publishToMavenLocal']) {
+task publishToMavenSF(dependsOn: [ 'build', 'publishToMavenLocal']) {
 	doLast {
-	    def wdir = System.getProperty("user.home")+'/.m2/repository/it/unito/di/moise-exceptions'
+
+    	def wdir = System.getProperty("user.home")+'\\.m2\\repository\\it\\unito\\di\\moise-exceptions\\'
 	    def tdir = project.findProperty("sf.user")+'@web.sourceforge.net:/home/project-web/moise-exceptions/htdocs/maven2/it/unito/di/moise-exceptions/'
-	    exec {
-	        commandLine 'scp', '-r', project.version, tdir
-	        workingDir wdir
-	    }
-	    exec {
-	        commandLine 'cp', 'maven-metadata-local.xml', 'maven-metadata.xml'
-	        workingDir wdir
-	    }
-	    exec {
-	        commandLine 'scp', 'maven-metadata.xml', tdir
-	        workingDir wdir
-	    }
-	}
-}*/
 
-task publishMavenSF(dependsOn: [ 'build', 'publishToMavenLocal']) {
-	doLast {
-    	
-    	def wdir = System.getProperty("user.home")+'/.m2/repository/it/unito/di/moise-exceptions/'+project.version
-	    def tdir = project.findProperty("sf.user")+'@web.sourceforge.net:/home/project-web/moise-exceptions/htdocs/maven2/it/unito/di/moise-exceptions/'+project.version
-		
+        file(wdir+'maven-metadata-local.xml').renameTo(file(wdir+'maven-metadata.xml'))
+
 		ant.taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
             classpath: configurations.sshAntTask.asPath)
-            
+
 	    // Invoke the scp Ant task. (Use gradle -i update to see the output of the Ant task.)
 	    ant.scp(todir: tdir,
-	            keyfile: '${user.home}\\.gradle\\sourceforge-key.pem',
-	            passphrase: '',
+	            password: project.findProperty("sf.pass"),
 	            trust: "yes",
 	            verbose: 'true') {
 	        fileset(dir: wdir) {
 	            include(name: '**/**')
 	        }
 	    }
+
+        file(wdir+'maven-metadata.xml').renameTo(file(wdir+'maven-metadata-local.xml'))
+
 	}
 }

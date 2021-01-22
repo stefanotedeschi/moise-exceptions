@@ -97,7 +97,7 @@
 
             <recovery-strategy id="rs1">
                 <notification-policy id="np1">
-                    <condition type="goal-fault">
+                    <condition type="goal-failure">
                         <condition-argument id="target" value="site_prepared" />
                     </condition>
                     <exception-type id="site_preparation_exception">
@@ -181,4 +181,3 @@
     </normative-specification>
 
 </organisational-specification>
-
