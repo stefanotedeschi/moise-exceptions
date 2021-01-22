@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification
+    id="atm_exceptions" os-version="0.8"
+
+    xmlns='http://moise.sourceforge.net/os'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+
+    <structural-specification>
+
+        <role-definitions>
+            <role id="worker" />
+            <role id="client" />
+        </role-definitions>
+
+        <group-specification id="sample_group">
+            <roles>
+                <role id="worker" min="1" max="1" />
+                <role id="client" min="1" max="1" />
+            </roles>
+        </group-specification>
+
+    </structural-specification>
+
+    <functional-specification>
+
+        <scheme id="sample_sch">
+
+            <goal id="task" ttf="5 seconds" />
+
+            <recovery-strategy id="rec1">
+
+                <notification-policy id="np1">
+
+                    <!-- CONDITION -->
+                    <condition type="goal-ttf-expiration">
+                        <condition-argument id="target" value="task" />
+                    </condition>
+
+                    <exception-type id="delay">
+                        <exception-argument id="eta" arity="1" />
+                    </exception-type>
+
+                    <!-- THROWING GOAL -->
+                    <goal id="explainDelay"/>
+
+                </notification-policy>
+
+                <handling-policy id="hp1">
+
+                    <!-- CONDITION -->
+                   <condition type="always"/>
+
+                    <!-- CATCHING GOAL -->
+                    <goal id="giveUp" />
+
+                </handling-policy>
+
+            </recovery-strategy>
+
+            <mission id="mWorker" min="1" max="1">
+                <goal id="task" />
+                <goal id="explainDelay" />
+            </mission>
+            <mission id="mClient" min="1" max="1">
+                <goal id="giveUp" />
+            </mission>
+
+        </scheme>
+
+    </functional-specification>
+
+    <normative-specification>
+        <norm id="n1" type="obligation" role="worker" mission="mWorker" />
+        <norm id="n2" type="obligation" role="client" mission="mClient" />
+    </normative-specification>
+
+</organisational-specification>
