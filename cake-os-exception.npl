@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on gennaio 22, 2021 - 20:25:59
+    on gennaio 23, 2021 - 22:47:40
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -11,7 +11,6 @@ scope organisation(cake) {
 
 
    // Role hierarchy
-   subrole(boss,soc).
    subrole(supplier,soc).
    subrole(baker,soc).
    subrole(apprentice,soc).
@@ -37,19 +36,19 @@ scope organisation(cake) {
 scope group(bakery) {
 
    // ** Facts from OS
-   role_cardinality(boss,1,1).
    role_cardinality(supplier,1,1).
    role_cardinality(baker,1,1).
    role_cardinality(apprentice,1,1).
+   role_cardinality(customer,1,1).
 
 
    // ** Rules
    rplayers(R,G,V)    :- .count(play(_,R,G),V).
    well_formed(G) :-
-      rplayers(boss,G,Vboss) & Vboss >= 1 & Vboss <= 1 &
       rplayers(supplier,G,Vsupplier) & Vsupplier >= 1 & Vsupplier <= 1 &
       rplayers(baker,G,Vbaker) & Vbaker >= 1 & Vbaker <= 1 &
       rplayers(apprentice,G,Vapprentice) & Vapprentice >= 1 & Vapprentice <= 1 &
+      rplayers(customer,G,Vcustomer) & Vcustomer >= 1 & Vcustomer <= 1 &
       .findall(GInst, subgroup(GInst,_,G), ListSubgroups) & all_subgroups_well_formed(ListSubgroups).
    all_subgroups_well_formed([]).
    all_subgroups_well_formed([H|T]) :- subgroup_well_formed(H) & all_subgroups_well_formed(T).
@@ -96,7 +95,7 @@ scope scheme(cake_sch) {
 
    // mission_cardinality(mission id, min, max)
    mission_cardinality(mBaker,1,1).
-   mission_cardinality(mBoss,1,1).
+   mission_cardinality(mCustomer,1,1).
    mission_cardinality(mSupplier,1,1).
    mission_cardinality(mApprentice,1,1).
 
@@ -104,16 +103,15 @@ scope scheme(cake_sch) {
    mission_role(mSupplier,supplier).
    mission_role(mApprentice,apprentice).
    mission_role(mBaker,baker).
-   mission_role(mBoss,boss).
+   mission_role(mCustomer,customer).
 
    // mission_goal(mission id, goal id)
    mission_goal(mBaker,mixIngredients).
    mission_goal(mBaker,dealWithMissingIngredients).
-   mission_goal(mBaker,workspaceSetup).
    mission_goal(mBaker,checkOven).
-   mission_goal(mBaker,notifyWorkspaceSetupFailure).
-   mission_goal(mBoss,haveCake).
-   mission_goal(mBoss,handleSetupFailure).
+   mission_goal(mBaker,notifyCakePreparationFailure).
+   mission_goal(mCustomer,haveCake).
+   mission_goal(mCustomer,handleCakePreparationFailure).
    mission_goal(mSupplier,notifyIngredientsUnavailability).
    mission_goal(mSupplier,provideIngredients).
    mission_goal(mApprentice,bakeCake).
@@ -122,16 +120,16 @@ scope scheme(cake_sch) {
 
    // goal(missions, goal id, dependence (on goal statisfaction), type, #ags to satisfy, ttf)
    goal([mBaker],mixIngredients,dep(and,[workspaceSetup]),performance,all,`1 year`).
-   goal([mBoss],haveCake,dep(and,[bakeCake]),performance,all,`1 year`).
+   goal([mCustomer],haveCake,dep(and,[bakeCake]),performance,all,`1 year`).
    goal([mApprentice],bakeCake,dep(and,[mixIngredients]),performance,all,`1 year`).
    goal([mBaker],dealWithMissingIngredients,dep(and,[]),performance,all,`1 year`).
-   goal([mBaker],workspaceSetup,dep(and,[provideIngredients, switchOnOven]),performance,all,`1 year`).
+   goal([],workspaceSetup,dep(and,[provideIngredients, switchOnOven]),performance,0,`1 year`).
    goal([mBaker],checkOven,dep(and,[]),performance,all,`1 year`).
    goal([mApprentice],notifyProblemWithOven,dep(and,[]),performance,all,`1 year`).
    goal([mSupplier],notifyIngredientsUnavailability,dep(and,[]),performance,all,`1 year`).
    goal([mSupplier],provideIngredients,dep(and,[]),performance,all,`1 year`).
-   goal([mBoss],handleSetupFailure,dep(and,[]),performance,all,`1 year`).
-   goal([mBaker],notifyWorkspaceSetupFailure,dep(and,[]),performance,all,`1 year`).
+   goal([mBaker],notifyCakePreparationFailure,dep(and,[]),performance,all,`1 year`).
+   goal([mCustomer],handleCakePreparationFailure,dep(and,[]),performance,all,`1 year`).
    goal([mApprentice],switchOnOven,dep(and,[]),performance,all,`1 year`).
    super_goal(haveCake, mixIngredients).
    super_goal(haveCake, bakeCake).
@@ -146,37 +144,37 @@ scope scheme(cake_sch) {
 
    // notificationPolicy(policy id, condition)
    notificationPolicy(np2,(scheme_id(S) & failed(S,switchOnOven))).
-   notificationPolicy(np3,(scheme_id(S) & failed(S,provideIngredients))).
+   notificationPolicy(np3,(scheme_id(S) & (failed(S,dealWithMissingIngredients) | failed(S,checkOven)))).
    notificationPolicy(np1,(scheme_id(S) & failed(S,provideIngredients))).
 
    // handlingPolicy(policy id, condition)
    handlingPolicy(handlerOvenProblem,true).
-   handlingPolicy(handlerWorkspaceSetupFailure,true).
+   handlingPolicy(handlerCakePreparationFailure,true).
    handlingPolicy(handlerIngredientsUnavailable,true).
 
    // strategy_policy(strategy id, policy id)
    strategy_policy(r2,np2).
    strategy_policy(r2,handlerOvenProblem).
    strategy_policy(r3,np3).
-   strategy_policy(r3,handlerWorkspaceSetupFailure).
+   strategy_policy(r3,handlerCakePreparationFailure).
    strategy_policy(r1,np1).
    strategy_policy(r1,handlerIngredientsUnavailable).
 
    // exceptionType(exception type id)
    exceptionType(ovenBroken).
-   exceptionType(workspaceSetupFailure).
+   exceptionType(cakePreparationFailure).
    exceptionType(ingredientsUnavailable).
 
    // policy_exceptionType(policy id, exception type id)
    policy_exceptionType(np2,ovenBroken).
-   policy_exceptionType(np3,workspaceSetupFailure).
+   policy_exceptionType(np3,cakePreparationFailure).
    policy_exceptionType(np1,ingredientsUnavailable).
 
    // policy_goal(policy id, goal id)
    policy_goal(np2,notifyProblemWithOven).
    policy_goal(handlerOvenProblem,checkOven).
-   policy_goal(np3,notifyWorkspaceSetupFailure).
-   policy_goal(handlerWorkspaceSetupFailure,handleSetupFailure).
+   policy_goal(np3,notifyCakePreparationFailure).
+   policy_goal(handlerCakePreparationFailure,handleCakePreparationFailure).
    policy_goal(np1,notifyIngredientsUnavailability).
    policy_goal(handlerIngredientsUnavailable,dealWithMissingIngredients).
 
@@ -184,7 +182,7 @@ scope scheme(cake_sch) {
    mplayers(M,S,V) :- .count(committed(_,M,S),V).
    well_formed(S) :- 
       (mission_accomplished(S,mBaker) | not mission_accomplished(S,mBaker) & mplayers(mBaker,S,VmBaker) & VmBaker >= 1 & VmBaker <= 1) &
-      (mission_accomplished(S,mBoss) | not mission_accomplished(S,mBoss) & mplayers(mBoss,S,VmBoss) & VmBoss >= 1 & VmBoss <= 1) &
+      (mission_accomplished(S,mCustomer) | not mission_accomplished(S,mCustomer) & mplayers(mCustomer,S,VmCustomer) & VmCustomer >= 1 & VmCustomer <= 1) &
       (mission_accomplished(S,mSupplier) | not mission_accomplished(S,mSupplier) & mplayers(mSupplier,S,VmSupplier) & VmSupplier >= 1 & VmSupplier <= 1) &
       (mission_accomplished(S,mApprentice) | not mission_accomplished(S,mApprentice) & mplayers(mApprentice,S,VmApprentice) & VmApprentice >= 1 & VmApprentice <= 1).
    is_finished(S) :- satisfied(S,haveCake).

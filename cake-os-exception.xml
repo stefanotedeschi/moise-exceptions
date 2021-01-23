@@ -3,122 +3,122 @@
 <?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
 
 <organisational-specification id="cake"
-	os-version="0.8" xmlns='http://moise.sourceforge.net/os'
-	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+    os-version="0.8" xmlns='http://moise.sourceforge.net/os'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 
-	<structural-specification>
+    <structural-specification>
 
-		<role-definitions>
-			<role id="baker" />
-			<role id="apprentice" />
-			<role id="customer" />
-			<role id="supplier" />
-		</role-definitions>
+        <role-definitions>
+            <role id="baker" />
+            <role id="apprentice" />
+            <role id="customer" />
+            <role id="supplier" />
+        </role-definitions>
 
-		<group-specification id="bakery">
-			<roles>
-				<role id="baker" min="1" max="1" />
-				<role id="apprentice" min="1" max="1" />
-				<role id="supplier" min="1" max="1" />
-				<role id="boss" min="1" max="1" />
-			</roles>
-		</group-specification>
+        <group-specification id="bakery">
+            <roles>
+                <role id="baker" min="1" max="1" />
+                <role id="apprentice" min="1" max="1" />
+                <role id="supplier" min="1" max="1" />
+                <role id="customer" min="1" max="1" />
+            </roles>
+        </group-specification>
 
-	</structural-specification>
+    </structural-specification>
 
-	<functional-specification>
+    <functional-specification>
 
-		<scheme id="cake_sch">
+        <scheme id="cake_sch">
 
-			<goal id="haveCake">
-				<plan operator="sequence">
-					<goal id="workspaceSetup">
-						<plan operator="parallel">
-							<goal id="provideIngredients" />
-							<goal id="switchOnOven" />
-						</plan>
-					</goal>
-					<goal id="mixIngredients" />
-					<goal id="bakeCake" />
-				</plan>
-			</goal>
+            <goal id="haveCake">
+                <plan operator="sequence">
+                    <goal id="workspaceSetup">
+                        <plan operator="parallel">
+                            <goal id="provideIngredients" />
+                            <goal id="switchOnOven" />
+                        </plan>
+                    </goal>
+                    <goal id="mixIngredients" />
+                    <goal id="bakeCake" />
+                </plan>
+            </goal>
 
-			<recovery-strategy id="r1">
-				<notification-policy id="np1">
-				<!--<notification-policy id="np1" condition="scheme(S) &amp; failed(S,provideIngredients)">-->
-
-					<condition type="goal-failure">
-                    	<condition-argument id="target" value="provideIngredients" />
+            <recovery-strategy id="r1">
+                <notification-policy id="np1">
+                    <condition type="goal-failure">
+                        <condition-argument id="target" value="provideIngredients" />
                     </condition>
+                    <exception-type id="ingredientsUnavailable">
+                        <exception-argument id="missingIngredients" arity="1" />
+                    </exception-type>
+                    <goal id="notifyIngredientsUnavailability" />
+                </notification-policy>
+                <handling-policy id="handlerIngredientsUnavailable">
+                    <condition type="always" />
+                    <goal id="dealWithMissingIngredients" />
+                </handling-policy>
+            </recovery-strategy>
 
-					<exception-type id="ingredientsUnavailable" />
-					<goal id="notifyIngredientsUnavailability" />
-				</notification-policy>
-				<handling-policy id="handlerIngredientsUnavailable">
-					<condition type="always" />
-					<goal id="dealWithMissingIngredients" />
-				</handling-policy>
-			</recovery-strategy>
-
-			<recovery-strategy id="r2">
-				<notification-policy id="np2">
-					<condition type="goal-failure">
-                    	<condition-argument id="target" value="switchOnOven" />
+            <recovery-strategy id="r2">
+                <notification-policy id="np2">
+                    <condition type="goal-failure">
+                        <condition-argument id="target" value="switchOnOven" />
                     </condition>
-					<exception-type id="ovenBroken" />
-					<goal id="notifyProblemWithOven" />
-				</notification-policy>
-				<handling-policy id="handlerOvenProblem">
-					<condition type="always" />
-					<goal id="checkOven" />
-				</handling-policy>
-			</recovery-strategy>
+                    <exception-type id="ovenBroken">
+                        <exception-argument id="faultType" arity="1" />
+                    </exception-type>
+                    <goal id="notifyProblemWithOven" />
+                </notification-policy>
+                <handling-policy id="handlerOvenProblem">
+                    <condition type="always" />
+                    <goal id="checkOven" />
+                </handling-policy>
+            </recovery-strategy>
 
-			<recovery-strategy id="r3">
-				<notification-policy id="np3">
-					<condition type="goal-failure">
-						<condition-argument id="target" value="provideIngredients" />
-					</condition>
-					<exception-type id="workspaceSetupFailure" />
-					<goal id="notifyWorkspaceSetupFailure" />
-				</notification-policy>
-				<handling-policy id="handlerWorkspaceSetupFailure">
-					<condition type="always" />
-					<goal id="handleSetupFailure" />
-				</handling-policy>
-			</recovery-strategy>
+            <recovery-strategy id="r3">
+                <notification-policy id="np3">
+                    <condition type="custom">
+                        <condition-argument id="formula" value="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))" />
+                    </condition>
+                    <exception-type id="cakePreparationFailure" />
+                    <goal id="notifyCakePreparationFailure" />
+                </notification-policy>
+                <handling-policy id="handlerCakePreparationFailure">
+                    <condition type="always" />
+                    <goal id="handleCakePreparationFailure" />
+                </handling-policy>
+            </recovery-strategy>
 
-			<mission id="mApprentice" min="1" max="1">
-				<goal id="switchOnOven" />
-				<goal id="bakeCake" />
-				<goal id="notifyProblemWithOven" />
-			</mission>
-			<mission id="mSupplier" min="1" max="1">
-				<goal id="provideIngredients" />
-				<goal id="notifyIngredientsUnavailability" />
-			</mission>
-			<mission id="mBaker" min="1" max="1">
-				<goal id="workspaceSetup" />
-				<goal id="mixIngredients" />
-				<goal id="notifyWorkspaceSetupFailure" />
-				<goal id="dealWithMissingIngredients" />
-				<goal id="checkOven" />
-			</mission>
-			<mission id="mBoss" min="1" max="1">
-				<goal id="haveCake" />
-				<goal id="handleSetupFailure" />
-			</mission>
+            <mission id="mApprentice" min="1" max="1">
+                <goal id="switchOnOven" />
+                <goal id="bakeCake" />
+                <goal id="notifyProblemWithOven" />
+            </mission>
+            <mission id="mSupplier" min="1" max="1">
+                <goal id="provideIngredients" />
+                <goal id="notifyIngredientsUnavailability" />
+            </mission>
+            <mission id="mBaker" min="1" max="1">
+                <goal id="mixIngredients" />
+                <goal id="dealWithMissingIngredients" />
+                <goal id="checkOven" />
+                <goal id="notifyCakePreparationFailure" />
+            </mission>
+            <mission id="mCustomer" min="1" max="1">
+                <goal id="haveCake" />
+                <goal id="handleCakePreparationFailure" />
+            </mission>
 
-		</scheme>
-	</functional-specification>
+        </scheme>
+    </functional-specification>
 
-	<normative-specification>
-		<norm id="n1" type="obligation" role="supplier"
-			mission="mSupplier" />
-		<norm id="n2" type="obligation" role="apprentice"
-			mission="mApprentice" />
-		<norm id="n3" type="obligation" role="baker" mission="mBaker" />
-		<norm id="n4" type="obligation" role="boss" mission="mBoss" />
-	</normative-specification>
+    <normative-specification>
+        <norm id="n1" type="obligation" role="supplier"
+            mission="mSupplier" />
+        <norm id="n2" type="obligation" role="apprentice"
+            mission="mApprentice" />
+        <norm id="n3" type="obligation" role="baker" mission="mBaker" />
+        <norm id="n4" type="obligation" role="customer" mission="mCustomer" />
+    </normative-specification>
 
 </organisational-specification>

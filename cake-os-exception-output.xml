@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><organisational-specification xmlns="http://moise.sourceforge.net/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="cake" os-version="0.7" xsi:schemaLocation="http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd">
     <structural-specification>
         <role-definitions>
-            <role id="boss">
-                <extends role="soc"/>
-            </role>
             <role id="supplier">
                 <extends role="soc"/>
             </role>
@@ -24,16 +21,16 @@
         </link-types>
         <group-specification id="bakery">
             <roles>
-                <role id="boss"/>
                 <role id="supplier"/>
                 <role id="baker"/>
                 <role id="apprentice"/>
+                <role id="customer"/>
             </roles>
             <formation-constraints>
-                <cardinality id="boss" max="1" min="1" object="role"/>
                 <cardinality id="supplier" max="1" min="1" object="role"/>
                 <cardinality id="baker" max="1" min="1" object="role"/>
                 <cardinality id="apprentice" max="1" min="1" object="role"/>
+                <cardinality id="customer" max="1" min="1" object="role"/>
             </formation-constraints>
         </group-specification>
     </structural-specification>
@@ -41,7 +38,7 @@
         <scheme id="cake_sch">
             <goal id="haveCake" type="performance">
                 <plan operator="sequence">
-                    <goal id="workspaceSetup" type="performance">
+                    <goal id="workspaceSetup" min="0" type="performance">
                         <plan operator="parallel">
                             <goal id="provideIngredients" type="performance"/>
                             <goal id="switchOnOven" type="performance"/>
@@ -56,7 +53,9 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="switchOnOven"/>
                     </condition>
-                    <exception-type id="ovenBroken"/>
+                    <exception-type id="ovenBroken">
+                        <exception-argument arity="1" id="faultType"/>
+                    </exception-type>
                     <goal id="notifyProblemWithOven" type="performance"/>
                 </notification-policy>
                 <handling-policy id="handlerOvenProblem">
@@ -66,15 +65,15 @@
             </recovery-strategy>
             <recovery-strategy id="r3">
                 <notification-policy id="np3">
-                    <condition type="goal-failure">
-                        <condition-argument id="target" value="provideIngredients"/>
+                    <condition type="custom">
+                        <condition-argument id="formula" value="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))"/>
                     </condition>
-                    <exception-type id="workspaceSetupFailure"/>
-                    <goal id="notifyWorkspaceSetupFailure" type="performance"/>
+                    <exception-type id="cakePreparationFailure"/>
+                    <goal id="notifyCakePreparationFailure" type="performance"/>
                 </notification-policy>
-                <handling-policy id="handlerWorkspaceSetupFailure">
+                <handling-policy id="handlerCakePreparationFailure">
                     <condition type="always"/>
-                    <goal id="handleSetupFailure" type="performance"/>
+                    <goal id="handleCakePreparationFailure" type="performance"/>
                 </handling-policy>
             </recovery-strategy>
             <recovery-strategy id="r1">
@@ -82,7 +81,9 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="provideIngredients"/>
                     </condition>
-                    <exception-type id="ingredientsUnavailable"/>
+                    <exception-type id="ingredientsUnavailable">
+                        <exception-argument arity="1" id="missingIngredients"/>
+                    </exception-type>
                     <goal id="notifyIngredientsUnavailability" type="performance"/>
                 </notification-policy>
                 <handling-policy id="handlerIngredientsUnavailable">
@@ -93,13 +94,12 @@
             <mission id="mBaker" max="1" min="1">
                 <goal id="mixIngredients"/>
                 <goal id="dealWithMissingIngredients"/>
-                <goal id="workspaceSetup"/>
                 <goal id="checkOven"/>
-                <goal id="notifyWorkspaceSetupFailure"/>
+                <goal id="notifyCakePreparationFailure"/>
             </mission>
-            <mission id="mBoss" max="1" min="1">
+            <mission id="mCustomer" max="1" min="1">
                 <goal id="haveCake"/>
-                <goal id="handleSetupFailure"/>
+                <goal id="handleCakePreparationFailure"/>
             </mission>
             <mission id="mSupplier" max="1" min="1">
                 <goal id="notifyIngredientsUnavailability"/>
@@ -116,6 +116,6 @@
         <norm id="n1" mission="mSupplier" role="supplier" type="obligation"/>
         <norm id="n2" mission="mApprentice" role="apprentice" type="obligation"/>
         <norm id="n3" mission="mBaker" role="baker" type="obligation"/>
-        <norm id="n4" mission="mBoss" role="boss" type="obligation"/>
+        <norm id="n4" mission="mCustomer" role="customer" type="obligation"/>
     </normative-specification>
 </organisational-specification>
