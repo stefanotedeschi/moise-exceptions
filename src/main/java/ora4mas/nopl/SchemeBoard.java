@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,6 +45,7 @@ import moise.os.Cardinality;
 import moise.os.OS;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
+import moise.os.fs.exceptions.HandlingPolicy;
 import moise.tools.os2dot;
 import moise.xml.DOMUtils;
 import npl.NPLLiteral;
@@ -365,8 +367,9 @@ public class SchemeBoard extends OrgArt {
                 getSchState().addReleasedGoal(goal);
                 getSchState().removeFailedGoal(spec.getGoal(goal));
                 //getSchState().resetExceptions(nengine);
-                getSchState().computeSatisfiedGoals();
-                //nengine.verifyNorms();
+                if (getSchState().computeSatisfiedGoals()) {
+                    nengine.verifyNorms();
+                }
                 updateGoalStateObsProp();
                 //updateExceptionsObsProp();
             }

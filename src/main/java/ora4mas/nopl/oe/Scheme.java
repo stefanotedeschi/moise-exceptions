@@ -194,6 +194,10 @@ public class Scheme extends CollectiveOE {
     public Set<Literal> getDoneGoals() {
         return new HashSet<>(doneGoals);
     }
+    
+    public Set<Literal> getReleasedGoals() {
+        return releasedGoals;
+    }
 
     public boolean resetGoal(Goal goal) {
         boolean changed = resetGoalAndPreConditions(goal);
@@ -408,27 +412,47 @@ public class Scheme extends CollectiveOE {
         satisfiedGoals.remove(g);
     }
 
+    public boolean isReleased(Goal g) {
+        for(Literal l : releasedGoals) {
+            if (l.getTerm(1).toString().equals(g.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public boolean isSatisfied(Goal g) {
         if (satisfiedGoals.contains(g.getId()))
             return true;
 
-        // all pre-conditions
-        //    satisfied(S,G) :-     // no agents have to achieve -- automatically satisfied by its pre-conditions
-        //           goal(_,G,PCG,_,0,_) & all_satisfied(S,PCG).
-
+        //no agents have to achieve -- automatically satisfied if preconditions are satisfied or released
         if (g.getMinAgToSatisfy() == 0) { // goal without mission
             if (!g.hasPlan())   // if no plan is defined, it is never satisfied
                 return false;
             boolean hasChoicePlan = g.getPlan().getOp() == PlanOpType.choice;
+            int nPreconditionsSatisfied = 0;
+            int nPreconditionsReleased = 0;
             for (Goal pg: g.getPreConditionGoals()) {
-                if (hasChoicePlan) {
-                    if (isSatisfied(pg))
-                        return true; // if one of the precondition goals is satisfied, g is also satisfied
-                } else if (! isSatisfied(pg)) {
-                    return false;
+                if(isSatisfied(pg))
+                    nPreconditionsSatisfied++;
+                else if(isReleased(pg)) {
+                    nPreconditionsReleased++;
                 }
+                //if (hasChoicePlan) {
+                //    if (isSatisfied(pg))
+                //        return true; // if one of the precondition goals is satisfied, g is also satisfied
+                    
+                //} else if (!isSatisfied(pg)) {
+                //    return false;
+                //}
             }
-            return !hasChoicePlan;
+            if(hasChoicePlan) {
+                return (nPreconditionsSatisfied != 0) || (nPreconditionsReleased == g.getPreConditionGoals().size());
+            }
+            else {
+                return nPreconditionsReleased + nPreconditionsSatisfied == g.getPreConditionGoals().size();
+            }
+            //return !hasChoicePlan;
         }
 
         int a = 0; // qty of achieved
