@@ -4,8 +4,8 @@
 { include("$jacamoJar/templates/common-moise.asl") }
 
 +!explainDelay
-	<- println("Delay of 100 seconds...");
-	   throwException(delay,[eta(100)]).
+	<- println("Delay of ",300," seconds...");
+	   throwException(delay,[eta(300)]).
 
 // uncomment the include below to have an agent compliant with its organisation
 { include("$moiseJar/asl/org-obedient.asl") }
