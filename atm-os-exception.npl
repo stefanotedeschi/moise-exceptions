@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm_exceptions'
-    on gennaio 23, 2021 - 22:47:40
+    on gennaio 24, 2021 - 16:23:13
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -249,25 +249,28 @@ scope scheme(atm_sch) {
         -> fail(mission_cardinality(M,S,MP,MMax)).
    norm exc_agent_not_allowed:  
            thrown(S,E,Ag) &
-           exceptionType(E,_) &
-           mission_goal(M,G) &
-           exception_goal(E,G) &
+           exceptionType(E) &
+           mission_goal(M,TG) &
+           policy_exceptionType(NP,E) &
+           policy_goal(NP,TG) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
            thrown(S,E,Ag) &
-           exceptionType(E,Condition) &
-           mission_goal(M,G) &
-           exception_goal(E,G) &
-           committed(Ag,M,S) &
-           not Condition
+           exceptionType(E) &
+           policy_exceptionType(NP,E) &
+           notificationPolicy(NP,Condition) &
+           policy_goal(NP,TG) &
+           not (Condition | done(S,TG,Ag))
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
-   norm ach_th_goal_exc_not_thrown:  
-           done(S,G,Ag) &
-           exception_goal(E,G) &
-           not super_goal(SG,G) &
+   norm ach_thr_goal_exc_not_thrown:  
+           done(S,TG,Ag) &
+           exceptionType(E) &
+           policy_exceptionType(NP,E) &
+           policy_goal(NP,TG) &
+           not super_goal(SG,TG) &
            not thrown(S,E,_)
-        -> fail(ach_th_goal_exc_not_thrown(S,G,E,Ag)).
+        -> fail(ach_thr_goal_exc_not_thrown(S,G,E,Ag)).
 
    // agents are obliged to fulfill their enabled goals
    norm ngoal: 

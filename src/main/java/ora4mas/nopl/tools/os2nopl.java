@@ -49,7 +49,7 @@ public class os2nopl {
 
     public static final String PROP_ExcAgNotAllowed = "exc_agent_not_allowed";
     public static final String PROP_ExcCondNotHolding = "exc_condition_not_holding";
-    public static final String PROP_AchThGoalExcNotThrown = "ach_th_goal_exc_not_thrown";
+    public static final String PROP_AchThrGoalExcNotThrown = "ach_thr_goal_exc_not_thrown";
 
     // public static final String PROP_NotCompGoal = "goal_non_compliance";
 
@@ -59,7 +59,7 @@ public class os2nopl {
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { // PROP_NotCompGoal,
             PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission,
-            PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThGoalExcNotThrown };
+            PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {};
 
@@ -97,11 +97,11 @@ public class os2nopl {
                 "done(S,G,Agt) & .findall(M, mission_goal(M,G) & (committed(Agt,M,S) | mission_accomplished(S,M)), [])");
 
         condCode.put(PROP_ExcAgNotAllowed,
-                "thrown(S,E,Ag) & exceptionType(E,_) & mission_goal(M,G) & exception_goal(E,G) & not committed(Ag,M,S)");
+                "thrown(S,E,Ag) & exceptionType(E) & mission_goal(M,TG) & policy_exceptionType(NP,E) & policy_goal(NP,TG) & not committed(Ag,M,S)");
         condCode.put(PROP_ExcCondNotHolding,
-                "thrown(S,E,Ag) & exceptionType(E,Condition) & mission_goal(M,G) & exception_goal(E,G) & committed(Ag,M,S) & not Condition");
-        condCode.put(PROP_AchThGoalExcNotThrown,
-                "done(S,G,Ag) & exception_goal(E,G) & not super_goal(SG,G) & not thrown(S,E,_)");
+                "thrown(S,E,Ag) & exceptionType(E) & policy_exceptionType(NP,E) & notificationPolicy(NP,Condition) & policy_goal(NP,TG) & not (Condition | done(S,TG,Ag))");
+        condCode.put(PROP_AchThrGoalExcNotThrown,
+                "done(S,TG,Ag) & exceptionType(E) & policy_exceptionType(NP,E) & policy_goal(NP,TG) & not super_goal(SG,TG) & not thrown(S,E,_)");
 
         // condCode.put(PROP_NotCompGoal, "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF) & not
         // Obj & `now` > TTF");
@@ -125,7 +125,7 @@ public class os2nopl {
 
         argsCode.put(PROP_ExcAgNotAllowed, "S,E,Ag");
         argsCode.put(PROP_ExcCondNotHolding, "S,E,Ag,Condition");
-        argsCode.put(PROP_AchThGoalExcNotThrown, "S,G,E,Ag");
+        argsCode.put(PROP_AchThrGoalExcNotThrown, "S,G,E,Ag");
 
         // argsCode.put(PROP_NotCompGoal , "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF)");
     }

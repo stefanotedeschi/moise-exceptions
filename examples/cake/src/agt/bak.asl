@@ -7,8 +7,7 @@ available(chocolate).
        exceptionArgument(_,ingredientsUnavailable,missingIngredients(I)) &
        .member(strawberries,I) &
        available(raspberries)
-	<- .wait(2000);
-	   println("I will use ",raspberries," instead of ",strawberries);
+	<- println("I will use ",raspberries," instead of ",strawberries);
 	   goalReleased(provideIngredients).
 	   
 +!mixIngredients
