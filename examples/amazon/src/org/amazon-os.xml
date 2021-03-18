@@ -97,7 +97,9 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="payOrder" />
                     </condition>
-                    <exception-type id="paymentRefused" />
+                    <exception-spec id="paymentRefused">
+                        <exception-argument id="balance" arity="1" />
+                    </exception-spec>
                     <goal id="raisePaymentRefused" />
                 </notification-policy>
                 <handling-policy id="handlerPaymentRefused">
@@ -111,7 +113,7 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="retry" />
                     </condition>
-                    <exception-type id="checkoutFailed" />
+                    <exception-spec id="checkoutFailed" />
                     <goal id="raiseCheckoutFailed" />
                 </notification-policy>
                 <handling-policy id="handlerCheckoutFailed">
@@ -125,7 +127,7 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="receiveItems" />
                     </condition>
-                    <exception-type id="itemsNotReceived" />
+                    <exception-spec id="itemsNotReceived" />
                     <goal id="raiseItemsNotReceived" />
                 </notification-policy>
                 <handling-policy id="handlerItemsNotReceived">
@@ -221,7 +223,7 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="deliverItems" />
                     </condition>
-                    <exception-type id="itemsLost" />
+                    <exception-spec id="itemsLost" />
                     <goal id="raiseItemsLost" />
                 </notification-policy>
                 <handling-policy id="handlerItemsLost">

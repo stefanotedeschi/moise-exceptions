@@ -19,7 +19,7 @@ import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
-public class ExceptionType extends moise.common.MoiseElement implements ToXML, ToProlog {
+public class ExceptionSpec extends moise.common.MoiseElement implements ToXML, ToProlog {
     
     private String id;
     
@@ -27,7 +27,7 @@ public class ExceptionType extends moise.common.MoiseElement implements ToXML, T
     
     private List<Literal> exceptionArguments = new ArrayList<>();
     
-    public ExceptionType(String id, NotificationPolicy inPolicy) {
+    public ExceptionSpec(String id, NotificationPolicy inPolicy) {
         super();
         this.id = id;
         this.inPolicy = inPolicy;
@@ -41,8 +41,18 @@ public class ExceptionType extends moise.common.MoiseElement implements ToXML, T
         return inPolicy;
     }
     
+    
+    
+    public List<Literal> getExceptionArguments() {
+        return exceptionArguments;
+    }
+
+    public void setExceptionArguments(List<Literal> exceptionArguments) {
+        this.exceptionArguments = exceptionArguments;
+    }
+
     public static String getXMLTag() {
-        return "exception-type";
+        return "exception-spec";
     }
     
     public void setFromDOM(Element ele) throws MoiseException {

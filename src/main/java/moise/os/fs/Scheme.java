@@ -25,7 +25,7 @@ import moise.common.MoiseElement;
 import moise.common.MoiseException;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
-import moise.os.fs.exceptions.ExceptionType;
+import moise.os.fs.exceptions.ExceptionSpec;
 import moise.os.fs.exceptions.PolicyConditionTemplate;
 import moise.os.fs.exceptions.RecoveryStrategy;
 import moise.prolog.ToProlog;
@@ -191,9 +191,9 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         return recoveryStrategies.values();
     }
 
-    public ExceptionType getExceptionType(String id) throws MoiseException {
+    public ExceptionSpec getExceptionSpec(String id) throws MoiseException {
         for (RecoveryStrategy rs : recoveryStrategies.values()) {
-            ExceptionType ex = rs.getNotificationPolicy().getExceptionType();
+            ExceptionSpec ex = rs.getNotificationPolicy().getExceptionSpec();
             if (ex.getId().equals(id)) {
                 return ex;
             }

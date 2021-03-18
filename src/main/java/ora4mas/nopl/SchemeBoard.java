@@ -385,7 +385,7 @@ public class SchemeBoard extends OrgArt {
     public void throwException(final String agent, String exception, Object[] arguments) throws CartagoException {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
-                getSchState().addThrown(agent, exception);
+                getSchState().addThrown(agent, exception, arguments);
                 nengine.verifyNorms();
                 exceptionsObsProps.add(defineObsProperty("exceptionThrown", createAtom(getId().getName()),
                         createAtom(exception), createAtom(agent)));

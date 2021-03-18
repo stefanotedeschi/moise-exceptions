@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jason.asSyntax.Literal;
 import moise.common.MoiseElement;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
@@ -49,6 +50,8 @@ public class os2nopl {
 
     public static final String PROP_ExcAgNotAllowed = "exc_agent_not_allowed";
     public static final String PROP_ExcCondNotHolding = "exc_condition_not_holding";
+    public static final String PROP_ExcArgMissing = "exc_arg_missing";
+    public static final String PROP_ExcArgUnknown = "exc_arg_unknown";
     public static final String PROP_AchThrGoalExcNotThrown = "ach_thr_goal_exc_not_thrown";
 
     // public static final String PROP_NotCompGoal = "goal_non_compliance";
@@ -59,7 +62,7 @@ public class os2nopl {
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { // PROP_NotCompGoal,
             PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission,
-            PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown };
+            PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown, PROP_ExcArgUnknown, PROP_ExcArgMissing };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {};
 
@@ -97,12 +100,16 @@ public class os2nopl {
                 "done(S,G,Agt) & .findall(M, mission_goal(M,G) & (committed(Agt,M,S) | mission_accomplished(S,M)), [])");
 
         condCode.put(PROP_ExcAgNotAllowed,
-                "thrown(S,E,Ag) & exceptionType(E) & mission_goal(M,TG) & policy_exceptionType(NP,E) & policy_goal(NP,TG) & not committed(Ag,M,S)");
+                "thrown(S,E,Ag,Args) & exceptionSpec(E) & mission_goal(M,TG) & policy_exceptionSpec(NP,E) & policy_goal(NP,TG) & not committed(Ag,M,S)");
         condCode.put(PROP_ExcCondNotHolding,
-                "thrown(S,E,Ag) & exceptionType(E) & policy_exceptionType(NP,E) & notificationPolicy(NP,Condition) & policy_goal(NP,TG) & not (Condition | done(S,TG,Ag))");
+                "thrown(S,E,Ag,Args) & exceptionSpec(E) & policy_exceptionSpec(NP,E) & notificationPolicy(NP,Condition) & policy_goal(NP,TG) & not (Condition | done(S,TG,Ag))");
         condCode.put(PROP_AchThrGoalExcNotThrown,
-                "done(S,TG,Ag) & exceptionType(E) & policy_exceptionType(NP,E) & policy_goal(NP,TG) & not super_goal(SG,TG) & not thrown(S,E,_)");
-
+                "done(S,TG,Ag,Args) & exceptionSpec(E) & policy_exceptionSpec(NP,E) & policy_goal(NP,TG) & not super_goal(SG,TG) & not thrown(S,E,_,_)");
+        condCode.put(PROP_ExcArgMissing,
+                "thrown(S,E,Ag,Args) & exceptionSpec(E) & exceptionArgument(E,ArgFunctor,ArgArity) & not (.member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity))");
+        condCode.put(PROP_ExcArgUnknown,
+                "thrown(S,E,Ag,Args) & exceptionSpec(E) & .member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity) & not exceptionArgument(E,ArgFunctor,ArgArity)");
+        
         // condCode.put(PROP_NotCompGoal, "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF) & not
         // Obj & `now` > TTF");
     }
@@ -126,6 +133,8 @@ public class os2nopl {
         argsCode.put(PROP_ExcAgNotAllowed, "S,E,Ag");
         argsCode.put(PROP_ExcCondNotHolding, "S,E,Ag,Condition");
         argsCode.put(PROP_AchThrGoalExcNotThrown, "S,G,E,Ag");
+        argsCode.put(PROP_ExcArgMissing, "S,E,ArgFunctor,ArgArity");
+        argsCode.put(PROP_ExcArgUnknown, "S,E,Arg");
 
         // argsCode.put(PROP_NotCompGoal , "obligation(Agt,"+NGOA+"(S,M,G),Obj,TTF)");
     }
@@ -330,10 +339,11 @@ public class os2nopl {
         String recoveryStrategy = "\n   // recoveryStrategy(id)\n";
         String notificationPolicy = "\n   // notificationPolicy(policy id, condition)\n";
         String handlingPolicy = "\n   // handlingPolicy(policy id, condition)\n";
-        String exceptionType = "\n   // exceptionType(exception type id)\n";
+        String exceptionSpec = "\n   // exceptionSpec(exception spec id)\n";
+        String exceptionArgument = "\n   // exceptionArgument(exception spec id, functor, arity)\n";
         String strategyPolicy = "\n   // strategy_policy(strategy id, policy id)\n";
         String policyGoal = "\n   // policy_goal(policy id, goal id)\n";
-        String policyExceptionType = "\n   // policy_exceptionType(policy id, exception type id)\n";
+        String policyExceptionSpec = "\n   // policy_exceptionSpec(policy id, exception spec id)\n";
 
         for (RecoveryStrategy rs : sch.getRecoveryStrategies()) {
             recoveryStrategy += "   recoveryStrategy(" + rs.getId() + ").\n";
@@ -341,9 +351,12 @@ public class os2nopl {
             if(npol != null) {
                 notificationPolicy += "   notificationPolicy("+npol.getId()+","+npol.getCondition().getConditionFormula()+").\n";
                 strategyPolicy += "   strategy_policy("+rs.getId()+","+npol.getId()+").\n";
-                if(npol.getExceptionType() != null) {
-                    exceptionType += "   exceptionType("+npol.getExceptionType().getId()+").\n";
-                    policyExceptionType += "   policy_exceptionType("+npol.getId()+","+npol.getExceptionType().getId()+").\n";
+                if(npol.getExceptionSpec() != null) {
+                    exceptionSpec += "   exceptionSpec("+npol.getExceptionSpec().getId()+").\n";
+                    policyExceptionSpec += "   policy_exceptionSpec("+npol.getId()+","+npol.getExceptionSpec().getId()+").\n";
+                    for(Literal l : npol.getExceptionSpec().getExceptionArguments()) {
+                        exceptionArgument += "   exceptionArgument("+npol.getExceptionSpec().getId()+","+l.getFunctor().toString()+","+l.getArity()+").\n";
+                    }
                 }
                 if(npol.getGoal() != null) {
                       policyGoal += "   policy_goal("+npol.getId()+","+npol.getGoal().getId()+").\n";
@@ -369,8 +382,9 @@ public class os2nopl {
         np.append(notificationPolicy);
         np.append(handlingPolicy);
         np.append(strategyPolicy);
-        np.append(exceptionType);
-        np.append(policyExceptionType);
+        np.append(exceptionSpec);
+        np.append(exceptionArgument);
+        np.append(policyExceptionSpec);
         np.append(policyGoal);
 
         np.append("\n   // ** Rules\n");
@@ -425,8 +439,8 @@ public class os2nopl {
                 + "                    recoveryStrategy(ST) &\r\n"
                 + "                    strategy_policy(ST,HP) &\r\n"
                 + "                    strategy_policy(ST,NPol) &\r\n"
-                + "                    policy_exceptionType(NPol,E) &\r\n"
-                + "                    thrown(S,E,_) &\r\n"
+                + "                    policy_exceptionSpec(NPol,E) &\r\n"
+                + "                    thrown(S,E,_,_) &\r\n"
                 + "                    policy_goal(NPol,TG) &\r\n" 
                 + "                    satisfied(S,TG) &\r\n"
                 + "                    goal(_, CG,  Dep, _, NP, _) & NP \\== 0 &\r\n"

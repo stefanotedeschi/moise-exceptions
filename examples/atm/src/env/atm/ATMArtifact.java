@@ -71,10 +71,10 @@ public class ATMArtifact extends GUIArtifact {
                     negative = true;
                     limit = Integer.MIN_VALUE;
                 } else if (firstChar != '+')
-                    failed("nan");
+                    failed("Not a number!","firstNaNIndex", i);
 
                 if (len == 1) // Cannot have lone "+" or "-"
-                    failed("nan");
+                    failed("nan","firstNaNIndex", i);
                 i++;
             }
             multmin = limit / 10;
@@ -82,19 +82,19 @@ public class ATMArtifact extends GUIArtifact {
                 // Accumulating negatively avoids surprises near MAX_VALUE
                 digit = Character.digit(amountString.charAt(i++), 10);
                 if (digit < 0) {
-                    failed("nan");
+                    failed("nan","firstNaNIndex", i-1);
                 }
                 if (result < multmin) {
-                    failed("nan");
+                    failed("nan","firstNaNIndex", i-1);
                 }
                 result *= 10;
                 if (result < limit + digit) {
-                    failed("nan");
+                    failed("nan","firstNaNIndex", i-1);
                 }
                 result -= digit;
             }
         } else {
-            failed("nan");
+            failed("nan","firstNaNIndex", -1);
         }
         amountInt = negative ? result : -result;
     }

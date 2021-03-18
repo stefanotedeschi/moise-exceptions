@@ -26,8 +26,7 @@ my_price(2500). // initial belief
       .wait(2000);
       println("Done!");
       fixFlooding;
-      goalReleased(site_prepared)[artifact_id(ArtId)];
-      goalAchieved(inspect_site)[artifact_id(ArtId)].
+      goalReleased(site_prepared)[artifact_id(ArtId)].
 
 /* plans for execution phase */
 

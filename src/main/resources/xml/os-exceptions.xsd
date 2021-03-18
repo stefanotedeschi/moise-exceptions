@@ -248,7 +248,7 @@
         <xsd:sequence>
           <xsd:element maxOccurs="1" minOccurs="0" name="properties" type="moise:propertiesType"/>
           <xsd:element maxOccurs="1" minOccurs="1" name="condition" type="moise:conditionType"/>
-          <xsd:element maxOccurs="1" minOccurs="1" name="exception-type" type="moise:exceptionType"/>
+          <xsd:element maxOccurs="1" minOccurs="1" name="exception-spec" type="moise:exceptionSpec"/>
           <xsd:element maxOccurs="1" minOccurs="1" name="goal" type="moise:goalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required"/>
@@ -272,7 +272,7 @@
         <xsd:attribute name="type" type="xsd:string" use="required" />
     </xsd:complexType>
 
-    <xsd:complexType name="exceptionType">
+    <xsd:complexType name="exceptionSpec">
         <xsd:sequence>
            <xsd:element maxOccurs="unbounded" minOccurs="0" name="exception-argument" type="moise:exceptionArgumentType"/>
         </xsd:sequence>

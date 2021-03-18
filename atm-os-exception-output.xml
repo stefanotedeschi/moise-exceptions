@@ -57,9 +57,9 @@
                     <condition type="custom">
                         <condition-argument id="formula" value="scheme_id(S) &amp; failed(S,parseAmount)"/>
                     </condition>
-                    <exception-type id="nan">
+                    <exception-spec id="nan">
                         <exception-argument arity="1" id="index"/>
-                    </exception-type>
+                    </exception-spec>
                     <goal id="throwNan" type="performance"/>
                 </notification-policy>
                 <handling-policy id="hp1">
@@ -72,7 +72,7 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="recoverFromNan"/>
                     </condition>
-                    <exception-type id="amountUnavailable"/>
+                    <exception-spec id="amountUnavailable"/>
                     <goal id="throwAmountUnavailable" type="performance"/>
                 </notification-policy>
                 <handling-policy id="hp2">

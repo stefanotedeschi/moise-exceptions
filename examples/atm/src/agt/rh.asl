@@ -1,10 +1,12 @@
 count(1).
 
-+!obtainAmount
-     : count(N)
-	<- println("Amount obtained!");
++obligation(Ag,_,done(_,obtainAmount,Ag),_)
+     : count(N) &
+       amountInt(Amount)
+	<- println("Amount obtained:",Amount);
 	   -count(N);
-	   +count(1).
+	   +count(1);
+	   goalAchieved(obtainAmount).
 	  
 +obligation(Ag,_,done(_,recoverFromNan,Ag),_)
     : .my_name(Ag) &
@@ -24,7 +26,7 @@ count(1).
 +obligation(Ag,_,done(_,throwAmountUnavailable,Ag),_)
 	 : .my_name(Ag)
 	<- println("Throwing exception AMOUNT UNAVAILABLE!");
-	   throwException(amountUnavailable,[parsificationProblem]);
+	   throwException(amountUnavailable,[]);
 	   goalAchieved(throwAmountUnavailable).
 
 { include("$jacamoJar/templates/common-cartago.asl") }

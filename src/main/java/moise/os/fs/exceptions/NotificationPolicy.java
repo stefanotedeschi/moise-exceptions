@@ -20,7 +20,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
 
     private String id;
     private PolicyCondition condition;
-    private ExceptionType exceptionType;
+    private ExceptionSpec exceptionSpec;
     private RecoveryStrategy inStrategy;
     private ThrowingGoal goal;
     private Scheme sch;
@@ -48,8 +48,8 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         return condition;
     }
 
-    public ExceptionType getExceptionType() {
-        return exceptionType;
+    public ExceptionSpec getExceptionSpec() {
+        return exceptionSpec;
     }
 
     public RecoveryStrategy getInStrategy() {
@@ -73,10 +73,10 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         }
         
         
-        Element exEle = DOMUtils.getDOMDirectChild(ele, ExceptionType.getXMLTag());
+        Element exEle = DOMUtils.getDOMDirectChild(ele, ExceptionSpec.getXMLTag());
         if (exEle != null) {
-            exceptionType = new ExceptionType(exEle.getAttribute("id"), this);
-            exceptionType.setFromDOM(exEle);
+            exceptionSpec = new ExceptionSpec(exEle.getAttribute("id"), this);
+            exceptionSpec.setFromDOM(exEle);
         }
         else {
             throw new MoiseException("Exception type missing in notification policy " + id);
@@ -104,8 +104,8 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         if(condition != null) {
             ele.appendChild(condition.getAsDOM(document));
         }
-        if (exceptionType != null) {
-            ele.appendChild(exceptionType.getAsDOM(document));
+        if (exceptionSpec != null) {
+            ele.appendChild(exceptionSpec.getAsDOM(document));
         }
         if (goal != null) {
             ele.appendChild(goal.getAsDOM(document));

@@ -100,9 +100,9 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="site_prepared" />
                     </condition>
-                    <exception-type id="site_preparation_exception">
+                    <exception-spec id="site_preparation_exception">
                         <exception-argument id="errorCode" arity="1" />
-                    </exception-type>
+                    </exception-spec>
                     <goal id="notify_site_preparation_problem" />
                 </notification-policy>
                 <handling-policy id="hp1">

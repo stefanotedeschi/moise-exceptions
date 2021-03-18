@@ -55,7 +55,7 @@ public class Scheme extends CollectiveOE {
         createLiteral(Group.playPI.getFunctor(), new VarTerm("Ag"), new VarTerm("Role"), new VarTerm("Gr")), // from group
         createLiteral(Group.responsiblePI.getFunctor(), new VarTerm("Gr"), new VarTerm("Sch")),               // from group
         createLiteral("failed",new VarTerm("SID"), new VarTerm("Goal")),
-        createLiteral("thrown", new VarTerm("SID"), new VarTerm("Exception"), new VarTerm("Ag")),
+        createLiteral("thrown", new VarTerm("SID"), new VarTerm("Exception"), new VarTerm("Ag"), new VarTerm("Args")),
         createLiteral("released", new VarTerm("SID"), new VarTerm("Goal")),
     };
 
@@ -88,8 +88,8 @@ public class Scheme extends CollectiveOE {
     // values for goal arguments (key = goal + arg, value = value)
     private HashMap<Pair<String,String>,Object> goalArgs = new HashMap<>();
 
-    // the literal is thrown(schemeId, exceptionId, agent name)
-    private ConcurrentSkipListSet<Literal> throwns = new ConcurrentSkipListSet<>();
+    // the literal is thrown(schemeId, exceptionId, agent name, arguments)
+    private List<Literal> throwns = new ArrayList<>();
 
     // list of satisfied goals
     private Set<String> satisfiedGoals = new HashSet<>(); // we use "contains" a lot, so remains HashSet
@@ -126,8 +126,18 @@ public class Scheme extends CollectiveOE {
         releasedGoals.add(createLiteral(releasedPI.getFunctor(), termId, createAtom(goal)));
     }
 
-    public void addThrown(String ag, String exception) {
-        throwns.add(createLiteral(thrownPI.getFunctor(), termId, createAtom(exception), createAtom(ag)));
+    public void addThrown(String ag, String exception, Object[] arguments) throws ParseException {
+        String argS = "[";
+        int i = 0;
+        while(i < arguments.length -1) {
+            argS += arguments[i] + ",";
+            i++;
+        }
+        if(arguments.length > 0) {
+            argS += arguments[arguments.length-1];
+        }
+        argS += "]";
+        throwns.add(createLiteral(thrownPI.getFunctor(), termId, createAtom(exception), createAtom(ag), ASSyntax.parseList(argS)));
     }
 
     public Term getTermId() {
@@ -177,9 +187,9 @@ public class Scheme extends CollectiveOE {
         return r;
     }
 
-    public boolean removeThrown(moise.os.fs.exceptions.ExceptionType exceptionType) {
+    public boolean removeThrown(moise.os.fs.exceptions.ExceptionSpec exceptionSpec) {
         boolean r = false;
-        Atom eAtom = createAtom(exceptionType.getId());
+        Atom eAtom = createAtom(exceptionSpec.getId());
         Iterator<Literal> iThrowns = throwns.iterator();
         while (iThrowns.hasNext()) {
             Literal l = iThrowns.next();
@@ -242,7 +252,7 @@ public class Scheme extends CollectiveOE {
         while (iThrowns.hasNext()) {
             Literal l = iThrowns.next();
             try {
-                moise.os.fs.exceptions.ExceptionType e = spec.getExceptionType(l.getTerm(1).toString());
+                moise.os.fs.exceptions.ExceptionSpec e = spec.getExceptionSpec(l.getTerm(1).toString());
                 LogicalFormula condition = e.getInPolicy().getCondition().getConditionFormula();
 
                 nplp parser = new nplp(new StringReader(condition.toString()));
@@ -250,6 +260,7 @@ public class Scheme extends CollectiveOE {
                 LogicalFormula formula = (LogicalFormula)parser.log_expr();
                 if(!nengine.holds(formula)) {
                     iThrowns.remove();
+                    
                     Goal tg = e.getInPolicy().getGoal();
                     resetGoal(tg);
                     Set<HandlingPolicy> handlingPolicies = e.getInPolicy().getInStrategy().getHandlingPolicies();
@@ -264,11 +275,6 @@ public class Scheme extends CollectiveOE {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-        }
-        if(changed) {
-            // if changed holds, I have reset some more goals (maybe impacting on other exceptions' conditions
-            // I have to check thrown exceptions again
-            resetExceptions(nengine);
         }
         return changed;
     }

@@ -53,9 +53,9 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="switchOnOven"/>
                     </condition>
-                    <exception-type id="ovenBroken">
+                    <exception-spec id="ovenBroken">
                         <exception-argument arity="1" id="faultType"/>
-                    </exception-type>
+                    </exception-spec>
                     <goal id="notifyProblemWithOven" type="performance"/>
                 </notification-policy>
                 <handling-policy id="handlerOvenProblem">
@@ -68,7 +68,7 @@
                     <condition type="custom">
                         <condition-argument id="formula" value="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))"/>
                     </condition>
-                    <exception-type id="cakePreparationFailure"/>
+                    <exception-spec id="cakePreparationFailure"/>
                     <goal id="notifyCakePreparationFailure" type="performance"/>
                 </notification-policy>
                 <handling-policy id="handlerCakePreparationFailure">
@@ -81,9 +81,9 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="provideIngredients"/>
                     </condition>
-                    <exception-type id="ingredientsUnavailable">
+                    <exception-spec id="ingredientsUnavailable">
                         <exception-argument arity="1" id="missingIngredients"/>
-                    </exception-type>
+                    </exception-spec>
                     <goal id="notifyIngredientsUnavailability" type="performance"/>
                 </notification-policy>
                 <handling-policy id="handlerIngredientsUnavailable">

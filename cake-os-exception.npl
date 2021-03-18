@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on gennaio 24, 2021 - 16:23:13
+    on marzo 18, 2021 - 22:55:20
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -160,15 +160,19 @@ scope scheme(cake_sch) {
    strategy_policy(r1,np1).
    strategy_policy(r1,handlerIngredientsUnavailable).
 
-   // exceptionType(exception type id)
-   exceptionType(ovenBroken).
-   exceptionType(cakePreparationFailure).
-   exceptionType(ingredientsUnavailable).
+   // exceptionSpec(exception spec id)
+   exceptionSpec(ovenBroken).
+   exceptionSpec(cakePreparationFailure).
+   exceptionSpec(ingredientsUnavailable).
 
-   // policy_exceptionType(policy id, exception type id)
-   policy_exceptionType(np2,ovenBroken).
-   policy_exceptionType(np3,cakePreparationFailure).
-   policy_exceptionType(np1,ingredientsUnavailable).
+   // exceptionArgument(exception spec id, functor, arity)
+   exceptionArgument(ovenBroken,faultType,1).
+   exceptionArgument(ingredientsUnavailable,missingIngredients,1).
+
+   // policy_exceptionSpec(policy id, exception spec id)
+   policy_exceptionSpec(np2,ovenBroken).
+   policy_exceptionSpec(np3,cakePreparationFailure).
+   policy_exceptionSpec(np1,ingredientsUnavailable).
 
    // policy_goal(policy id, goal id)
    policy_goal(np2,notifyProblemWithOven).
@@ -215,8 +219,8 @@ scope scheme(cake_sch) {
                     recoveryStrategy(ST) &
                     strategy_policy(ST,HP) &
                     strategy_policy(ST,NPol) &
-                    policy_exceptionType(NPol,E) &
-                    thrown(S,E,_) &
+                    policy_exceptionSpec(NPol,E) &
+                    thrown(S,E,_,_) &
                     policy_goal(NPol,TG) &
                     satisfied(S,TG) &
                     goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
@@ -257,29 +261,45 @@ scope scheme(cake_sch) {
            MP > MMax
         -> fail(mission_cardinality(M,S,MP,MMax)).
    norm exc_agent_not_allowed:  
-           thrown(S,E,Ag) &
-           exceptionType(E) &
+           thrown(S,E,Ag,Args) &
+           exceptionSpec(E) &
            mission_goal(M,TG) &
-           policy_exceptionType(NP,E) &
+           policy_exceptionSpec(NP,E) &
            policy_goal(NP,TG) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
-           thrown(S,E,Ag) &
-           exceptionType(E) &
-           policy_exceptionType(NP,E) &
+           thrown(S,E,Ag,Args) &
+           exceptionSpec(E) &
+           policy_exceptionSpec(NP,E) &
            notificationPolicy(NP,Condition) &
            policy_goal(NP,TG) &
            not (Condition | done(S,TG,Ag))
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
    norm ach_thr_goal_exc_not_thrown:  
-           done(S,TG,Ag) &
-           exceptionType(E) &
-           policy_exceptionType(NP,E) &
+           done(S,TG,Ag,Args) &
+           exceptionSpec(E) &
+           policy_exceptionSpec(NP,E) &
            policy_goal(NP,TG) &
            not super_goal(SG,TG) &
-           not thrown(S,E,_)
+           not thrown(S,E,_,_)
         -> fail(ach_thr_goal_exc_not_thrown(S,G,E,Ag)).
+   norm exc_arg_unknown:  
+           thrown(S,E,Ag,Args) &
+           exceptionSpec(E) &
+           .member(Arg,Args) &
+           Arg=..[ArgFunctor,T,A] &
+           .length(T,ArgArity) &
+           not exceptionArgument(E,ArgFunctor,ArgArity)
+        -> fail(exc_arg_unknown(S,E,Arg)).
+   norm exc_arg_missing:  
+           thrown(S,E,Ag,Args) &
+           exceptionSpec(E) &
+           exceptionArgument(E,ArgFunctor,ArgArity) &
+           not (.member(Arg,Args) &
+           Arg=..[ArgFunctor,T,A] &
+           .length(T,ArgArity))
+        -> fail(exc_arg_missing(S,E,ArgFunctor,ArgArity)).
 
    // agents are obliged to fulfill their enabled goals
    norm ngoal: 
