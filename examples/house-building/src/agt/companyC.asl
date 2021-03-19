@@ -41,5 +41,24 @@ my_price("Painting",        1100).
 
 /* plans for execution phase */
 
++!windows_fitted
+    : not hurryUp
+   <- println("Fitting windows...");
+      +hurryUp
+      .wait(8000);
+      fitWindows;
+      println("Windows done!").
+      
++!windows_fitted
+    : hurryUp
+   <- println("Fitting windows... I Have to hurry!");
+      fitWindows;
+      println("Windows done!").
+
++!notify_windows_fitting_delay
+   <- println("Notifying weeks of delay");
+      throwException(windows_delay_exception,[weeksOfDelay(1)]).
+      //throwException(windows_delay_exception,[weeksOfDelay(3)]). // This exception would enable the catching goal
+
 { include("org_code.asl") }
 { include("org_goals.asl") }

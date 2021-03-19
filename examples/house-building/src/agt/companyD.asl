@@ -7,7 +7,7 @@
 !discover_art("auction_for_Floors").
 !discover_art("auction_for_Walls").
 !discover_art("auction_for_Roof").
-!discover_art("auction_for_WindowsDoors").
+//!discover_art("auction_for_WindowsDoors").
 !discover_art("auction_for_Plumbing").
 !discover_art("auction_for_ElectricalSystem").
 !discover_art("auction_for_Painting").

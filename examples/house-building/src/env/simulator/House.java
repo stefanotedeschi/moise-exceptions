@@ -5,16 +5,23 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import cartago.OPERATION;
+import cartago.OpFeedbackParam;
 import cartago.tools.GUIArtifact;
+import jason.asSyntax.ASSyntax;
+import jason.asSyntax.Literal;
+import simulator.Site.SiteStatus;
 
 public class House extends GUIArtifact {
 
     HouseView view;
+    
+    private int attempts = 0;
 
     @Override
     public void init(){
@@ -25,12 +32,36 @@ public class House extends GUIArtifact {
     // Actions that simulate the building progress
 
     @OPERATION void prepareSite(){
-        view.addPart(new Site(false));
-        failed("Bad weather");
+    	if(attempts++ == 0) {
+	    	Random random = new Random();
+	    	if(random.nextInt()%2 == 0) {
+	    		view.addPart(new Site(SiteStatus.FLOODED));
+	    		failed("Bad weather","flooding");
+	    	}
+	    	else {
+	    		view.addPart(new Site(SiteStatus.REMAINS));
+	    		failed("Bad weather","archaeologicalRemains");
+	    	}
+    	}
+    	else {
+    		view.addPart(new Site(SiteStatus.OK));
+    	}
     }
     
-    @OPERATION void fixFlooding(){
-        view.addPart(new Site(true));
+    @OPERATION void performSiteAnalysis(OpFeedbackParam<Literal> result){
+    	result.set(ASSyntax.createLiteral("waterQuantity", ASSyntax.parseNumber("20")));
+    }
+    
+    @OPERATION void fixFlooding(String waterQuantity){
+        view.addPart(new Site(SiteStatus.OK));
+    }
+    
+    @OPERATION void delimitSite(){
+        view.addPart(new Site(SiteStatus.DELIMITED));
+    }
+    
+    @OPERATION void carefullyRemoveRemains(){
+        view.removeParts();
     }
 
     @OPERATION void layFloors(){
@@ -95,6 +126,11 @@ public class House extends GUIArtifact {
 
         public synchronized void addPart(HousePart part){
             partsToDraw.add(part);
+            repaint();
+        }
+        
+        public synchronized void removeParts(){
+            partsToDraw.clear();
             repaint();
         }
 

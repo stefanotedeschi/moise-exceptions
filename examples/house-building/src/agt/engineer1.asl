@@ -16,17 +16,36 @@ my_price(2500). // initial belief
    <- //.print("my bid in auction artifact ", Art, " is ",math.max(V-150,P));
       bid( math.max(V-150,P) ).         // place my bid offering a cheaper service
 
-+!inspect_site
++obligation(Ag,_,done(_,inspect_site,Ag),_)
     : .my_name(Ag) &
-      focused(ora4mas,bhsch,ArtId)
+      focused(ora4mas,bhsch,ArtId) &
+      exceptionThrown(bhsch,site_preparation_exception,_) &
+      exceptionArgument(bhsch,site_preparation_exception,errorCode(flooding))
    <- println("Inspecting site...");
       .wait(2000);
+      performSiteAnalysis(Result);
       println("Done!");
       println("Fixing flooding...");
       .wait(2000);
+      fixFlooding(Result);
       println("Done!");
-      fixFlooding;
-      goalReleased(site_prepared)[artifact_id(ArtId)].
+      goalReleased(site_prepared)[artifact_id(ArtId)];
+      goalAchieved(inspect_site).
+      
++obligation(Ag,_,done(_,inspect_site,Ag),_)
+    : .my_name(Ag) &
+      focused(ora4mas,bhsch,ArtId) &
+      exceptionThrown(bhsch,site_preparation_exception,_) &
+      exceptionArgument(bhsch,site_preparation_exception,errorCode(archaeologicalRemains))
+   <- println("Inspecting site...");
+      .wait(2000);
+      delimitSite;
+      println("Done!");
+      println("RemovingRemains...");
+      .wait(2000);
+      carefullyRemoveRemains;
+      println("Done!");
+      resetGoal(site_prepared)[artifact_id(ArtId)].
 
 /* plans for execution phase */
 

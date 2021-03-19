@@ -79,9 +79,9 @@
                     <goal id="walls_built" ttf="40 minutes" />
                     <goal id="rwd">
                         <plan operator="parallel">
-                            <goal id="roof_built" ttf="30 minutes" />
-                            <goal id="windows_fitted" ttf="10 minutes" />
-                            <goal id="doors_fitted" ttf="10 minutes" />
+                            <goal id="roof_built" ttf="10 seconds" />
+                            <goal id="windows_fitted" ttf="5 seconds" />
+                            <goal id="doors_fitted" ttf="5 seconds" />
                         </plan>
                     </goal>
                     <goal id="pee">
@@ -115,10 +115,30 @@
                     </goal>
                 </handling-policy>
             </recovery-strategy>
+            
+            <recovery-strategy id="rs2">
+                <notification-policy id="np2">
+                    <condition type="goal-ttf-expiration">
+                        <condition-argument id="target" value="windows_fitted" />
+                    </condition>
+                    <exception-spec id="windows_delay_exception">
+                        <exception-argument id="weeksOfDelay" arity="1" />
+                    </exception-spec>
+                    <goal id="notify_windows_fitting_delay" />
+                </notification-policy>
+                <handling-policy id="hp2">
+                    <condition type="custom">
+                    	<condition-argument id="formula" value="thrown(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
+                    	<!--<condition-argument id="formula" value="thrown(_,windows_delay_exception),_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />-->
+                    </condition>
+                    <goal id="handle_windows_fitting_delay" />
+                </handling-policy>
+            </recovery-strategy>
 
             <mission id="management_of_house_building" min="1" max="1">
                 <goal id="house_built" />
                 <goal id="notify_affected_companies" />
+                <goal id="handle_windows_fitting_delay" />
             </mission>
             <mission id="site_inspection" min="1" max="1">
                 <goal id="inspect_site" />
@@ -138,6 +158,7 @@
             </mission>
             <mission id="fit_windows" min="1" max="1">
                 <goal id="windows_fitted" />
+                <goal id="notify_windows_fitting_delay" />
             </mission>
             <mission id="fit_doors" min="1" max="1">
                 <goal id="doors_fitted" />
