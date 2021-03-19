@@ -95,7 +95,7 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="rs1">
+            <recovery-strategy id="rsSitePreparation">
                 <notification-policy id="np1">
                     <condition type="goal-failure">
                         <condition-argument id="target" value="site_prepared" />
@@ -116,7 +116,7 @@
                 </handling-policy>
             </recovery-strategy>
             
-            <recovery-strategy id="rs2">
+            <recovery-strategy id="rsWindowDelay">
                 <notification-policy id="np2">
                     <condition type="goal-ttf-expiration">
                         <condition-argument id="target" value="windows_fitted" />
