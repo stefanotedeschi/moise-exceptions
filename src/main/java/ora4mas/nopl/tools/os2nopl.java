@@ -48,6 +48,9 @@ public class os2nopl {
     public static final String PROP_AchNotEnabledGoal = "ach_not_enabled_goal";
     public static final String PROP_AchNotCommGoal = "ach_not_committed_goal";
 
+    public static final String PROP_FailNotEnabledGoal = "fail_not_enabled_goal";
+    
+    public static final String PROP_ExcUnknown = "exc_unknown";
     public static final String PROP_ExcAgNotAllowed = "exc_agent_not_allowed";
     public static final String PROP_ExcCondNotHolding = "exc_condition_not_holding";
     public static final String PROP_ExcArgNotGround = "exc_arg_not_ground";
@@ -63,7 +66,7 @@ public class os2nopl {
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { // PROP_NotCompGoal,
             PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission,
-            PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown, PROP_ExcArgNotGround, PROP_ExcArgMissing };
+            PROP_MissionCardinality, PROP_FailNotEnabledGoal, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown, PROP_ExcArgNotGround, PROP_ExcArgMissing };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {};
 
@@ -100,6 +103,10 @@ public class os2nopl {
         condCode.put(PROP_AchNotCommGoal,
                 "done(S,G,Agt) & .findall(M, mission_goal(M,G) & (committed(Agt,M,S) | mission_accomplished(S,M)), [])");
 
+        condCode.put(PROP_FailNotEnabledGoal, 
+                "failed(S,G) & mission_goal(M,G) & not mission_accomplished(S,M) & not enabled(S,G)");
+        condCode.put(PROP_ExcUnknown,
+                "thrown(S,E,Ag,Args) & not exceptionSpec(E)");
         condCode.put(PROP_ExcAgNotAllowed,
                 "thrown(S,E,Ag,Args) & exceptionSpec(E) & mission_goal(M,TG) & policy_exceptionSpec(NP,E) & policy_goal(NP,TG) & not committed(Ag,M,S)");
         condCode.put(PROP_ExcCondNotHolding,
@@ -133,6 +140,9 @@ public class os2nopl {
         argsCode.put(PROP_AchNotEnabledGoal, "S,G,Agt");
         argsCode.put(PROP_AchNotCommGoal, "S,G,Agt");
 
+        argsCode.put(PROP_FailNotEnabledGoal, "S,G");
+        
+        argsCode.put(PROP_ExcUnknown, "S,E,Ag");
         argsCode.put(PROP_ExcAgNotAllowed, "S,E,Ag");
         argsCode.put(PROP_ExcCondNotHolding, "S,E,Ag,Condition");
         argsCode.put(PROP_ExcArgNotGround, "S,E,Arg");
@@ -423,13 +433,13 @@ public class os2nopl {
         np.append("   // enabled goals (i.e. dependence between goals)\n");
         //np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
         //np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & NP \\== 0 & all_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & not failed(S,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & not failed(S,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
 
         np.append("   enabled(S,TG) :- policy_goal(P,TG) &\r\n"
                 + "                    notificationPolicy(P,Condition) &\r\n"
                 + "                    Condition &\r\n"             
-                + "                    not failed(S,TG) &\r\n"
+                //+ "                    not failed(S,TG) &\r\n"
                 //+ "                    not released(S,TG) &\r\n" 
                 + "                    goal(_, TG,  Dep, _, NP, _) & NP \\== 0 & \r\n"
                 + "                    ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n"
@@ -438,7 +448,7 @@ public class os2nopl {
         np.append("   enabled(S,CG) :- policy_goal(HP,CG) &\r\n" 
                 + "                    handlingPolicy(HP,Condition) &\r\n"
                 + "                    Condition &\r\n"
-                + "                    not failed(S,CG) &\r\n"
+                //+ "                    not failed(S,CG) &\r\n"
                 //+ "                    not released(S,CG) &\r\n"
                 + "                    recoveryStrategy(ST) &\r\n"
                 + "                    strategy_policy(ST,HP) &\r\n"

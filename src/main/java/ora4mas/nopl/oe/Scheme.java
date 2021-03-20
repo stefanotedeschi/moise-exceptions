@@ -80,7 +80,7 @@ public class Scheme extends CollectiveOE {
 
 
     // the literal is failed(schemeId, goalId)
-    private ConcurrentSkipListSet<Literal> failedGoals = new ConcurrentSkipListSet<>();
+    private List<Literal> failedGoals = new ArrayList<>();
 
     // the literal is released(schemeId, goalId)
     private ConcurrentSkipListSet<Literal> releasedGoals = new ConcurrentSkipListSet<>();

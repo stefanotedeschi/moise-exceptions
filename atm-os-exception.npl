@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm_exceptions'
-    on marzo 20, 2021 - 19:37:17
+    on marzo 20, 2021 - 20:28:10
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -191,13 +191,12 @@ scope scheme(atm_sch) {
    all_satisfied_released(_,[]).
    all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & not failed(S,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & not failed(S,G) & NP \== 0 & all_satisfied_released(S,PCG).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
    enabled(S,TG) :- policy_goal(P,TG) &
                     notificationPolicy(P,Condition) &
                     Condition &
-                    not failed(S,TG) &
                     goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
                      (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
@@ -205,7 +204,6 @@ scope scheme(atm_sch) {
    enabled(S,CG) :- policy_goal(HP,CG) &
                     handlingPolicy(HP,Condition) &
                     Condition &
-                    not failed(S,CG) &
                     recoveryStrategy(ST) &
                     strategy_policy(ST,HP) &
                     strategy_policy(ST,NPol) &
@@ -250,6 +248,12 @@ scope scheme(atm_sch) {
            mplayers(M,S,MP) &
            MP > MMax
         -> fail(mission_cardinality(M,S,MP,MMax)).
+   norm fail_not_enabled_goal:  
+           failed(S,G) &
+           mission_goal(M,G) &
+           not mission_accomplished(S,M) &
+           not enabled(S,G)
+        -> fail(fail_not_enabled_goal(S,G)).
    norm exc_agent_not_allowed:  
            thrown(S,E,Ag,Args) &
            exceptionSpec(E) &
