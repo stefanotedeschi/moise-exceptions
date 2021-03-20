@@ -32,24 +32,24 @@ public class House extends GUIArtifact {
     // Actions that simulate the building progress
 
     @OPERATION void prepareSite(){
-    	if(attempts++ == 0) {
-	    	Random random = new Random();
-	    	if(random.nextInt()%2 == 0) {
-	    		view.addPart(new Site(SiteStatus.FLOODED));
-	    		failed("Bad weather","flooding");
-	    	}
-	    	else {
-	    		view.addPart(new Site(SiteStatus.REMAINS));
-	    		failed("Bad weather","archaeologicalRemains");
-	    	}
-    	}
-    	else {
-    		view.addPart(new Site(SiteStatus.OK));
-    	}
+        if(attempts++ == 0) {
+            Random random = new Random();
+            if(random.nextInt()%2 == 0) {
+                view.addPart(new Site(SiteStatus.FLOODED));
+                failed("Bad weather","flooding");
+            }
+            else {
+                view.addPart(new Site(SiteStatus.REMAINS));
+                failed("Bad weather","archaeologicalRemains");
+            }
+        }
+        else {
+            view.addPart(new Site(SiteStatus.OK));
+        }
     }
     
     @OPERATION void performSiteAnalysis(OpFeedbackParam<Literal> result){
-    	result.set(ASSyntax.createLiteral("waterQuantity", ASSyntax.parseNumber("20")));
+        result.set(ASSyntax.createLiteral("waterQuantity", ASSyntax.parseNumber("20")));
     }
     
     @OPERATION void fixFlooding(String waterQuantity){

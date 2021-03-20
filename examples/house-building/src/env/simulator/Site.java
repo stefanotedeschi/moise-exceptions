@@ -23,10 +23,10 @@ public class Site implements HousePart {
             g.setColor(Color.CYAN);
         }
         else if(status == SiteStatus.DELIMITED) {
-        	g.setColor(Color.YELLOW);
+            g.setColor(Color.YELLOW);
         }
         else if(status == SiteStatus.REMAINS) {
-        	g.setColor(Color.RED);
+            g.setColor(Color.RED);
         }
         g.fillRect(0, size.height-200, size.width,100);
         g.setColor(Color.BLACK);
@@ -37,10 +37,10 @@ public class Site implements HousePart {
             g.drawString("Site FLOODED!", 20, size.height-185);
         }
         else if(status == SiteStatus.DELIMITED) {
-        	g.drawString("Site DELIMITED!", 20, size.height-185);
+            g.drawString("Site DELIMITED!", 20, size.height-185);
         }
         else if(status == SiteStatus.REMAINS) {
-        	g.drawString("Achaeological remains found!", 20, size.height-185);
+            g.drawString("Achaeological remains found!", 20, size.height-185);
         }
     }
 

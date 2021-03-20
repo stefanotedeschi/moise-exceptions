@@ -128,8 +128,8 @@
                 </notification-policy>
                 <handling-policy id="hp2">
                     <condition type="custom">
-                    	<condition-argument id="formula" value="thrown(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
-                    	<!--<condition-argument id="formula" value="thrown(_,windows_delay_exception),_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />-->
+                        <condition-argument id="formula" value="thrown(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
+                        <!--<condition-argument id="formula" value="thrown(_,windows_delay_exception),_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />-->
                     </condition>
                     <goal id="handle_windows_fitting_delay" />
                 </handling-policy>

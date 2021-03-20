@@ -50,6 +50,7 @@ public class os2nopl {
 
     public static final String PROP_ExcAgNotAllowed = "exc_agent_not_allowed";
     public static final String PROP_ExcCondNotHolding = "exc_condition_not_holding";
+    public static final String PROP_ExcArgNotGround = "exc_arg_not_ground";
     public static final String PROP_ExcArgMissing = "exc_arg_missing";
     public static final String PROP_ExcArgUnknown = "exc_arg_unknown";
     public static final String PROP_AchThrGoalExcNotThrown = "ach_thr_goal_exc_not_thrown";
@@ -62,7 +63,7 @@ public class os2nopl {
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { // PROP_NotCompGoal,
             PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission,
-            PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown, PROP_ExcArgUnknown, PROP_ExcArgMissing };
+            PROP_MissionCardinality, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown, PROP_ExcArgNotGround, PROP_ExcArgMissing };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {};
 
@@ -105,6 +106,8 @@ public class os2nopl {
                 "thrown(S,E,Ag,Args) & exceptionSpec(E) & policy_exceptionSpec(NP,E) & notificationPolicy(NP,Condition) & policy_goal(NP,TG) & not (Condition | done(S,TG,Ag))");
         condCode.put(PROP_AchThrGoalExcNotThrown,
                 "done(S,TG,Ag,Args) & exceptionSpec(E) & policy_exceptionSpec(NP,E) & policy_goal(NP,TG) & not super_goal(SG,TG) & not thrown(S,E,_,_)");
+        condCode.put(PROP_ExcArgNotGround,
+                "thrown(S,E,Ag,Args) & exceptionSpec(E) & .member(Arg,Args) & not .ground(Arg)");
         condCode.put(PROP_ExcArgMissing,
                 "thrown(S,E,Ag,Args) & exceptionSpec(E) & exceptionArgument(E,ArgFunctor,ArgArity) & not (.member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity))");
         condCode.put(PROP_ExcArgUnknown,
@@ -132,6 +135,7 @@ public class os2nopl {
 
         argsCode.put(PROP_ExcAgNotAllowed, "S,E,Ag");
         argsCode.put(PROP_ExcCondNotHolding, "S,E,Ag,Condition");
+        argsCode.put(PROP_ExcArgNotGround, "S,E,Arg");
         argsCode.put(PROP_AchThrGoalExcNotThrown, "S,G,E,Ag");
         argsCode.put(PROP_ExcArgMissing, "S,E,ArgFunctor,ArgArity");
         argsCode.put(PROP_ExcArgUnknown, "S,E,Arg");
