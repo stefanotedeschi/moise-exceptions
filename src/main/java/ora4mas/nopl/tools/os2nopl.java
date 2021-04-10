@@ -112,7 +112,7 @@ public class os2nopl {
         condCode.put(PROP_ExcCondNotHolding,
                 "thrown(S,E,Ag,Args) & exceptionSpec(E) & policy_exceptionSpec(NP,E) & notificationPolicy(NP,Condition) & policy_goal(NP,TG) & not (Condition | done(S,TG,Ag))");
         condCode.put(PROP_AchThrGoalExcNotThrown,
-                "done(S,TG,Ag,Args) & exceptionSpec(E) & policy_exceptionSpec(NP,E) & policy_goal(NP,TG) & not super_goal(SG,TG) & not thrown(S,E,_,_)");
+                "done(S,TG,Ag) & exceptionSpec(E) & policy_exceptionSpec(NP,E) & policy_goal(NP,TG) & not super_goal(SG,TG) & not thrown(S,E,_,_)");
         condCode.put(PROP_ExcArgNotGround,
                 "thrown(S,E,Ag,Args) & exceptionSpec(E) & .member(Arg,Args) & not .ground(Arg)");
         condCode.put(PROP_ExcArgMissing,
