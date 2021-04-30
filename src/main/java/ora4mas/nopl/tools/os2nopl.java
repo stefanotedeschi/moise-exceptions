@@ -498,7 +498,7 @@ public class os2nopl {
             np.append("           not failed(_,G) & \n");
             np.append("           not released(_,G) & \n");
             np.append("           not super_satisfied(S,G)\n");
-            np.append("        -> obligation(A,enabled(S,G),What,`now` + D).\n\n");
+            np.append("        -> obligation(A,(enabled(S,G) & not failed(S,G)),What,`now` + D).\n\n");
             // TODO: maintenance goals
             // np.append(" // maintenance goals\n");
         }
