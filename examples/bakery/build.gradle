@@ -61,7 +61,7 @@ task run (type: JavaExec, dependsOn: 'classes') {
     description 'runs the application'
     group ' JaCaMo'
     main = 'jacamo.infra.JaCaMoLauncher'
-    args 'cake.jcm'
+    args 'bakery.jcm'
     classpath sourceSets.main.runtimeClasspath
 }
 
