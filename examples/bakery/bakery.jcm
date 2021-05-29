@@ -1,5 +1,5 @@
 /*
-    cake
+    bakery
     ---------------------------
 
     JaCaMo Application File
@@ -12,7 +12,7 @@
     <DATE>
 */
 
-mas cake {
+mas bakery {
 
     agent bak {
     	roles: baker in bakeOff
