@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification
+    id="parcel" os-version="0.8"
+
+    xmlns='http://moise.sourceforge.net/os'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+
+    <structural-specification>
+
+        <role-definitions>
+        </role-definitions>
+
+        <group-specification id="parcel_delivery_group">
+            <roles>
+
+            </roles>
+        </group-specification>
+
+    </structural-specification>
+
+    <functional-specification>
+
+        <scheme id="production_cell_scheme">
+
+            <goal id="delivery">
+                <plan operator="sequence">
+                    <goal id="prepareParcel">
+                        <plan operator="sequence">
+                            <goal id="takeGoodsFromWarehouse" />
+                            <goal id="packUpGoods" />
+                            <goal id="loadOnTruck" />
+                        </plan>
+                    </goal>
+                    <goal id="deliverParcel">
+                        <plan operator="sequence">
+                            <goal id="locateAddress" />
+                            <goal id="planPath" />
+                            <goal id="reachDestination" />
+                            <goal id="handOverToCustomer">
+                                <plan operator="sequence">
+                                    <goal id="unloadFromTruck" />
+                                    <goal id="bringParcelToCustomerDoor" />
+                                    <goal id="collectProofOfDelivery" />
+                                </plan>
+                            </goal>
+                        </plan>
+                    </goal>
+                    <goal id="closeOrder" />
+                </plan>
+            </goal>
+
+            <mission id="mBlankProvider" min="1" max="1">
+                <goal id="putPlateOnBelt" />
+            </mission>
+            <mission id="mFeedBelt" min="1" max="1">
+                <goal id="conveyPlateToTable" />
+            </mission>
+            <mission id="mElevatingRotaryTable" min="1" max="1">
+                <goal id="turnTableMoveUp" />
+                <goal id="turnTableMoveDown" />
+            </mission>
+            <mission id="mRobot" min="1" max="1">
+                <goal id="extendArm1" />
+                <goal id="grabPlateFromBelt" />
+                <goal id="movePlateOnPress" />
+                <goal id="releasePlateOnPress" />
+                <goal id="retractArm1" />
+                <goal id="turnRobot" />
+                <goal id="extendArm2" />
+                <goal id="grabPlateFromPress" />
+                <goal id="movePlateOnBelt" />
+                <goal id="releasePlateOnBelt" />
+                <goal id="retractArm2" />
+            </mission>
+            <mission id="mPress" min="1" max="1">
+                <goal id="movePressDownUp" />
+            </mission>
+            <mission id="mDepositBelt" min="1" max="1">
+                <goal id="conveyPlateToDeposit" />
+            </mission>
+
+        </scheme>
+
+    </functional-specification>
+
+    <normative-specification>
+        <norm id="n1" type="obligation" role="blankProvider"
+            mission="mBlankProvider" />
+        <norm id="n2" type="obligation" role="feedBelt"
+            mission="mFeedBelt" />
+        <norm id="n3" type="obligation" role="elevatingRotaryTable"
+            mission="mElevatingRotaryTable" />
+        <norm id="n4" type="obligation" role="robot"
+            mission="mRobot" />
+        <norm id="n5" type="obligation" role="press"
+            mission="mPress" />
+        <norm id="n6" type="obligation" role="depositBelt"
+            mission="mDepositBelt" />
+    </normative-specification>
+
+</organisational-specification>
