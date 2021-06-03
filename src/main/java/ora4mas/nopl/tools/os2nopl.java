@@ -66,7 +66,7 @@ public class os2nopl {
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { // PROP_NotCompGoal,
             PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission,
-            PROP_MissionCardinality, PROP_FailNotEnabledGoal, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown, PROP_ExcArgNotGround, PROP_ExcArgMissing };
+            PROP_MissionCardinality, PROP_FailNotEnabledGoal, PROP_ExcUnknown, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown, PROP_ExcArgNotGround, PROP_ExcArgMissing, PROP_ExcArgUnknown };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {};
 
