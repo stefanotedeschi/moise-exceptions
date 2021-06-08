@@ -17,8 +17,11 @@
 +solution(S)
 	<- println("Problem solved through ", S, ". Thank you!").
 	
-+cancel_request
++problem_request_canceled
 	<- println("Too bad =(").
+		
++please_recall
+	<- println("I'll recall later.'").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

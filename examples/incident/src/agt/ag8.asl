@@ -59,7 +59,7 @@
 	   
 +obligation(Ag,_,done(fls_sch,raise_first_level_exception,Ag),_)
 	 : .my_name(Ag) &
-	   scheme(fls_sch,_,SlsSchId) &
+	   scheme(fls_sch,_,FlsSchId) &
 	   exceptionThrown(sls_sch,second_level_exception,_) &
 	   exceptionArgument(sls_sch,second_level_exception,warrantyStatus(no))
 	<- println("Raising first level exception! Product out of warranty");

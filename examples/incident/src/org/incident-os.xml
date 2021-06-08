@@ -91,7 +91,7 @@
                             <goal id="cnh_branch" ds="cannot handle branch">
                                 <plan operator="sequence">
                                     <goal id="cannot_handle" />
-                                    <goal id="ask_1st_level_support" />
+                                    <goal id="ask_1st_level_support" ttf="10 seconds" />
                                 </plan>
                             </goal>
                         </plan>
@@ -100,13 +100,15 @@
                 </plan>
             </goal>
             
-            <!-- <recovery-strategy id="r1">
+            <recovery-strategy id="r1">
                 <notification-policy id="np1">
                     <condition type="goal-failure">
                         <condition-argument id="target" value="ask_1st_level_support" />
                     </condition>
-                    <exception-spec id="1st_level_support_failure_exception" />
-                    <goal id="notify_1st_level_support_failure" />
+                    <exception-spec id="account_manager_exception">
+                    	<exception-argument id="warrantyStatus" arity="1" />
+                    </exception-spec>
+                    <goal id="raise_account_manager_exception" />
                 </notification-policy>
                 <handling-policy id="hp1">
                     <condition type="always" />
@@ -118,33 +120,33 @@
                     <condition type="goal-ttf-expiration">
                         <condition-argument id="target" value="ask_1st_level_support" />
                     </condition>
-                    <exception-spec id="1st_level_support_timeout_exception" />
-                    <goal id="notifyIngredientsUnavailability" />
+                    <exception-spec id="account_manager_timeout" />
+                    <goal id="raise_account_manager_timeout" />
                 </notification-policy>
-                <handling-policy id="hp1">
+                <handling-policy id="hp2">
                     <condition type="always" />
-                    <goal id="cancel_problem_request" />
+                    <goal id="invite_to_recall" />
                 </handling-policy>
-            </recovery-strategy>-->
+            </recovery-strategy>
 
             <mission id="m0" min="1" max="1">
                 <goal id="root_account_manager" />
                 <goal id="can_handle" />
                 <goal id="cannot_handle" />
-                <!-- <goal id="cancel_problem_request" /> -->
+                <goal id="cancel_problem_request" />
+                <goal id="invite_to_recall" />
             </mission>
             <mission id="m1" min="1" max="1">
                 <goal id="get_description" />
             </mission>
             <mission id="m2" min="1" max="1">
                 <goal id="ask_1st_level_support" />
+                <goal id="raise_account_manager_exception" />
+                <goal id="raise_account_manager_timeout" />
             </mission>
             <mission id="m3" min="1" max="1">
                 <goal id="explain_solution" />
             </mission>
-            <!-- <mission id="m4" min="1" max="1">
-                <goal id="invite_to_recall" />
-            </mission> -->
 
         </scheme>
 
@@ -285,7 +287,7 @@
             <goal id="root_developer" ttf="5 seconds">
                 <plan operator="sequence">
                     <goal id="examine_problem" />
-                    <goal id="provide_feedback_for_2nd_level_support" />
+                    <goal id="provide_feedback_for_2nd_level_support" ttf="5 seconds" />
                 </plan>
             </goal>
             
@@ -305,24 +307,26 @@
                 </handling-policy>
             </recovery-strategy>
             
-            <!-- <recovery-strategy id="rsDeveloper2">
+            <recovery-strategy id="rsDeveloper2">
                 <notification-policy id="npDeveloper2">
                     <condition type="goal-ttf-expiration">
                         <condition-argument id="target" value="provide_feedback_for_2nd_level_support" />
                     </condition>
-                    <exception-spec id="developer_timeout" />
-                    <goal id="explain_developer_timeout" />
+                    <exception-spec id="developer_feedback_delay">
+                    	<exception-argument id="reason" arity="1" />
+                    </exception-spec>
+                    <goal id="raise_developer_feedback_delay" />
                 </notification-policy>
                 <handling-policy id="hpDeveloper2">
                     <condition type="always" />
-                    <goal id="explain_failure_developer_2" />
+                    <goal id="handle_developer_feedback_delay" />
                 </handling-policy>
-            </recovery-strategy> -->
+            </recovery-strategy>
 
             <mission id="m16" min="1" max="1">
                 <goal id="root_developer" />
                 <goal id="handle_developer_exception" />
-                <!-- <goal id="exp_failure_developer_2" /> -->
+                <goal id="handle_developer_feedback_delay" />
             </mission>
             <mission id="m17" min="1" max="1">
                 <goal id="examine_problem" />
@@ -330,8 +334,7 @@
             </mission>
             <mission id="m18" min="1" max="1">
                 <goal id="provide_feedback_for_2nd_level_support" />
-                <!-- <goal id="raise_developer_exception" />
-                <goal id="explain_developer_timeout" /> -->
+                <goal id="raise_developer_feedback_delay" />
             </mission>
 
         </scheme>

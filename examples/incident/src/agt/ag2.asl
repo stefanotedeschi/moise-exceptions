@@ -25,15 +25,27 @@
 	<- println("*** SCHEME KEY ACCOUNT MANAGER COMPLETED ***");
 	   goalAchieved(root_account_manager)[artifact_id(SchId)].
 	   
-+obligation(Ag,_,What,_)
++obligation(Ag,_,done(am_sch,cancel_problem_request,Ag),_)
 	 : .my_name(Ag) &
-	   done(am_sch,cpr,Ag)=What &
-	   scheme(am_sch,_,SchId) &
+	   scheme(am_sch,_,AmSchId) &
+	   exceptionThrown(am_sch,account_manager_exception,_) &
+	   exceptionArgument(am_sch,account_manager_exception,warrantyStatus(no)) &
 	   group(GroupName,key_account_management_group,_) &
 	   play(C,customer,GroupName)
-	<- println("Canceling problem request...");
-	   .send(C,tell,cancel_request);
-	   goalAchieved(cpr)[artifact_id(SchId)].
+	<- println("Handling account manager exception... The product is out of warranty, canceling problem request");
+	   .send(C,tell,problem_request_canceled);
+	   goalReleased(root_account_manager)[artifact_id(AmSchId)];
+	   goalAchieved(cancel_problem_request)[artifact_id(AmSchId)].
+	   
++obligation(Ag,_,done(am_sch,invite_to_recall,Ag),_)
+	 : .my_name(Ag) &
+	   scheme(am_sch,_,AmSchId) &
+	   group(GroupName,key_account_management_group,_) &
+	   play(C,customer,GroupName)
+	<- println("Handling account manager timeout... Asking customer to recall");
+	   .send(C,tell,please_recall);
+	   goalReleased(root_account_manager)[artifact_id(AmSchId)];
+	   goalAchieved(invite_to_recall)[artifact_id(AmSchId)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

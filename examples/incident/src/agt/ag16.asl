@@ -9,7 +9,6 @@
 	 : .my_name(Ag) &
 	   scheme(dev_sch,_,SchId)
 	<- println("Cannot examine problem, the product is out of warranty");
-	   //goalAchieved(examine_problem)[artifact_id(SchId)].
 	   throwException(developer_exception,[warrantyStatus(no)])[artifact_id(SchId)];
 	   goalAchieved(raise_developer_exception)[artifact_id(SchId)].
 	   

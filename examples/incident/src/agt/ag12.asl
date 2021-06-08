@@ -31,6 +31,15 @@
 	   goalReleased(root_developer)[artifact_id(DevSchId)];
 	   goalAchieved(handle_developer_exception)[artifact_id(DevSchId)].
 	   
++obligation(Ag,_,done(dev_sch,handle_developer_feedback_delay,Ag),_)
+	 : .my_name(Ag) &
+	   scheme(dev_sch,_,DevSchId) &
+	   scheme(sls_sch,_,SlsSchId)
+	<- println("Handling developer feedback delay... Cannot achieve ask_developer");
+	   goalFailed(ask_developer)[artifact_id(SlsSchId)];
+	   goalReleased(root_developer)[artifact_id(DevSchId)];
+	   goalAchieved(handle_developer_feedback_delay)[artifact_id(DevSchId)].
+	   
 +obligation(Ag,_,done(sls_sch,raise_second_level_exception,Ag),_)
 	 : .my_name(Ag) &
 	   scheme(sls_sch,_,SlsSchId) &
