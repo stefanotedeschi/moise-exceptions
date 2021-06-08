@@ -96,7 +96,7 @@
             </goal>
 
             <recovery-strategy id="rsSitePreparation">
-                <notification-policy id="np1">
+                <notification-policy id="npSitePreparation">
                     <condition type="goal-failure">
                         <condition-argument id="target" value="site_prepared" />
                     </condition>
@@ -105,7 +105,7 @@
                     </exception-spec>
                     <goal id="notify_site_preparation_problem" />
                 </notification-policy>
-                <handling-policy id="hp1">
+                <handling-policy id="hpSitePreparation">
                     <condition type="always" />
                     <goal id="handle_site_problem">
                         <plan operator="parallel">
