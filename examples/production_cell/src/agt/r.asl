@@ -3,13 +3,6 @@
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
 
-!request.
-
-+!request
-	<- .wait(1000);
-	   println("**** PERFORMING REQUEST ****");
-	   goalAchieved(requestRemainingStock).
-
 +!extendArm1
 	<- println("Extending robotic arm 1...").
 	
@@ -42,6 +35,37 @@
 	
 +!retractArm2
 	<- println("Retracting robotic arm 2...").
+	
++!slowDownProduction
+     : exceptionThrown(_,exStock,_) &
+       exceptionArgument(_,exStock,availablePlates(N)) &
+       N >= 5
+	<- println("Setting production speed to 70%...").
+	
++!slowDownProduction
+     : exceptionThrown(_,exStock,_) &
+       exceptionArgument(_,exStock,availablePlates(N)) &
+       N >= 2
+	<- println("Setting production speed to 30%...").
+	
++!slowDownProduction
+     : exceptionThrown(_,exStock,_) &
+       exceptionArgument(_,exStock,availablePlates(N)) &
+       N <= 1
+	<- println("Temporarily stopping production...").
+	
++!scheduleTableMotorFix
+	<- println("Scheduling table motor fix...").
+	
++!pauseProduction
+	<- println("Pausing production...")
+	   .wait(5000);
+	   goalReleased(turnTableMoveUp);
+	   println("Problem solved! Production resumed").
+	   
++!emergencyStop
+	<- println("***EMERGENCY STOP***")
+	   goalReleased(producePlate).
 
 // uncomment the include below to have an agent compliant with its organisation
 { include("$moiseJar/asl/org-obedient.asl") }
