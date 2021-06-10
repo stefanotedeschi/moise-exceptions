@@ -1,5 +1,5 @@
 /*
-    production_cell
+    parcel_delivery
     ---------------------------
 
     JaCaMo Application File
@@ -12,35 +12,31 @@
     <DATE>
 */
 
-mas production_cell {
+mas parcel_delivery {
 	
-	agent bp {
-		roles: blankProvider in g1
+	agent pm {
+		roles: parcelManager in g1
 	}
-	agent fb {
-		roles: feedBelt in g1
+	agent ww {
+		roles: warehouseWorker in g1
 	}
-	agent ert {
-		roles: elevatingRotaryTable in g1
+	agent rp {
+		roles: routePlanner in g1
 	}
-	agent r {
-		roles: robot in g1
+	agent t {
+		roles: truck in g1
 	}
-	agent p {
-		roles: press in g1
-	}
-	agent db {
-		roles: depositBelt in g1
+	agent c {
+		roles: carrier in g1
 	}
 
     //workspace default {
 	//}
 
-    organisation o1 : production-cell-os.xml {
-		group g1 : production_cell_group {
-			responsible-for: pcsch
+    organisation o1 : parcel-os.xml {
+		group g1 : parcel_delivery_group {
+			debug
 		}
-		scheme pcsch : production_cell_scheme
 	}
 
 	java-path: ., src/env
