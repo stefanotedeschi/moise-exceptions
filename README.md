@@ -11,8 +11,9 @@ Some examples are available in the examples folders.
 
 ## Installation (requires Gradle)
 
-    git clone git clone git://git.code.sf.net/p/moise-exceptions/code moise-exceptions-code
+    git clone git://git.code.sf.net/p/moise-exceptions/code moise-exceptions-code
     cd moise-exceptions-code
+    git checkout release/v5
     gradlew build
 
 
