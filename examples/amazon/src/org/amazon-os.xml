@@ -223,7 +223,9 @@
                     <condition type="goal-failure">
                         <condition-argument id="target" value="deliverItems" />
                     </condition>
-                    <exception-spec id="itemsLost" />
+                    <exception-spec id="itemsLost">
+                        <exception-argument id="recipient" arity="1" />
+                    </exception-spec>
                     <goal id="raiseItemsLost" />
                 </notification-policy>
                 <handling-policy id="handlerItemsLost">

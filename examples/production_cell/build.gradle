@@ -5,6 +5,11 @@
    September 27, 2018 - 15:33:36
 */
 
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
 defaultTasks 'run'
 
 apply plugin: 'java'
@@ -20,7 +25,10 @@ repositories {
     mavenCentral()
     //mavenLocal()
 
-    maven { url "http://jacamo.sourceforge.net/maven2" }
+    maven {
+        url "http://jacamo.sourceforge.net/maven2"
+        allowInsecureProtocol = true
+    }
     maven { url "https://moise-exceptions.sourceforge.io/maven2" }
     //maven { url "http://www.di.unito.it/~tedeschi/maven2" }
 
@@ -30,9 +38,9 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.jacamo',   name: 'jacamo',           version: '0.8'
-    compile group: 'org.jacamo',   name: 'npl' ,             version: '0.5-SNAPSHOT', changing: true, transitive: false
-    compile group: 'it.unito.di', name: 'moise-exceptions', version: '0.2', changing: true
+    implementation group: 'org.jacamo',   name: 'jacamo',           version: '0.8'
+    implementation group: 'org.jacamo',   name: 'npl' ,             version: '0.5-SNAPSHOT', changing: true, transitive: false
+    implementation group: 'it.unito.di', name: 'moise-exceptions', version: '0.2', changing: true
 }
 
 configurations {
@@ -60,7 +68,7 @@ sourceSets {
 task run (type: JavaExec, dependsOn: 'classes') {
     description 'runs the application'
     group ' JaCaMo'
-    main = 'jacamo.infra.JaCaMoLauncher'
+    mainClass = 'jacamo.infra.JaCaMoLauncher'
     args 'production_cell.jcm'
     classpath sourceSets.main.runtimeClasspath
 }

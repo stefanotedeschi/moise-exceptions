@@ -8,7 +8,6 @@ import groovy.swing.SwingBuilder
 plugins {
   id 'java'
   id 'eclipse'
-  id 'maven'
   id 'maven-publish'
 }
 
@@ -23,7 +22,11 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
 
-    maven { url "http://jacamo.sourceforge.net/maven2" }
+    maven {
+        url "http://jacamo.sourceforge.net/maven2"
+        allowInsecureProtocol = true
+    }
+
 }
 
 configurations {
@@ -40,14 +43,14 @@ publishing {
 }
 
 dependencies {
-    compile group: 'org.jason-lang', name: 'jason',    version: '2.4', changing: false
-    compile group: 'org.jacamo',     name: 'npl' ,     version: '0.5-SNAPSHOT', changing: true, transitive: false
-    compile group: 'org.jacamo',     name: 'cartago',  version: '2.4', changing: true
-    compile group: 'org.jacamo',     name: 'jaca',     version: '2.4', changing: true
+    implementation group: 'org.jason-lang', name: 'jason',    version: '2.4', changing: false
+    implementation group: 'org.jacamo',     name: 'npl' ,     version: '0.5-SNAPSHOT', changing: true, transitive: false
+    implementation group: 'org.jacamo',     name: 'cartago',  version: '2.4', changing: true
+    implementation group: 'org.jacamo',     name: 'jaca',     version: '2.4', changing: true
 
-    testCompile group: 'junit',      name: 'junit', version: '4.+'
+    implementation group: 'junit',      name: 'junit', version: '4.+'
 
-    compile group: 'guru.nidi', name: 'graphviz-java', version: '0.7.0'
+    implementation group: 'guru.nidi', name: 'graphviz-java', version: '0.7.0'
 
     //umljavadoc 'org.umlgraph:umlgraph:5.6'
 
@@ -68,7 +71,7 @@ clean {
 
 task intsim (type: JavaExec, dependsOn: 'jar') {
     description 'runs an interactive simulation of some organisation'
-    main = 'jason.infra.centralised.RunCentralisedMAS'
+    mainClass = 'jason.infra.centralised.RunCentralisedMAS'
     args 'org-simulator.mas2j'
     classpath sourceSets.main.runtimeClasspath
     workingDir project.projectDir.absolutePath + '/examples/sim'
@@ -76,12 +79,12 @@ task intsim (type: JavaExec, dependsOn: 'jar') {
 
 task sim (type: JavaExec, dependsOn: 'jar') {
     description 'runs a program that simulates some dynamics of an organisation'
-    main = 'ora4mas.nopl.simulator.ConsoleSimulator'
+    mainClass = 'ora4mas.nopl.simulator.ConsoleSimulator'
     classpath sourceSets.main.runtimeClasspath
 }
 
 task os2dot (type: JavaExec, dependsOn: 'jar') {
-    main = 'moise.tools.os2dotGUI'
+    mainClass = 'moise.tools.os2dotGUI'
     classpath sourceSets.main.runtimeClasspath
 }
 

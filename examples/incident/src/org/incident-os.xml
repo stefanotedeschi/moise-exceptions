@@ -106,7 +106,7 @@
                         <condition-argument id="target" value="ask_1st_level_support" />
                     </condition>
                     <exception-spec id="account_manager_exception">
-                    	<exception-argument id="warrantyStatus" arity="1" />
+                        <exception-argument id="warrantyStatus" arity="1" />
                     </exception-spec>
                     <goal id="raise_account_manager_exception" />
                 </notification-policy>
@@ -313,7 +313,7 @@
                         <condition-argument id="target" value="provide_feedback_for_2nd_level_support" />
                     </condition>
                     <exception-spec id="developer_feedback_delay">
-                    	<exception-argument id="reason" arity="1" />
+                        <exception-argument id="reason" arity="1" />
                     </exception-spec>
                     <goal id="raise_developer_feedback_delay" />
                 </notification-policy>

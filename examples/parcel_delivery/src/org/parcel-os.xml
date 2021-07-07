@@ -11,20 +11,20 @@
     <structural-specification>
 
         <role-definitions>
-        	<role id="parcelManager" />
-        	<role id="warehouseWorker" />
-        	<role id="routePlanner" />
-        	<role id="truck" />
-        	<role id="carrier" />
+            <role id="parcelManager" />
+            <role id="warehouseWorker" />
+            <role id="routePlanner" />
+            <role id="truck" />
+            <role id="carrier" />
         </role-definitions>
 
         <group-specification id="parcel_delivery_group">
             <roles>
-            	<role id="parcelManager" min="1" max="1" />
-				<role id="warehouseWorker" min="1" max="1" />
-	        	<role id="routePlanner" min="1" max="1" />
-	        	<role id="truck" min="1" max="1" />
-	        	<role id="carrier" min="1" max="1" />
+                <role id="parcelManager" min="1" max="1" />
+                <role id="warehouseWorker" min="1" max="1" />
+                <role id="routePlanner" min="1" max="1" />
+                <role id="truck" min="1" max="1" />
+                <role id="carrier" min="1" max="1" />
             </roles>
         </group-specification>
 
@@ -62,43 +62,43 @@
             </goal>
             
             <recovery-strategy id="strParcel">
-			    <notification-policy id="npParcel">
-			        <condition type="goal-ttf-expiration">
-			            <condition-argument id="target" value="reachDestination" />
-			        </condition>
-			        <exception-spec id="exParcel">
-			        	<exception-argument id="reason" arity="1" />
-			            <exception-argument id="closedRoads" arity="1" />
-			        </exception-spec>
-			        <goal id="reportDelayReason" />
-			    </notification-policy>
-			    <handling-policy id="hpParcel">
-			        <condition type="always" />
-			        <goal id="updateMap" />
-			    </handling-policy>
-			</recovery-strategy>
+                <notification-policy id="npParcel">
+                    <condition type="goal-ttf-expiration">
+                        <condition-argument id="target" value="reachDestination" />
+                    </condition>
+                    <exception-spec id="exParcel">
+                        <exception-argument id="reason" arity="1" />
+                        <exception-argument id="closedRoads" arity="1" />
+                    </exception-spec>
+                    <goal id="reportDelayReason" />
+                </notification-policy>
+                <handling-policy id="hpParcel">
+                    <condition type="always" />
+                    <goal id="updateMap" />
+                </handling-policy>
+            </recovery-strategy>
 
             <mission id="mWarehouseWorker" min="1" max="1">
-				<goal id="takeGoodsFromWarehouse" />
+                <goal id="takeGoodsFromWarehouse" />
                 <goal id="packUpGoods" />
                 <goal id="loadOnTruck" />
             </mission>
             <mission id="mRoutePlanner" min="1" max="1">
-				<goal id="locateAddress" />
+                <goal id="locateAddress" />
                 <goal id="planPath" />
                 <goal id="updateMap" />
             </mission>
             <mission id="mTruck" min="1" max="1">
-				<goal id="reachDestination" />
-				<goal id="reportDelayReason" />
+                <goal id="reachDestination" />
+                <goal id="reportDelayReason" />
             </mission>
             <mission id="mCarrier" min="1" max="1">
-				<goal id="unloadFromTruck" />
+                <goal id="unloadFromTruck" />
                 <goal id="bringParcelToCustomerDoor" />
                 <goal id="collectProofOfDelivery" />
             </mission>
             <mission id="mParcelManager" min="1" max="1">
-				<goal id="closeOrder" />
+                <goal id="closeOrder" />
             </mission>
 
         </scheme>
