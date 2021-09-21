@@ -8,6 +8,7 @@
 // counts the number of tasks based on the observable properties of the auction artifacts
 number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 
+iteration(1).
 
 /* Initial goals */
 
@@ -73,8 +74,9 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 /* Plans for managing the execution of the house construction */
 
 +!execute
+    : iteration(I)
    <- println;
-      println("*** Execution Phase ***");
+      println("*** Execution Phase no. ",I,"***");
       println;
 
       // create the group
