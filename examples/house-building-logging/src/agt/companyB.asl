@@ -25,16 +25,16 @@ my_price(1500). // initial belief
       .wait(2000);
       prepareSite. // simulates the action (in GUI artifact)
    	  
--!site_prepared[env_failure_reason(F)]
-    : focused(ora4mas,bhsch,ArtId)
+-!site_prepared[env_failure_reason(F),scheme(S)]
+    : focused(ora4mas,S,ArtId)
    <- println("The site is flooded due to ",F,"!");
       +failureReason(F)
       goalFailed(site_prepared)[artifact_id(ArtId)];
    	  .fail.
    	  
-+obligation(Ag,_,done(_,notify_site_preparation_problem,Ag),_)
++obligation(Ag,_,done(Scheme,notify_site_preparation_problem,Ag),_)
     : .my_name(Ag) &
-      focused(ora4mas,bhsch,ArtId) &
+      focused(ora4mas,Scheme,ArtId) &
       failureReason(F)
    <- println("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE ",F,"!")
       throwException(site_preparation_exception,[errorCode(F)])[artifact_id(ArtId)];
