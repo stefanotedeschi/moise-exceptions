@@ -18,11 +18,12 @@ iteration(1).
 /* Plans */
 
 +!have_a_house
-   <- !contract; // hire the companies that will build the house
-      !execute;
-      makeArtifact("LogArt", "tools.LoggingArtifact",[], ArtId);
-      println("CREATED")
-      log("Created!")[artifact_id(ArtId)].  // (simulates) the execution of the construction
+   <- makeArtifact("LogArt", "tools.LoggingArtifact",[], ArtId);
+      +loggerArtifact(ArtId);
+      println("Logging artifact created!")
+      log("Logging artifact created")[artifact_id(ArtId)]
+      !contract; // hire the companies that will build the house
+      !execute.  // (simulates) the execution of the construction
 
 -!have_a_house[error(E),error_msg(Msg),code(Cmd),code_src(Src),code_line(Line)]
    <- .print("Failed to build a house due to: ",Msg," (",E,"). Command: ",Cmd, " on ",Src,":", Line).
@@ -74,9 +75,12 @@ iteration(1).
 /* Plans for managing the execution of the house construction */
 
 +!execute
-    : iteration(I)
+    : iteration(I) &
+      loggerArtifact(LogArtId)
    <- println;
-      println("*** Execution Phase no. ",I,"***");
+      println("*** Starting iteration no. ",I,"***");
+      .concat("Starting iteration no. ",I,Log)
+      log(Log)[artifact_id(LogArtId)];
       println;
 
       // create the group
@@ -98,12 +102,13 @@ iteration(1).
       makeArtifact("housegui", "simulator.House");
 
       // create the scheme
-      createScheme(bhsch, build_house_sch, SchArtId);
+      .concat(bhsch,I,ArtName)
+      createScheme(ArtName, build_house_sch, SchArtId);
       //debug(inspector_gui(on))[artifact_id(SchArtId)];
       focus(SchArtId);
 
       ?formationStatus(ok)[artifact_id(GrArtId)]; // see plan below to ensure we wait until it is well formed
-      addScheme("bhsch")[artifact_id(GrArtId)];
+      addScheme(ArtName)[artifact_id(GrArtId)];
       commitMission("management_of_house_building")[artifact_id(SchArtId)];
       .
 
@@ -126,7 +131,23 @@ iteration(1).
    <- .wait({+formationStatus(ok)[artifact_id(G)]}).
 
 +!house_built // I have an obligation towards the top-level goal of the scheme: finished!
-   <- println("*** Finished ***").
+    : iteration(N) & N < 10 &
+      group(hsh_group,house_group,GrArtId)
+   <- println("*** Finished iteration no.",N," ***");
+      -iteration(N);
+      +iteration(N+1);
+      println("*** Starting iteration no.",N+1," ***");
+      .concat("Starting iteration no. ",N+1,Log)
+      log(Log)[artifact_id(LogArtId)];
+      .concat(bsch,N,ArtName)
+      createScheme(ArtName, build_house_sch, SchArtId);
+      //debug(inspector_gui(on))[artifact_id(SchArtId)];
+      focus(SchArtId);
+
+      ?formationStatus(ok)[artifact_id(GrArtId)]; // see plan below to ensure we wait until it is well formed
+      addScheme(ArtName)[artifact_id(GrArtId)];
+      commitMission("management_of_house_building")[artifact_id(SchArtId)];
+      .
 
 +!notify_affected_companies
    <- println("Notifying the companies that we had a problem in site preparation!");
