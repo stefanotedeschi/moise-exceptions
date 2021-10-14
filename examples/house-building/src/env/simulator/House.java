@@ -20,7 +20,7 @@ import simulator.Site.SiteStatus;
 public class House extends GUIArtifact {
 
     HouseView view;
-    
+
     private int attempts = 0;
 
     @Override
@@ -40,26 +40,26 @@ public class House extends GUIArtifact {
             }
             else {
                 view.addPart(new Site(SiteStatus.REMAINS));
-                failed("Bad weather","archaeologicalRemains");
+                failed("Egyptian remains found","archaeologicalRemains");
             }
         }
         else {
             view.addPart(new Site(SiteStatus.OK));
         }
     }
-    
+
     @OPERATION void performSiteAnalysis(OpFeedbackParam<Literal> result){
         result.set(ASSyntax.createLiteral("waterQuantity", ASSyntax.parseNumber("20")));
     }
-    
+
     @OPERATION void fixFlooding(String waterQuantity){
         view.addPart(new Site(SiteStatus.OK));
     }
-    
+
     @OPERATION void delimitSite(){
         view.addPart(new Site(SiteStatus.DELIMITED));
     }
-    
+
     @OPERATION void carefullyRemoveRemains(){
         view.removeParts();
     }
@@ -128,7 +128,7 @@ public class House extends GUIArtifact {
             partsToDraw.add(part);
             repaint();
         }
-        
+
         public synchronized void removeParts(){
             partsToDraw.clear();
             repaint();
