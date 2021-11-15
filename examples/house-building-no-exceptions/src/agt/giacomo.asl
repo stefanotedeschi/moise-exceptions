@@ -75,7 +75,7 @@ iteration(1).
 /* Plans for managing the execution of the house construction */
 
 +!execute
-    : iteration(I) &
+	: iteration(I) &
       loggerArtifact(LogArtId)
    <- println;
       println("*** Starting iteration no. ",I,"***");
@@ -99,7 +99,7 @@ iteration(1).
       !contract_winners("hsh_group"); // they will enter into the group
 
       // create the GUI artifact
-      makeArtifact("housegui", "simulator.House",[],HouseArtId);
+      makeArtifact("housegui", "simulator.House");
 
       // create the scheme
       .concat(bsch,I,ArtName);
@@ -158,12 +158,12 @@ iteration(1).
       +iteration(N+1);
       log("Finished")[artifact_id(LogArtId)];
       .
-
-+!notify_affected_companies
+   
++exception(S,site_preparation_exception,Args)
    <- println("Notifying the companies that we had a problem in site preparation!");
       // Do something to notify the companies
       .
-
+      
 +!handle_windows_fitting_delay
     : exceptionThrown(bhsch,windows_delay_exception,Company) &
       exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D))
