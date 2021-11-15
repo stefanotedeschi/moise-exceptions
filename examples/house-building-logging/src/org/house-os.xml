@@ -80,7 +80,7 @@
                     <goal id="rwd">
                         <plan operator="parallel">
                             <goal id="roof_built" ttf="10 seconds" />
-                            <goal id="windows_fitted" ttf="5 seconds" />
+                            <goal id="windows_fitted" ttf="1 second" />
                             <goal id="doors_fitted" ttf="5 seconds" />
                         </plan>
                     </goal>

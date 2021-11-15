@@ -31,8 +31,12 @@ public class House extends GUIArtifact {
 
     // Actions that simulate the building progress
 
+    @OPERATION void clearHouse(){
+        view.removeParts();
+    }
+    
     @OPERATION void prepareSite(){
-        if(attempts++ == 0) {
+        if(attempts++ %2 == 0) {
             Random random = new Random();
             if(random.nextInt()%2 == 0) {
                 view.addPart(new Site(SiteStatus.FLOODED));
@@ -65,47 +69,47 @@ public class House extends GUIArtifact {
     }
 
     @OPERATION void layFloors(){
-        await_time(1000);
+        //await_time(1000);
         view.addPart(new Floor());
     }
 
     @OPERATION void buildWalls(){
-        await_time(500);
+        //await_time(500);
         view.addPart(new Walls());
     }
 
     @OPERATION void buildRoof(){
-        await_time(1000);
+        //await_time(1000);
         view.addPart(new Roof());
     }
 
     @OPERATION void fitDoors(){
-        await_time(300);
+        //await_time(300);
         view.addPart(new Doors());
     }
 
     @OPERATION void fitWindows(){
-        await_time(300);
+        //await_time(300);
         view.addPart(new Windows());
     }
 
     @OPERATION void paintExterior(){
-        await_time(2000);
+        //await_time(2000);
         view.addPart(new ExteriorPainting());
     }
 
     @OPERATION void installPlumbing(){
-        await_time(300);
+        //await_time(300);
         view.addPart(new Plumbing());
     }
 
     @OPERATION void installElectricalSystem(){
-        await_time(300);
+        //await_time(300);
         view.addPart(new ElectricalSystem());
     }
 
     @OPERATION void paintInterior(){
-        await_time(500);
+        //await_time(500);
         view.addPart(new InteriorPainting());
     }
 

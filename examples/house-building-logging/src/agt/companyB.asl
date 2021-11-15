@@ -22,7 +22,6 @@ my_price(1500). // initial belief
       
 +!site_prepared
    <- println("Preparing site...");
-      .wait(2000);
       prepareSite. // simulates the action (in GUI artifact)
    	  
 -!site_prepared[env_failure_reason(F),scheme(S)]
@@ -39,6 +38,6 @@ my_price(1500). // initial belief
    <- println("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE ",F,"!")
       throwException(site_preparation_exception,[errorCode(F)])[artifact_id(ArtId)];
       -failureReason(F);
-      goalAchieved(notify_site_preparation_problem).
+      goalAchieved(notify_site_preparation_problem)[artifact_id(ArtId)].
    	  
  { include("org_code.asl") }

@@ -99,10 +99,10 @@ iteration(1).
       !contract_winners("hsh_group"); // they will enter into the group
 
       // create the GUI artifact
-      makeArtifact("housegui", "simulator.House");
+      makeArtifact("housegui", "simulator.House",[],HouseArtId);
 
       // create the scheme
-      .concat(bhsch,I,ArtName)
+      .concat(bsch,I,ArtName);
       createScheme(ArtName, build_house_sch, SchArtId);
       //debug(inspector_gui(on))[artifact_id(SchArtId)];
       focus(SchArtId);
@@ -131,7 +131,7 @@ iteration(1).
    <- .wait({+formationStatus(ok)[artifact_id(G)]}).
 
 +!house_built // I have an obligation towards the top-level goal of the scheme: finished!
-    : iteration(N) & N < 10 &
+    : iteration(N) & N < 1000 &
       group(hsh_group,house_group,GrArtId)
    <- println("*** Finished iteration no.",N," ***");
       -iteration(N);
@@ -139,7 +139,8 @@ iteration(1).
       println("*** Starting iteration no.",N+1," ***");
       .concat("Starting iteration no. ",N+1,Log)
       log(Log)[artifact_id(LogArtId)];
-      .concat(bsch,N,ArtName)
+      .concat(bsch,N+1,ArtName)
+      clearHouse[artifact_id(HouseArtId)];
       createScheme(ArtName, build_house_sch, SchArtId);
       //debug(inspector_gui(on))[artifact_id(SchArtId)];
       focus(SchArtId);
@@ -147,6 +148,15 @@ iteration(1).
       ?formationStatus(ok)[artifact_id(GrArtId)]; // see plan below to ensure we wait until it is well formed
       addScheme(ArtName)[artifact_id(GrArtId)];
       commitMission("management_of_house_building")[artifact_id(SchArtId)];
+      .
+      
++!house_built // I have an obligation towards the top-level goal of the scheme: finished!
+    : iteration(N) & N >= 1000 &
+      group(hsh_group,house_group,GrArtId)
+   <- println("*** Finished iteration no.",N," ***");
+      -iteration(N);
+      +iteration(N+1);
+      log("Finished")[artifact_id(LogArtId)];
       .
 
 +!notify_affected_companies

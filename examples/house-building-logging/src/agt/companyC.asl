@@ -45,7 +45,7 @@ my_price("Painting",        1100).
     : not hurryUp
    <- println("Fitting windows...");
       +hurryUp
-      .wait(8000);
+      .wait(1500);
       fitWindows;
       println("Windows done!").
       
@@ -53,6 +53,7 @@ my_price("Painting",        1100).
     : hurryUp
    <- println("Fitting windows... I Have to hurry!");
       fitWindows;
+      -hurryUp;
       println("Windows done!").
 
 +!notify_windows_fitting_delay
