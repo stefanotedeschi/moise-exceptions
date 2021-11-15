@@ -57,7 +57,7 @@ my_price("Painting",        1100).
       println("Windows done!").
 
 +!notify_windows_fitting_delay[scheme(S)]
-	: focused(ora4mas,Scheme,ArtId)
+	: focused(ora4mas,S,ArtId)
    <- println("Notifying weeks of delay");
       throwException(windows_delay_exception,[weeksOfDelay(1)])[artifact_id(ArtId)].
       //throwException(windows_delay_exception,[weeksOfDelay(3)]). // This exception would enable the catching goal
