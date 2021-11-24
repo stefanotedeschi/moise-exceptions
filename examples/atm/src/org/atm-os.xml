@@ -52,8 +52,8 @@
 
                 <notification-policy id="np1">
 
-                    <condition type="custom"> <!-- must-notify-when -->
-                        <condition-argument id="formula" value="scheme_id(S) &amp; failed(S,parseAmount)" />
+                    <condition type="goal-failure"> <!-- must-notify-when -->
+                        <condition-argument id="target" value="parseAmount" />
                     </condition>
 
                     <exception-spec id="nan">
