@@ -1,0 +1,82 @@
+/*
+   Application Gold Miners extended with Exception Support
+
+   Gradle build file for JaCaMo Application
+*/
+
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+defaultTasks 'run'
+
+version '1.0'
+group   'it.unito.di'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    //mavenLocal()
+
+    maven {
+        url "http://jacamo.sourceforge.net/maven2"
+        allowInsecureProtocol = true
+    }
+    maven { url "https://moise-exceptions.sourceforge.io/maven2" }
+
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+dependencies {
+    implementation group: 'org.jacamo',     name: 'jacamo' ,   version: '0.8'
+    implementation group: 'org.jacamo',   name: 'npl' ,            version: '0.5-SNAPSHOT', changing: true, transitive: false
+    implementation group: 'it.unito.di', name: 'moise-exceptions', version: '0.2',          changing: true
+    implementation name: 'search'
+    implementation 'org.twitter4j:twitter4j-async:4.0.7'
+    implementation 'org.twitter4j:twitter4j-stream:4.0.7'
+}
+
+configurations {
+    compile.exclude group: 'org.jacamo', module: 'moise'
+}
+
+configurations.all {
+    // Check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/env'
+            srcDir 'src/agt'
+            srcDir 'src/org'
+            srcDir 'src/int'
+            srcDir 'src/java'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+}
+
+task run (type: JavaExec, dependsOn: 'classes') {
+    description 'runs the application'
+    group ' JaCaMo'
+    doFirst {
+        mkdir 'log'
+    }
+    main = 'jacamo.infra.JaCaMoLauncher'
+    args 'gold_miners.jcm'
+    classpath sourceSets.main.runtimeClasspath
+}
+
+clean {
+    delete 'bin'
+    delete 'build'
+}

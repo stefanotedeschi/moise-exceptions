@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification
+    id="gold_miners" os-version="0.8"
+
+    xmlns='http://moise.sourceforge.net/os'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+
+    <structural-specification>
+
+        <role-definitions>
+            <role id="leader" />
+            <role id="miner" />
+        </role-definitions>
+
+        <group-specification id="gold_group">
+            <roles>
+                <role id="leader" min="1" max="1" />
+                <role id="miner" min="1" max="unbounded" />
+            </roles>
+        </group-specification>
+
+    </structural-specification>
+
+    <functional-specification>
+
+        <scheme id="gold_sch">
+
+            <goal id="mine_gold">
+                <plan operator="sequence">
+                    <goal id="allocate_quadrants" />
+                    <goal id="search_gold" />
+                    <goal id="negotiation">
+                        <plan operator="sequence">
+                            <goal id="place_bid" />
+                            <goal id="select_miner" />
+                        </plan>
+                    </goal>
+                    <goal id="fetch_gold" />
+                    <goal id="go_to_depot">
+                </plan>
+            </goal>
+
+            <mission id="mLeader" min="1" max="1">
+                <goal id="allocate_quadrants" />
+                <goal id="select_bid" />
+            </mission>
+            <mission id="mMiner" min="1" max="1">
+                <goal id="search_gold" />
+                <goal id="place_bid" />
+                <goal id="fetch_gold" />
+                <goal id="go_to_depot" />
+            </mission>
+
+        </scheme>
+
+    </functional-specification>
+
+    <normative-specification>
+        <norm id="n1" type="obligation" role="leader" mission="mLeader" />
+        <norm id="n2" type="obligation" role="miner" mission="mMiner" />
+    </normative-specification>
+
+</organisational-specification>
