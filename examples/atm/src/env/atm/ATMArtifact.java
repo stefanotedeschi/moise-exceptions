@@ -97,6 +97,7 @@ public class ATMArtifact extends GUIArtifact {
             failed("nan","firstNaNIndex", -1);
         }
         amountInt = negative ? result : -result;
+        defineObsProperty("amountInt", amountInt);
     }
     
     @OPERATION
