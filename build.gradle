@@ -30,8 +30,9 @@ repositories {
 }
 
 configurations {
-	sshAntTask
+	  sshAntTask
     //umljavadoc  // see http://www.umlgraph.org/doc/indexw.html
+    extraLibs
 }
 
 publishing {
@@ -56,11 +57,17 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
-	sshAntTask 'org.apache.ant:ant-jsch:1.7.1', 'jsch:jsch:0.1.29'
+	  sshAntTask 'org.apache.ant:ant-jsch:1.7.1', 'jsch:jsch:0.1.29'
+
+    extraLibs group: 'org.jacamo',     name: 'npl' ,     version: '0.5-SNAPSHOT', changing: true, transitive: false
+    extraLibs 'com.google.code.gson:gson:2.8.6'
 }
 
 jar {
     baseName 'moise-exceptions'
+    into('') {
+        from configurations.extraLibs
+    }
 }
 
 clean {

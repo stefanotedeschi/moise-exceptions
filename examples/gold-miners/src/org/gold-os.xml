@@ -12,13 +12,17 @@
 
         <role-definitions>
             <role id="leader" />
+            <role id="explorer" />
             <role id="miner" />
+            <role id="helper" />
         </role-definitions>
 
         <group-specification id="gold_group">
             <roles>
                 <role id="leader" min="1" max="1" />
+                <role id="explorer" min="1" max="unbounded" />
                 <role id="miner" min="1" max="unbounded" />
+                <role id="helper" min="1" max="unbounded" />
             </roles>
         </group-specification>
 
