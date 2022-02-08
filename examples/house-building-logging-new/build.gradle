@@ -1,10 +1,22 @@
+/*
+   example: house building logging new
+
+   Gradle build file for JaCaMo Application
+   September 27, 2018 - 15:33:36
+*/
+
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
 defaultTasks 'run'
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
 version '1.0'
-group   'org.jacamo'
+group   'it.unito.di'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -21,14 +33,19 @@ repositories {
     //maven { url "http://www.di.unito.it/~tedeschi/maven2" }
 
     flatDir {
-       dirs 'lib'
+       dirs 'lib', 'res'
     }
 }
 
 dependencies {
-    implementation group: 'org.jacamo',   name: 'jacamo',          version: '0.8'
-    implementation group: 'org.jacamo',   name: 'npl' ,            version: '0.5-SNAPSHOT', changing: true, transitive: false
-    implementation group: 'it.unito.di', name: 'moise-exceptions', version: '0.2',          changing: true
+    implementation group: 'org.jacamo',   name: 'jacamo',           version: '0.8'
+    implementation group: 'org.jacamo',   name: 'npl' ,             version: '0.5-SNAPSHOT', changing: true, transitive: false
+    implementation group: 'it.unito.di', name: 'moise-exceptions', version: '0.2', changing: true
+
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.16.0'
+  	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
+
+    implementation files('res')
 }
 
 configurations {
@@ -46,7 +63,6 @@ sourceSets {
             srcDir 'src/env'
             srcDir 'src/agt'
             srcDir 'src/org'
-            srcDir 'src/java'
         }
         resources {
             srcDir 'src/resources'
@@ -55,18 +71,14 @@ sourceSets {
 }
 
 task run (type: JavaExec, dependsOn: 'classes') {
-    group       ' JaCaMo'
-    description 'runs the JaCaMo application'
-    doFirst {
-        mkdir 'log'
-    }
-    main 'jacamo.infra.JaCaMoLauncher'
-    args 'mas1.jcm'
+    description 'runs the application'
+    group ' JaCaMo'
+    mainClass = 'jacamo.infra.JaCaMoLauncher'
+    args 'house.jcm'
     classpath sourceSets.main.runtimeClasspath
 }
 
 clean {
     delete 'bin'
     delete 'build'
-    delete 'log'
 }

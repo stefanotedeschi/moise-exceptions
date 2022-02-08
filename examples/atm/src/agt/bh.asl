@@ -6,7 +6,8 @@
 +!retryLater
 	<- failWithdraw;
 	   goalReleased(withdraw);
-	   println("TRY LATER").
+	   println("TRY LATER");
+	   .stopMAS.
 	   
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

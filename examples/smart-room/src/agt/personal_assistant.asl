@@ -31,12 +31,11 @@
      vm::vote([Second]);
   .
 
-{ include("$moiseJar/asl/org-obedient.asl") }
-
 // commit to missions when permitted
-+permission(Ag,Norm,committed(Ag,Mission,Scheme),Deadline)[artifact_id(ArtId),workspace(_,W)]
++permission(Ag,Norm,committed(Ag,Mission,Scheme),Deadline)[artifact_id(ArtId)]
     : .my_name(Ag)
-   <- //.print("I am permitted to commit to ",Mission," on ",Scheme,"... doing so");
-      commitMission(Mission)[artifact_name(Scheme), wid(W)].
+   <- .print("I am permitted to commit to ",Mission," on ",Scheme,"... doing so");
+      commitMission(Mission)[artifact_name(Scheme)].
 
+{ include("$moiseJar/asl/org-obedient.asl") }
 { include("base-pa.asl") }

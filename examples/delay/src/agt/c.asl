@@ -3,6 +3,18 @@
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
 
+!start.
+!check.
+
++!start
+  <- +start;
+     println("START").
+
++!check
+  <- .wait(1000);
+     ?start;
+     println("CHECK").
+
 +!handleDelay
      : exceptionThrown(_,delay,_) &
        exceptionArgument(_,delay,eta(N)) &
