@@ -62,19 +62,19 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
          println("Winner of task ", Task," is ", Ag, " for ", Price)
       }.
 
-// +!dispose_auction_artifacts
+//+!dispose_auction_artifacts
 //   <- for ( task(_)[artifact_id(ArtId)] ) {
-//         stopFocus(ArtId);
-//         disposeArtifact(ArtId);
+//         stopFocus(ArtId)
+//         //disposeArtifact(ArtId)
 //      }.
 
 /* Plans for managing the execution of the house construction */
 
 +!execute
-    : loggerArtifact(LogArtId)
+	 : loggerArtifact(LogArtId)
    <- println;
       println("*** Execution Phase ***");
-      println
+      println;
 
       logStart[artifact_id(LogArtId)];
 
@@ -94,7 +94,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       !contract_winners("hsh_group"); // they will enter into the group
 
       // create the GUI artifact
-      makeArtifact("housegui", "simulator.House",[],HouseArtId);
+      makeArtifact("housegui", "simulator.House");
 
       // create the scheme
       createScheme(bhsch, build_house_sch, SchArtId);
@@ -132,12 +132,12 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       .wait(500);
       .stopMAS;
       .
-
-+!notify_affected_companies
+   
++exception(S,site_preparation_exception,Args)
    <- println("Notifying the companies that we had a problem in site preparation!");
       // Do something to notify the companies
       .
-
+      
 +!handle_windows_fitting_delay
     : exceptionThrown(bhsch,windows_delay_exception,Company) &
       exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D))
