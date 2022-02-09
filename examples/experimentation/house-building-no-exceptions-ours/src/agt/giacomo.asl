@@ -17,10 +17,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 /* Plans */
 
 +!have_a_house
-   <- makeArtifact("LogArt", "tools.LoggingArtifact",[], ArtId);
-      +loggerArtifact(ArtId);
-      println("Logging artifact created!");
-      !contract; // hire the companies that will build the house
+   <- !contract; // hire the companies that will build the house
       !execute.  // (simulates) the execution of the construction
 
 -!have_a_house[error(E),error_msg(Msg),code(Cmd),code_src(Src),code_line(Line)]
@@ -72,10 +69,13 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 /* Plans for managing the execution of the house construction */
 
 +!execute
-    : loggerArtifact(LogArtId)
    <- println;
       println("*** Execution Phase ***");
       println;
+
+      makeArtifact("LogArt", "tools.LoggingArtifact",[], LogArtId);
+      +loggerArtifact(LogArtId);
+      println("Logging artifact created!");
 
       logStart[artifact_id(LogArtId)];
 
@@ -85,7 +85,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       joinWorkspace("ora4mas",WOrg);
 
       // NB.: we (have to) use the same id for OrgBoard and Workspace (ora4mas in this example)
-      makeArtifact(ora4mas, "ora4mas.nopl.OrgBoard", ["src/org/house-os.xml"], OrgArtId)[wid(WOrg)];
+      makeArtifact(ora4mas,"ora4mas.nopl.OrgBoard", ["src/org/house-os.xml"], OrgArtId);
       focus(OrgArtId);
       createGroup(hsh_group, house_group, GrArtId);
       //debug(inspector_gui(on))[artifact_id(GrArtId)];
@@ -126,10 +126,11 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
    <- .wait({+formationStatus(ok)[artifact_id(G)]}).
 
 +!house_built // I have an obligation towards the top-level goal of the scheme: finished!
-    : loggerArtifact(LogArtId)
    <- println;
       println("*** Finished ***");
-      logFinish[artifact_id(LogArtId)];
-      .wait(500);
-      .stopMAS;
       .
+
++goalState(bhsch,house_built,_,_,satisfied)
+    : loggerArtifact(LogArtId)
+   <- logFinish[artifact_id(LogArtId)];
+      .stopMAS.

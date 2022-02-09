@@ -128,16 +128,18 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
     : loggerArtifact(LogArtId)
    <- println;
       println("*** Finished ***");
-      logFinish[artifact_id(LogArtId)];
-      .wait(500);
-      .stopMAS;
       .
-   
+
++goalState(bhsch,house_built,_,_,satisfied)
+    : loggerArtifact(LogArtId)
+   <- logFinish[artifact_id(LogArtId)];
+      .stopMAS.
+
 +exception(S,site_preparation_exception,Args)
    <- println("Notifying the companies that we had a problem in site preparation!");
       // Do something to notify the companies
       .
-      
+
 +!handle_windows_fitting_delay
     : exceptionThrown(bhsch,windows_delay_exception,Company) &
       exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D))
