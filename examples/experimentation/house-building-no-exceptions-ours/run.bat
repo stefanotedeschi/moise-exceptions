@@ -1,0 +1,1 @@
+FOR /L %%v IN (1,1,10) DO call gradlew run

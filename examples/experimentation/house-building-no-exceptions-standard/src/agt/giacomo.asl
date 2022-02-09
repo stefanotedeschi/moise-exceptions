@@ -8,9 +8,11 @@
 // counts the number of tasks based on the observable properties of the auction artifacts
 number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 
+
 /* Initial goals */
 
 !have_a_house.
+
 
 /* Plans */
 
@@ -40,8 +42,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
        !create_auction_artifact("WindowsDoors",    2500);
        !create_auction_artifact("Plumbing",         500);
        !create_auction_artifact("ElectricalSystem", 500);
-       !create_auction_artifact("Painting",        1200);
-       !create_auction_artifact("Engineering",     5000);.
+       !create_auction_artifact("Painting",        1200).
 
 +!create_auction_artifact(Task,MaxPrice)
    <- .concat("auction_for_",Task,ArtName);
@@ -71,7 +72,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 /* Plans for managing the execution of the house construction */
 
 +!execute
-	 : loggerArtifact(LogArtId)
+    : loggerArtifact(LogArtId)
    <- println;
       println("*** Execution Phase ***");
       println;
@@ -131,16 +132,4 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       logFinish[artifact_id(LogArtId)];
       .wait(500);
       .stopMAS;
-      .
-   
-+exception(S,site_preparation_exception,Args)
-   <- println("Notifying the companies that we had a problem in site preparation!");
-      // Do something to notify the companies
-      .
-      
-+!handle_windows_fitting_delay
-    : exceptionThrown(bhsch,windows_delay_exception,Company) &
-      exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D))
-   <- println("There is a delay in windows fitting by ",Company, " of ",D," weeks!");
-      // Do something to handle the delay
       .

@@ -16,28 +16,34 @@ my_price(2500). // initial belief
    <- //.print("my bid in auction artifact ", Art, " is ",math.max(V-150,P));
       bid( math.max(V-150,P) ).         // place my bid offering a cheaper service
 
-+exception(S,site_preparation_exception,Args)
-    : .member(errorCode(flooding),Args) &
-      focused(ora4mas,S,ArtId) &
-      play(SPC,site_prep_contractor,hsh_group)
++exception(S,site_preparation_exception,Args)[source(Sender)]
+    : (.member(errorCode(flooding),Args) | .member(errorCode(archaeologicalRemains),Args)) &
+      focused(ora4mas,S,ArtId)
+   <- println("Proposing as handler for site preparation exception...");
+      .send(Sender,tell,handlerProposal(S,site_preparation_exception)).
+
++handlerProposalAccepted(S,site_preparation_exception)[source(Sender)]
+    : exception(S,site_preparation_exception,Args) &
+      .member(errorCode(flooding),Args) &
+      focused(ora4mas,S,ArtId)
    <- println("Inspecting site...");
       performSiteAnalysis(Result);
       println("Done!");
       println("Fixing flooding...");
       fixFlooding(Result);
-      .send(SPC,tell,handled(S,site_preparation_exception));
+      .send(Sender,tell,handled(S,site_preparation_exception));
       println("Done!").
-      
-+exception(S,site_preparation_exception,Args)
-    : .member(errorCode(archaeologicalRemains),Args) &
-      focused(ora4mas,S,ArtId) &
-      play(SPC,site_prep_contractor,hsh_group)
+
++handlerProposalAccepted(S,site_preparation_exception)[source(Sender)] 
+    : exception(S,site_preparation_exception,Args) &
+      .member(errorCode(archaeologicalRemains),Args) &
+      focused(ora4mas,S,ArtId)
    <- println("Inspecting site...");
       delimitSite;
       println("Done!");
       println("RemovingRemains...");
       carefullyRemoveRemains;
-      .send(SPC,tell,handled(S,site_preparation_exception));
+      .send(Sender,tell,handled(S,site_preparation_exception));
       println("Done!").
 
 /* plans for execution phase */
