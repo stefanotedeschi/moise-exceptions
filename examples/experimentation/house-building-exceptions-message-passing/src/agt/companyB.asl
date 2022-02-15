@@ -15,9 +15,10 @@ my_price(1500). // initial belief
 
 /* plans for execution phase */
 
-+!site_prepared
++!site_prepared  // the organisational goal (created from an obligation)
    <- println("Preparing site...");
-      prepareSite. // simulates the action (in GUI artifact)
+      prepareSite;
+      println("Done!").
 
 -!site_prepared[env_failure_reason(F)]
    <- println("The site is flooded due to ",F,"!");
@@ -27,14 +28,14 @@ my_price(1500). // initial belief
       .fail.
 
 +handlerProposal(bhsch,site_preparation_exception)[source(Sender)]
-    : not (handlerProposal(S,site_preparation_exception)[source(AnotherSender)] & Sender \== AnotherSender)
-   <- -handlerProposal(S,site_preparation_exception);
-      .send(Sender,tell,handlerProposalAccepted(S,site_preparation_exception)).
+    : not (handlerProposal(bhsch,site_preparation_exception)[source(AnotherSender)] & Sender \== AnotherSender)
+   <- -handlerProposal(bhsch,site_preparation_exception)[source(Sender)];
+      .send(Sender,tell,handlerProposalAccepted(bhsch,site_preparation_exception)).
 
-+handled(bhsch,site_preparation_exception)
++handled(bhsch,site_preparation_exception)[source(Sender)]
     : focused(ora4mas,bhsch,ArtId)
-	<- -handled(S,site_preparation_exception);
+	<- -handled(S,site_preparation_exception)[source(Sender)];
       !site_prepared;
 	   goalAchieved(site_prepared)[artifact_id(ArtId)].
 
- { include("org_code.asl") }
+{ include("org_code.asl") }

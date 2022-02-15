@@ -133,11 +133,12 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +goalState(bhsch,house_built,_,_,satisfied)
     : loggerArtifact(LogArtId)
    <- logFinish[artifact_id(LogArtId)];
-      //.stopMAS;
+      .stopMAS;
       .
 
-+exception(S,site_preparation_exception,Args)
++exception(bhsch,site_preparation_exception,Args)[source(Sender)]
    <- println("Notifying the companies that we had a problem in site preparation!");
+      -exception(bhsch,site_preparation_exception,Args)[source(Sender)];
       // Do something to notify the companies
       .
 

@@ -96,23 +96,23 @@ available_colors([white,gray,red,orange,cyan]).
 
 +!exterior_painted
     : play(HouseOwner,house_owner,hsh_group) &
-      focused(ora4mas,bhsch,ArtId) &
       exterior_color(C) & available_colors(L) & not .member(C,L)
    <- .send(HouseOwner,tell,exception(bhsch,exterior_paint_exception,[alternativeColors(L)]));
       .wait({+newColor(NC)});
       -exterior_color(C);
       +exterior_color(NC);
-      resetGoal(exterior_painted)[artifact_id(ArtId)].
+      !exterior_painted.
+      //resetGoal(exterior_painted)[artifact_id(ArtId)].
 
 +!interior_painted[scheme(S)]
     : play(HouseOwner,house_owner,hsh_group) &
-      focused(ora4mas,S,ArtId) &
       interior_color(C) & available_colors(L) & not .member(C,L)
    <- .send(HouseOwner,tell,exception(bhsch,interior_paint_exception,[alternativeColors(L)]));
       .wait({+newColor(NC)});
       -interior_color(C);
       +interior_color(NC);
-      resetGoal(interior_painted)[artifact_id(ArtId)].
+      !interior_painted.
+      //resetGoal(interior_painted)[artifact_id(ArtId)].
 
 { include("org_code.asl") }
 { include("org_goals.asl") }

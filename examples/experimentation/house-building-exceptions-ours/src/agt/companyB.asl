@@ -14,11 +14,12 @@ my_price(1500). // initial belief
       bid( math.max(V-150,P) ).         // place my bid offering a cheaper service
 
 /* plans for execution phase */
-      
-+!site_prepared
+
++!site_prepared  // the organisational goal (created from an obligation)
    <- println("Preparing site...");
-      prepareSite. // simulates the action (in GUI artifact)
-   	  
+      prepareSite;
+      println("Done!").
+
 -!site_prepared[env_failure_reason(F),scheme(S)]
     : focused(ora4mas,S,ArtId)
    <- println("The site is flooded due to ",F,"!");
