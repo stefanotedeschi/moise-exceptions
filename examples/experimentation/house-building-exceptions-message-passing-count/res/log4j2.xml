@@ -4,7 +4,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="File" fileName="logs/house-building-exceptions-message-passing.csv">
+        <File name="File" fileName="logs/house-building-exceptions-message-passing-count.csv">
             <PatternLayout pattern="%msg%n"/>
         </File>
     </Appenders>

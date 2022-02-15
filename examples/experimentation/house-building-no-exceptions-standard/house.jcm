@@ -4,7 +4,7 @@
 
 */
 
-mas house_building {
+mas house_building_no_exceptions_standard {
 
    agent giacomo     // the agent that wants to build a house
 
