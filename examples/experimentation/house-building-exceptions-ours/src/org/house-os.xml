@@ -14,6 +14,9 @@
             <role id="house_owner" />
             <role id="engineer" />
             <role id="building_company" />
+            <role id="rwd_company">
+                <extends role="building_company" />
+            </role>
             <role id="site_prep_contractor">
                 <extends role="building_company" />
             </role>
@@ -21,13 +24,13 @@
                 <extends role="building_company" />
             </role>
             <role id="roofer">
-                <extends role="building_company" />
+                <extends role="rwd_company" />
             </role>
             <role id="window_fitter">
-                <extends role="building_company" />
+                <extends role="rwd_company" />
             </role>
             <role id="door_fitter">
-                <extends role="building_company" />
+                <extends role="rwd_company" />
             </role>
             <role id="plumber">
                 <extends role="building_company" />
@@ -129,9 +132,8 @@
                 <handling-policy id="hp2">
                     <condition type="custom">
                         <condition-argument id="formula" value="thrown(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
-                        <!--<condition-argument id="formula" value="thrown(_,windows_delay_exception),_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />-->
                     </condition>
-                    <goal id="handle_windows_fitting_delay" />
+                    <goal id="handle_windows_fitting_delay" type="performance" />
                 </handling-policy>
             </recovery-strategy>
 
@@ -154,7 +156,6 @@
             <mission id="management_of_house_building" min="1" max="1">
                 <goal id="house_built" />
                 <goal id="notify_affected_companies" />
-                <goal id="handle_windows_fitting_delay" />
                 <goal id="choose_new_color" />
             </mission>
             <mission id="site_inspection" min="1" max="1">
@@ -191,6 +192,9 @@
                 <goal id="interior_painted" />
                 <goal id="notify_painting_failure" />
             </mission>
+            <mission id="handle_windows_delay" min="1" max="3">
+                <goal id="handle_windows_fitting_delay" />
+            </mission>
         </scheme>
     </functional-specification>
 
@@ -217,6 +221,8 @@
             mission="paint_house" />
         <norm id="n11" type="obligation" role="engineer"
             mission="site_inspection" />
+        <norm id="n12" type="obligation" role="rwd_company"
+            mission="handle_windows_delay" />
     </normative-specification>
 
 </organisational-specification>

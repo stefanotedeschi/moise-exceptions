@@ -3,7 +3,7 @@
 
 { include("common.asl") }
 
-!discover_art("auction_for_SitePreparation").
+//!discover_art("auction_for_SitePreparation").
 !discover_art("auction_for_Floors").
 !discover_art("auction_for_Walls").
 !discover_art("auction_for_Roof").

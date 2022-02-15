@@ -141,15 +141,8 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       // Do something to notify the companies
       .
 
-+!handle_windows_fitting_delay
-    : exceptionThrown(bhsch,windows_delay_exception,Company) &
-      exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D))
-   <- println("There is a delay in windows fitting by ",Company, " of ",D," weeks!");
-      // Do something to handle the delay
-      .
-
 +!choose_new_color
-    : exceptionThrown(bhsch,paint_exception,Company) &
+	 : exceptionThrown(bhsch,paint_exception,Company) &
       exceptionArgument(bhsch,paint_exception,alternativeColors(L)) &
       goalState(bhsch,exterior_painted,_,_,failed) &
       .member(white,L)

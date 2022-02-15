@@ -15,32 +15,26 @@ my_price(1500). // initial belief
 
 /* plans for execution phase */
 
-+obligation(Ag,_,done(_,site_prepared,Ag),_)
-	: my_name(Ag)
-   <- !site_prepared;
-      goalAchieved(site_prepared).
-
 +!site_prepared
    <- println("Preparing site...");
       prepareSite. // simulates the action (in GUI artifact)
 
--!site_prepared[env_failure_reason(F),scheme(S)]
-    : focused(ora4mas,S,ArtId) &
-      play(Eng,engineer,hsh_group) &
-      play(HouseOwner,house_owner,hsh_group)
+-!site_prepared[env_failure_reason(F)]
    <- println("The site is flooded due to ",F,"!");
       //.send(Eng,tell,exception(S,site_preparation_exception,[errorCode(F)]));
  	   //.send(HouseOwner,tell,exception(S,site_preparation_exception,[errorCode(F)]));
-      .broadcast(tell,exception(S,site_preparation_exception,[errorCode(F)]));
+      .broadcast(tell,exception(bhsch,site_preparation_exception,[errorCode(F)]));
       .fail.
 
-+handlerProposal(S,site_preparation_exception)[source(Sender)]
++handlerProposal(bhsch,site_preparation_exception)[source(Sender)]
     : not (handlerProposal(S,site_preparation_exception)[source(AnotherSender)] & Sender \== AnotherSender)
-   <- .send(Sender,tell,handlerProposalAccepted(S,site_preparation_exception)).
+   <- -handlerProposal(S,site_preparation_exception);
+      .send(Sender,tell,handlerProposalAccepted(S,site_preparation_exception)).
 
-+handled(S,site_preparation_exception)
-     : focused(ora4mas,S,ArtId)
-	<- !site_prepared;
++handled(bhsch,site_preparation_exception)
+    : focused(ora4mas,bhsch,ArtId)
+	<- -handled(S,site_preparation_exception);
+      !site_prepared;
 	   goalAchieved(site_prepared)[artifact_id(ArtId)].
 
  { include("org_code.asl") }

@@ -26,7 +26,9 @@ my_price(2500). // initial belief
     : exception(S,site_preparation_exception,Args) &
       .member(errorCode(flooding),Args) &
       focused(ora4mas,S,ArtId)
-   <- println("Inspecting site...");
+   <- -exception(S,site_preparation_exception,Args);
+      -handlerProposalAccepted(S,site_preparation_exception);
+      println("Inspecting site...");
       performSiteAnalysis(Result);
       println("Done!");
       println("Fixing flooding...");
@@ -38,7 +40,9 @@ my_price(2500). // initial belief
     : exception(S,site_preparation_exception,Args) &
       .member(errorCode(archaeologicalRemains),Args) &
       focused(ora4mas,S,ArtId)
-   <- println("Inspecting site...");
+   <- -exception(S,site_preparation_exception,Args);
+      -handlerProposalAccepted(S,site_preparation_exception);
+      println("Inspecting site...");
       delimitSite;
       println("Done!");
       println("RemovingRemains...");

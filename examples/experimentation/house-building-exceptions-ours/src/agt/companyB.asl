@@ -14,11 +14,6 @@ my_price(1500). // initial belief
       bid( math.max(V-150,P) ).         // place my bid offering a cheaper service
 
 /* plans for execution phase */
-
-+obligation(Ag,_,done(_,site_prepared,Ag),_)
-	: my_name(Ag)
-   <- !site_prepared;
-      goalAchieved(site_prepared).
       
 +!site_prepared
    <- println("Preparing site...");

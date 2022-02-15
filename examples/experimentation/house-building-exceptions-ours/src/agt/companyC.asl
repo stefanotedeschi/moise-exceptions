@@ -65,7 +65,7 @@ available_colors([white,gray,red,orange,cyan]).
 +!windows_fitted
     : not hurryUp
    <- println("Fitting windows...");
-      +hurryUp
+      +hurryUp;
       .random([0,1],N);
       if(N == 0) {
          .wait(1500);

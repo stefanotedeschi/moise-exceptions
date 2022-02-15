@@ -20,7 +20,7 @@ my_price("Plumbing",         600).
 my_price("ElectricalSystem", 300).
 my_price("Painting",        1100).
 
-!discover_art("auction_for_SitePreparation").
+//!discover_art("auction_for_SitePreparation").
 !discover_art("auction_for_Floors").
 !discover_art("auction_for_Walls").
 !discover_art("auction_for_Roof").

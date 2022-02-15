@@ -20,6 +20,11 @@
                                     // agent places a bid that is higher than
                                     // the current bid
 
++exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
+    : D >= 2 & focused(ora4mas,bhsch,ArtId)
+   <- println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
+      .send(Sender,tell,handled(S,windows_delay_exception)).
+
 /* plans for execution phase */
 
 { include("org_code.asl") }

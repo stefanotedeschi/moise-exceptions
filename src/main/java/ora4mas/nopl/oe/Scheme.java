@@ -4,15 +4,8 @@ import static jason.asSyntax.ASSyntax.createAtom;
 import static jason.asSyntax.ASSyntax.createLiteral;
 
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.*;
+import java.util.concurrent.*;
 
 import jaca.ToProlog;
 import jason.asSemantics.Unifier;
@@ -80,7 +73,7 @@ public class Scheme extends CollectiveOE {
 
 
     // the literal is failed(schemeId, goalId)
-    private List<Literal> failedGoals = new ArrayList<>();
+    private List<Literal> failedGoals = new CopyOnWriteArrayList<>();
 
     // the literal is released(schemeId, goalId)
     private ConcurrentSkipListSet<Literal> releasedGoals = new ConcurrentSkipListSet<>();
@@ -89,7 +82,7 @@ public class Scheme extends CollectiveOE {
     private HashMap<Pair<String,String>,Object> goalArgs = new HashMap<>();
 
     // the literal is thrown(schemeId, exceptionId, agent name, arguments)
-    private List<Literal> throwns = new ArrayList<>();
+    private List<Literal> throwns = new CopyOnWriteArrayList<>();
 
     // list of satisfied goals
     private Set<String> satisfiedGoals = new HashSet<>(); // we use "contains" a lot, so remains HashSet
@@ -161,14 +154,20 @@ public class Scheme extends CollectiveOE {
     public boolean removeFailedGoal(Goal goal) {
         boolean r = false;
         Atom gAtom = createAtom(goal.getId());
-        Iterator<Literal> iFailedGoals = failedGoals.iterator();
-        while (iFailedGoals.hasNext()) {
-            Literal l = iFailedGoals.next();
+        for(Literal l :failedGoals) {
             if (l.getTerm(1).equals(gAtom)) {
-                iFailedGoals.remove();
+                failedGoals.remove(l);
                 r = true;
             }
         }
+//        Iterator<Literal> iFailedGoals = failedGoals.iterator();
+//        while (iFailedGoals.hasNext()) {
+//            Literal l = iFailedGoals.next();
+//            if (l.getTerm(1).equals(gAtom)) {
+//                iFailedGoals.remove();
+//                r = true;
+//            }
+//        }
         return r;
     }
 
@@ -190,14 +189,20 @@ public class Scheme extends CollectiveOE {
     public boolean removeThrown(moise.os.fs.exceptions.ExceptionSpec exceptionSpec) {
         boolean r = false;
         Atom eAtom = createAtom(exceptionSpec.getId());
-        Iterator<Literal> iThrowns = throwns.iterator();
-        while (iThrowns.hasNext()) {
-            Literal l = iThrowns.next();
+        for(Literal l : throwns) {
             if (l.getTerm(1).equals(eAtom)) {
-                iThrowns.remove();
+                throwns.remove(l);
                 r = true;
             }
         }
+//        Iterator<Literal> iThrowns = throwns.iterator();
+//        while (iThrowns.hasNext()) {
+//            Literal l = iThrowns.next();
+//            if (l.getTerm(1).equals(eAtom)) {
+//                iThrowns.remove();
+//                r = true;
+//            }
+//        }
         return r;
     }
 
@@ -248,9 +253,10 @@ public class Scheme extends CollectiveOE {
 
     public boolean resetExceptions(NPLInterpreter nengine) {
         boolean changed = false;
-        Iterator<Literal> iThrowns = throwns.iterator();
-        while (iThrowns.hasNext()) {
-            Literal l = iThrowns.next();
+        //Iterator<Literal> iThrowns = throwns.iterator();
+        for(Literal l : throwns) {
+        //while (iThrowns.hasNext()) {
+            //Literal l = iThrowns.next();
             try {
                 moise.os.fs.exceptions.ExceptionSpec e = spec.getExceptionSpec(l.getTerm(1).toString());
                 LogicalFormula condition = e.getInPolicy().getCondition().getConditionFormula();
@@ -259,7 +265,8 @@ public class Scheme extends CollectiveOE {
                 parser.setDFP(this);
                 LogicalFormula formula = (LogicalFormula)parser.log_expr();
                 if(!nengine.holds(formula)) {
-                    iThrowns.remove();
+                    //iThrowns.remove();
+                    throwns.remove(l);
                     
                     Goal tg = e.getInPolicy().getGoal();
                     resetGoal(tg);

@@ -133,16 +133,20 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +goalState(bhsch,house_built,_,_,satisfied)
     : loggerArtifact(LogArtId)
    <- logFinish[artifact_id(LogArtId)];
-      .stopMAS.
+      //.stopMAS;
+      .
 
 +exception(S,site_preparation_exception,Args)
    <- println("Notifying the companies that we had a problem in site preparation!");
       // Do something to notify the companies
       .
 
-+!handle_windows_fitting_delay
-    : exceptionThrown(bhsch,windows_delay_exception,Company) &
-      exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D))
-   <- println("There is a delay in windows fitting by ",Company, " of ",D," weeks!");
-      // Do something to handle the delay
-      .
++exception(S,exterior_paint_exception,Args)[source(Sender)]
+    : .member(alternativeColors(L),Args) &
+      .member(white,L)
+   <- .send(Sender,tell,newColor(white)).
+
++exception(S,interior_paint_exception,Args)[source(Sender)]
+    : .member(alternativeColors(L),Args) &
+      .member(gray,L)
+   <- .send(Sender,tell,newColor(gray)).

@@ -20,6 +20,10 @@ my_price("Plumbing",         600).
 my_price("ElectricalSystem", 300).
 my_price("Painting",        1100).
 
+available_colors([white,gray,red,orange,cyan]).
+
+!setup_initial_colors.
+
 //!discover_art("auction_for_SitePreparation").
 !discover_art("auction_for_Floors").
 !discover_art("auction_for_Walls").
@@ -28,6 +32,23 @@ my_price("Painting",        1100).
 !discover_art("auction_for_Plumbing").
 !discover_art("auction_for_ElectricalSystem").
 !discover_art("auction_for_Painting").
+
++!setup_initial_colors
+   <- .random([0,1],R1)
+      if(R1 == 0) {
+         +exterior_color(yellow);
+      }
+      else {
+         +exterior_color(red);
+      }
+      .random([0,1],R2)
+      if(R2 == 0) {
+         +interior_color(green);
+      }
+      else {
+         +interior_color(white);
+      }
+      .
 
 @lbo[atomic] // atomic to ensure it still winning less than two when the bid is placed
 +currentBid(V)[artifact_id(Art)]        // there is a new value for current bid
@@ -44,20 +65,54 @@ my_price("Painting",        1100).
 +!windows_fitted
     : not hurryUp
    <- println("Fitting windows...");
-      +hurryUp
+      +hurryUp;
+      .random([0,1],N);
+      if(N == 0) {
+         .wait(1500);
+      }
       .wait(1500);
       fitWindows;
       println("Windows done!").
       
 +!windows_fitted[scheme(S)]
-    : hurryUp &
-      play(HouseOwner,house_owner,hsh_group)
+    : hurryUp
    <- println("Notifying weeks of delay");
-      .send(HouseOwner,tell,exception(S,windows_delay_exception,[weeksOfDelay(1)]));
+      .random([0,1],N);
+      if(N == 0) {
+         .broadcast(tell,exception(S,windows_delay_exception,[weeksOfDelay(1)]));
+      }
+      else {
+         .broadcast(tell,exception(S,windows_delay_exception,[weeksOfDelay(3)]));
+      }
       println("Fitting windows... I Have to hurry!");
       fitWindows;
       -hurryUp
       println("Windows done!").
+
++exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
+    : D >= 2 & focused(ora4mas,bhsch,ArtId)
+   <- println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
+      .send(Sender,tell,handled(S,windows_delay_exception)).
+
++!exterior_painted
+    : play(HouseOwner,house_owner,hsh_group) &
+      focused(ora4mas,bhsch,ArtId) &
+      exterior_color(C) & available_colors(L) & not .member(C,L)
+   <- .send(HouseOwner,tell,exception(bhsch,exterior_paint_exception,[alternativeColors(L)]));
+      .wait({+newColor(NC)});
+      -exterior_color(C);
+      +exterior_color(NC);
+      resetGoal(exterior_painted)[artifact_id(ArtId)].
+
++!interior_painted[scheme(S)]
+    : play(HouseOwner,house_owner,hsh_group) &
+      focused(ora4mas,S,ArtId) &
+      interior_color(C) & available_colors(L) & not .member(C,L)
+   <- .send(HouseOwner,tell,exception(bhsch,interior_paint_exception,[alternativeColors(L)]));
+      .wait({+newColor(NC)});
+      -interior_color(C);
+      +interior_color(NC);
+      resetGoal(interior_painted)[artifact_id(ArtId)].
 
 { include("org_code.asl") }
 { include("org_goals.asl") }

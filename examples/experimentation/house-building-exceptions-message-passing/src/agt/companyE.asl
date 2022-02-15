@@ -31,6 +31,11 @@ sum_of_my_offers(S) :-
    <- //.print("my bid in auction artifact ", Art, ", Task ", S,", is ",math.max(V-10,P));
       bid( math.max(V-10,P) )[ artifact_id(Art) ].  // place my bid offering a cheaper service
 
++exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
+    : D >= 2 & focused(ora4mas,bhsch,ArtId)
+   <- println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
+      .send(Sender,tell,handled(S,windows_delay_exception)).
+
 /* plans for execution phase */
 
 { include("org_code.asl") }
