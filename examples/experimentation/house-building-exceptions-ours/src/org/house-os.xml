@@ -135,10 +135,27 @@
                 </handling-policy>
             </recovery-strategy>
 
+            <recovery-strategy id="rsPaint">
+                <notification-policy id="np3">
+                    <condition type="custom">
+                        <condition-argument id="formula" value="scheme_id(S) &amp; (failed(S,interior_painted) | failed(S,exterior_painted))" />
+                    </condition>
+                    <exception-spec id="paint_exception">
+                        <exception-argument id="alternativeColors" arity="1" />
+                    </exception-spec>
+                    <goal id="notify_painting_failure" />
+                </notification-policy>
+                <handling-policy id="hp3">
+                    <condition type="always" />
+                    <goal id="choose_new_color" />
+                </handling-policy>
+            </recovery-strategy>
+
             <mission id="management_of_house_building" min="1" max="1">
                 <goal id="house_built" />
                 <goal id="notify_affected_companies" />
                 <goal id="handle_windows_fitting_delay" />
+                <goal id="choose_new_color" />
             </mission>
             <mission id="site_inspection" min="1" max="1">
                 <goal id="inspect_site" />
@@ -172,6 +189,7 @@
             <mission id="paint_house" min="1" max="1">
                 <goal id="exterior_painted" />
                 <goal id="interior_painted" />
+                <goal id="notify_painting_failure" />
             </mission>
         </scheme>
     </functional-specification>

@@ -20,6 +20,10 @@ my_price("Plumbing",         600).
 my_price("ElectricalSystem", 300).
 my_price("Painting",        1100).
 
+available_colors([white,gray,red,orange,cyan]).
+
+!setup_initial_colors.
+
 //!discover_art("auction_for_SitePreparation").
 !discover_art("auction_for_Floors").
 !discover_art("auction_for_Walls").
@@ -28,6 +32,23 @@ my_price("Painting",        1100).
 !discover_art("auction_for_Plumbing").
 !discover_art("auction_for_ElectricalSystem").
 !discover_art("auction_for_Painting").
+
++!setup_initial_colors
+   <- .random([0,1],R1)
+      if(R1 == 0) {
+         +exterior_color(yellow);
+      }
+      else {
+         +exterior_color(red);
+      }
+      .random([0,1],R2)
+      if(R2 == 0) {
+         +interior_color(green);
+      }
+      else {
+         +interior_color(white);
+      }
+      .
 
 @lbo[atomic] // atomic to ensure it still winning less than two when the bid is placed
 +currentBid(V)[artifact_id(Art)]        // there is a new value for current bid
@@ -45,10 +66,13 @@ my_price("Painting",        1100).
     : not hurryUp
    <- println("Fitting windows...");
       +hurryUp
-      .wait(1500);
+      .random([0,1],N);
+      if(N == 0) {
+         .wait(1500);
+      }
       fitWindows;
       println("Windows done!").
-      
+
 +!windows_fitted
     : hurryUp
    <- println("Fitting windows... I Have to hurry!");
@@ -59,8 +83,44 @@ my_price("Painting",        1100).
 +!notify_windows_fitting_delay[scheme(S)]
 	: focused(ora4mas,S,ArtId)
    <- println("Notifying weeks of delay");
-      throwException(windows_delay_exception,[weeksOfDelay(1)])[artifact_id(ArtId)].
-      //throwException(windows_delay_exception,[weeksOfDelay(3)]). // This exception would enable the catching goal
+      .random([0,1],N);
+      if(N == 0) {
+         throwException(windows_delay_exception,[weeksOfDelay(1)])[artifact_id(ArtId)];
+      }
+      else {
+         throwException(windows_delay_exception,[weeksOfDelay(3)]); // This exception would enable the catching goal
+      }
+      .
+
++!exterior_painted[scheme(S)]
+    : focused(ora4mas,S,ArtId) &
+      exterior_color(C) & available_colors(L) & not .member(C,L)
+   <- goalFailed(exterior_painted)[artifact_id(ArtId)];
+      .fail.
+
++!interior_painted[scheme(S)]
+    : focused(ora4mas,S,ArtId) &
+      interior_color(C) & available_colors(L) & not .member(C,L)
+   <- goalFailed(interior_painted)[artifact_id(ArtId)];
+      .fail.
+
++!notify_painting_failure[scheme(S)]
+    : focused(ora4mas,S,ArtId) & available_colors(L)
+   <- throwException(paint_exception,[alternativeColors(L)])[artifact_id(ArtId)].
+
++newColor(C)
+    : focused(ora4mas,bhsch,ArtId) &
+      goalState(bhsch,exterior_painted,_,_,failed)
+   <- -exterior_color(_);
+      +exterior_color(C);
+      resetGoal(exterior_painted)[artifact_id(ArtId)].
+
++newColor(C)
+    : focused(ora4mas,bhsch,ArtId) &
+      goalState(bhsch,interior_painted,_,_,failed)
+   <- -interior_color(_);
+      +interior_color(C);
+      resetGoal(interior_painted)[artifact_id(ArtId)].
 
 { include("org_code.asl") }
 { include("org_goals.asl") }

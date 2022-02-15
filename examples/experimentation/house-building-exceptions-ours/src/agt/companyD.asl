@@ -10,7 +10,7 @@
 //!discover_art("auction_for_WindowsDoors").
 !discover_art("auction_for_Plumbing").
 !discover_art("auction_for_ElectricalSystem").
-!discover_art("auction_for_Painting").
+//!discover_art("auction_for_Painting").
 
 +task(S)[artifact_id(Art)]
    <- .wait(math.random(500)+50);

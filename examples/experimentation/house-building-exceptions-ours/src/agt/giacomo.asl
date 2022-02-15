@@ -133,7 +133,8 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +goalState(bhsch,house_built,_,_,satisfied)
     : loggerArtifact(LogArtId)
    <- logFinish[artifact_id(LogArtId)];
-      .stopMAS.
+      //.stopMAS;
+      .
 
 +!notify_affected_companies
    <- println("Notifying the companies that we had a problem in site preparation!");
@@ -146,3 +147,17 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
    <- println("There is a delay in windows fitting by ",Company, " of ",D," weeks!");
       // Do something to handle the delay
       .
+
++!choose_new_color
+    : exceptionThrown(bhsch,paint_exception,Company) &
+      exceptionArgument(bhsch,paint_exception,alternativeColors(L)) &
+      goalState(bhsch,exterior_painted,_,_,failed) &
+      .member(white,L)
+   <- .send(Company,tell,newColor(white)).
+
++!choose_new_color
+    : exceptionThrown(bhsch,paint_exception,Company) &
+      exceptionArgument(bhsch,paint_exception,alternativeColors(L)) &
+      goalState(bhsch,interior_painted,_,_,failed) &
+      .member(gray,L)
+   <- .send(Company,tell,newColor(gray)).
