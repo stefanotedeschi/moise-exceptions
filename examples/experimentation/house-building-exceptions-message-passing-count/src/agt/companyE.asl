@@ -21,6 +21,8 @@ sum_of_my_offers(S) :-
 !discover_art("auction_for_Walls").
 !discover_art("auction_for_Roof").
 
+!discover_logging_art.
+
 
 +currentBid(V)[artifact_id(Art)]      // there is a new value for current bid
     : not i_am_winning(Art) &         // I am not the winner
@@ -32,11 +34,13 @@ sum_of_my_offers(S) :-
       bid( math.max(V-10,P) )[ artifact_id(Art) ].  // place my bid offering a cheaper service
 
 +exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
-    : D >= 2 & focused(ora4mas,bhsch,ArtId)
-   <- println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
+    : D >= 2 & focused(ora4mas,bhsch,ArtId) & loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
       .send(Sender,tell,handled(S,windows_delay_exception)).
 
 /* plans for execution phase */
 
 { include("org_code.asl") }
 { include("org_goals.asl") }
+{ include("exception_logging.asl") }

@@ -33,6 +33,8 @@ available_colors([white,gray,red,orange,cyan]).
 !discover_art("auction_for_ElectricalSystem").
 !discover_art("auction_for_Painting").
 
+!discover_logging_art.
+
 +!setup_initial_colors
    <- .random([0,1],R1)
       if(R1 == 0) {
@@ -70,7 +72,6 @@ available_colors([white,gray,red,orange,cyan]).
       if(N == 0) {
          .wait(1500);
       }
-      .wait(1500);
       fitWindows;
       println("Windows done!").
       
@@ -90,15 +91,18 @@ available_colors([white,gray,red,orange,cyan]).
       println("Windows done!").
 
 +exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
-    : D >= 2 & focused(ora4mas,bhsch,ArtId)
-   <- println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
+    : D >= 2 & focused(ora4mas,bhsch,ArtId) & loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
       .send(Sender,tell,handled(S,windows_delay_exception)).
 
 +!exterior_painted
     : play(HouseOwner,house_owner,hsh_group) &
-      exterior_color(C) & available_colors(L) & not .member(C,L)
+      exterior_color(C) & available_colors(L) & not .member(C,L) &
+      loggerArtifact(LogArtId)
    <- .send(HouseOwner,tell,exception(bhsch,exterior_paint_exception,[alternativeColors(L)]));
       .wait({+newColor(NC)});
+      logInc[artifact_id(LogArtId)];
       -exterior_color(C);
       +exterior_color(NC);
       !exterior_painted.
@@ -106,9 +110,11 @@ available_colors([white,gray,red,orange,cyan]).
 
 +!interior_painted[scheme(S)]
     : play(HouseOwner,house_owner,hsh_group) &
-      interior_color(C) & available_colors(L) & not .member(C,L)
+      interior_color(C) & available_colors(L) & not .member(C,L) &
+      loggerArtifact(LogArtId)
    <- .send(HouseOwner,tell,exception(bhsch,interior_paint_exception,[alternativeColors(L)]));
       .wait({+newColor(NC)});
+      logInc[artifact_id(LogArtId)];
       -interior_color(C);
       +interior_color(NC);
       !interior_painted.
@@ -116,3 +122,4 @@ available_colors([white,gray,red,orange,cyan]).
 
 { include("org_code.asl") }
 { include("org_goals.asl") }
+{ include("exception_logging.asl") }

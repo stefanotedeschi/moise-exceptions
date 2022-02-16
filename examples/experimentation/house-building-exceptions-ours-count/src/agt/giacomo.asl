@@ -76,8 +76,6 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       println("*** Execution Phase ***");
       println
 
-      logStart[artifact_id(LogArtId)];
-
       // create the group
       .my_name(Me);
       createWorkspace("ora4mas");
@@ -137,20 +135,38 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       .
 
 +!notify_affected_companies
+    : loggerArtifact(LogArtId)
    <- println("Notifying the companies that we had a problem in site preparation!");
       // Do something to notify the companies
+      logInc[artifact_id(LogArtId)];
       .
 
 +!choose_new_color
 	 : exceptionThrown(bhsch,paint_exception,Company) &
       exceptionArgument(bhsch,paint_exception,alternativeColors(L)) &
       goalState(bhsch,exterior_painted,_,_,failed) &
-      .member(white,L)
-   <- .send(Company,tell,newColor(white)).
+      .member(white,L) & loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      .send(Company,tell,newColor(white)).
 
 +!choose_new_color
     : exceptionThrown(bhsch,paint_exception,Company) &
       exceptionArgument(bhsch,paint_exception,alternativeColors(L)) &
       goalState(bhsch,interior_painted,_,_,failed) &
-      .member(gray,L)
-   <- .send(Company,tell,newColor(gray)).
+      .member(gray,L) & loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      .send(Company,tell,newColor(gray)).
+
++obligation(Ag,Norm,What,Deadline)[artifact_id(ArtId)]
+    : not .my_name(Ag) & (satisfied(Scheme,Goal)=What | done(Scheme,Goal,Ag)=What) &
+      (
+         Goal=notify_site_preparation_problem |
+         Goal=handle_site_problem |
+         Goal=inspect_site |
+         Goal=notify_affected_companies |
+         Goal=notify_windows_fitting_delay |
+         Goal=handle_windows_fitting_delay |
+         Goal=notify_painting_failure |
+         Goal=choose_new_color
+      ) & loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)].

@@ -7,6 +7,7 @@
 my_price(300). // initial belief
 
 !discover_art("auction_for_Plumbing").
+!discover_logging_art.
 
 +currentBid(V)[artifact_id(Art)]         // there is a new value for current bid
     : not i_am_winning(Art)  &           // I am not the current winner
@@ -25,3 +26,4 @@ my_price(300). // initial belief
       installPlumbing;
       println("Done!").
 
+{ include("exception_logging.asl") }

@@ -6,6 +6,7 @@
 my_price(1500). // initial belief
 
 !discover_art("auction_for_SitePreparation").
+!discover_logging_art.
 
 +currentBid(V)[artifact_id(Art)]        // there is a new value for current bid
     : not i_am_winning(Art) &           // I am not the winner
@@ -28,14 +29,19 @@ my_price(1500). // initial belief
       .fail.
 
 +handlerProposal(bhsch,site_preparation_exception)[source(Sender)]
-    : not (handlerProposal(bhsch,site_preparation_exception)[source(AnotherSender)] & Sender \== AnotherSender)
-   <- -handlerProposal(bhsch,site_preparation_exception)[source(Sender)];
+    : not (handlerProposal(bhsch,site_preparation_exception)[source(AnotherSender)] & Sender \== AnotherSender) &
+      loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      -handlerProposal(bhsch,site_preparation_exception)[source(Sender)];
       .send(Sender,tell,handlerProposalAccepted(bhsch,site_preparation_exception)).
 
 +handled(bhsch,site_preparation_exception)[source(Sender)]
-    : focused(ora4mas,bhsch,ArtId)
-	<- -handled(S,site_preparation_exception)[source(Sender)];
+    : focused(ora4mas,bhsch,ArtId) &
+      loggerArtifact(LogArtId)
+	<- logInc[artifact_id(LogArtId)];
+      -handled(S,site_preparation_exception)[source(Sender)];
       !site_prepared;
 	   goalAchieved(site_prepared)[artifact_id(ArtId)].
 
 { include("org_code.asl") }
+{ include("exception_logging.asl") }

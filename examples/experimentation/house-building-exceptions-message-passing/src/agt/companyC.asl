@@ -70,7 +70,6 @@ available_colors([white,gray,red,orange,cyan]).
       if(N == 0) {
          .wait(1500);
       }
-      .wait(1500);
       fitWindows;
       println("Windows done!").
       

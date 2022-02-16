@@ -12,6 +12,8 @@
 !discover_art("auction_for_ElectricalSystem").
 !discover_art("auction_for_Painting").
 
+!discover_logging_art.
+
 +task(S)[artifact_id(Art)]
    <- .wait(math.random(500)+50);
       Bid = math.floor(math.random(10000))+800;
@@ -21,11 +23,13 @@
                                     // the current bid
 
 +exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
-    : D >= 2 & focused(ora4mas,bhsch,ArtId)
-   <- println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
+    : D >= 2 & focused(ora4mas,bhsch,ArtId) & loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
       .send(Sender,tell,handled(S,windows_delay_exception)).
 
 /* plans for execution phase */
 
 { include("org_code.asl") }
 { include("org_goals.asl") }
+{ include("exception_logging.asl") }

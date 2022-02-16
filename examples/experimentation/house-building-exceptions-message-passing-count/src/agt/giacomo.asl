@@ -76,8 +76,6 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       println("*** Execution Phase ***");
       println;
 
-      logStart[artifact_id(LogArtId)];
-
       // create the group
       .my_name(Me);
       createWorkspace("ora4mas");
@@ -133,21 +131,30 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +goalState(bhsch,house_built,_,_,satisfied)
     : loggerArtifact(LogArtId)
    <- logFinish[artifact_id(LogArtId)];
-      .stopMAS;
+      //.stopMAS;
       .
 
 +exception(bhsch,site_preparation_exception,Args)[source(Sender)]
-   <- println("Notifying the companies that we had a problem in site preparation!");
+    : loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      println("Notifying the companies that we had a problem in site preparation!");
       -exception(bhsch,site_preparation_exception,Args)[source(Sender)];
       // Do something to notify the companies
       .
 
-+exception(S,exterior_paint_exception,Args)[source(Sender)]
++exception(bhsch,exterior_paint_exception,Args)[source(Sender)]
     : .member(alternativeColors(L),Args) &
-      .member(white,L)
-   <- .send(Sender,tell,newColor(white)).
+      .member(white,L) &
+      loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      .send(Sender,tell,newColor(white)).
 
-+exception(S,interior_paint_exception,Args)[source(Sender)]
++exception(bhsch,interior_paint_exception,Args)[source(Sender)]
     : .member(alternativeColors(L),Args) &
-      .member(gray,L)
-   <- .send(Sender,tell,newColor(gray)).
+      .member(gray,L) &
+      loggerArtifact(LogArtId)
+   <- logInc[artifact_id(LogArtId)];
+      .send(Sender,tell,newColor(gray)).
+
+
+{ include("exception_logging.asl") }

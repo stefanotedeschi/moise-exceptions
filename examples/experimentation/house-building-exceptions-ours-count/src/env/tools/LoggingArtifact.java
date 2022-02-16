@@ -10,25 +10,18 @@ import cartago.OPERATION;
 
 public class LoggingArtifact extends Artifact {
     
-    long startTimeMillis;
-    long endTimeMillis;
+    int nObligations = 0;
 
     private Logger logger = LogManager.getLogger(LoggingArtifact.class);
     
     @OPERATION
-    public void logStart() {
-
-        startTimeMillis = Calendar.getInstance().getTimeInMillis();
-
+    public void logInc() {
+        nObligations++;
     }
 
     @OPERATION
     public void logFinish() {
-
-        endTimeMillis = Calendar.getInstance().getTimeInMillis();
-
-        logger.info(endTimeMillis - startTimeMillis + ";");
-
+        logger.info(nObligations);
     }
 
 }

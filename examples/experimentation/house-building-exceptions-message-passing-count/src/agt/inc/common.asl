@@ -14,3 +14,9 @@ i_am_winning(Art)   // check if I placed the current best bid on auction artifac
 -!discover_art(ToolName)
    <- .wait(100);
       !discover_art(ToolName).
+
++!discover_logging_art
+   <- .wait(100);
+      lookupArtifact("LogArt",LogArtId);
+      +loggerArtifact(LogArtId);
+      println("Logging artifact discovered!");.
