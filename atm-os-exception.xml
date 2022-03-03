@@ -49,32 +49,49 @@
             </goal>
 
             <recovery-strategy id="rec1">
-
                 <notification-policy id="np1">
-                
                 	<condition type="custom"> <!-- must-notify-when -->
                 		<condition-argument id="formula" value="scheme_id(S) &amp; failed(S,parseAmount)" />
 					</condition>
-
                     <exception-spec id="nan">
                     	<exception-argument id="index" arity="1" />
                     </exception-spec>
-
                     <!-- THROWING GOAL -->
                     <goal id="throwNan" />
-
                 </notification-policy>
-
                 <handling-policy id="hp1">
-
                    <condition type="always" />
-                   
                    <!-- CATCHING GOAL -->
                    <goal id="recoverFromNan" />
-
                 </handling-policy>
 
             </recovery-strategy>
+
+            <!--<notification-policy>
+                <target id="parseAmount" />
+                <exception-spec id="not_a_number">
+                    <exception-argument functor="index" arity="1" />
+                    <throwing-goal id="throwNan" when="failed(parseAmount)" />
+                    <catching-goal id="recoverFromNan" />
+                </exception-spec>
+                <exception-spec id="parsing_delay">
+                    <exception-argument functor="eta" arity="1" />
+                    <throwing-goal id="" when="delay(parseAmount)" />
+                    <catching-goal id="recoverF" when="eta(N) &amp; N<2"/>
+                    <catching-goal id="recoverFromNan" />
+                    <catching-goal id="recoverFromNan" />
+                </exception-spec>
+            </notification-policy>
+
+
+
+            exceptionSpec(id, target, condition)
+            exceptionArgument(exception id, functor, arity)
+            throwingGoal(exception id, goal id)
+            catchingGoal(exception id, goal id, when)
+            -->
+
+            
 
             <recovery-strategy id="rec2">
 
