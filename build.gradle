@@ -13,7 +13,7 @@ plugins {
 
 defaultTasks 'jar'
 
-version '0.2'
+version '0.3'
 group   'it.unito.di'
 
 sourceCompatibility = 1.8
