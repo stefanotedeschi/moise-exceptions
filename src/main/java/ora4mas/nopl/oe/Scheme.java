@@ -7,6 +7,17 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.concurrent.*;
 
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
 import jaca.ToProlog;
 import jason.asSemantics.Unifier;
 import jason.asSyntax.ASSyntax;
@@ -90,7 +101,7 @@ public class Scheme extends CollectiveOE {
     public Scheme(moise.os.fs.Scheme spec, String id) {
         super(id);
         this.spec = spec;
-
+        
         // copy initial values of goal args
         for (Goal g: spec.getGoals()) {
             if (g.getArguments() != null) {
@@ -102,7 +113,7 @@ public class Scheme extends CollectiveOE {
             }
         }
     }
-
+    
     public moise.os.fs.Scheme getSpec() {
         return spec;
     }
@@ -230,7 +241,7 @@ public class Scheme extends CollectiveOE {
         }
         return changed;
     }
-
+    
     protected boolean resetGoalAndPreConditions(Goal goal) {
         boolean changed = removeDoneGoal(goal);
 
