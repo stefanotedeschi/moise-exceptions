@@ -127,7 +127,7 @@ public class OS extends MoiseElement implements ToXML {
         ele.setAttribute("os-version","1.0"); // TODO: get the number from other place
         ele.setAttribute("xmlns","https://moise-exceptions.sourceforge.io/os");
         ele.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
-        ele.setAttribute("xsi:schemaLocation","https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd");
+        ele.setAttribute("xsi:schemaLocation","https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd");
 
         if (getProperties().size() > 0) {
             ele.appendChild( getPropertiesAsDOM(document));

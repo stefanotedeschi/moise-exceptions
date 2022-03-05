@@ -3,12 +3,12 @@
 <?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
 
 <organisational-specification id="cake"
-	os-version="1.0"
+	os-version="0.3"
 	
 	xmlns="https://moise-exceptions.sourceforge.io/os"
 	
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
+	xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
     <structural-specification>
 
@@ -47,51 +47,28 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="r1">
-                <notification-policy id="np1">
-                    <condition type="goal-failure">
-                        <condition-argument id="target" value="provideIngredients" />
-                    </condition>
-                    <exception-spec id="ingredientsUnavailable">
-                        <exception-argument id="missingIngredients" arity="1" />
-                    </exception-spec>
-                    <goal id="notifyIngredientsUnavailability" />
-                </notification-policy>
-                <handling-policy id="handlerIngredientsUnavailable">
-                    <condition type="always" />
-                    <goal id="dealWithMissingIngredients" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np1" target="provideIngredients">
+                <exception-spec id="ingredientsUnavailable">
+                    <exception-argument id="missingIngredients" arity="1" />
+                    <throwing-goal id="notifyIngredientsUnavailability" when="scheme_id(S) &amp; failed(S,provideIngredients)" />
+                    <catching-goal id="dealWithMissingIngredients" />
+                </exception-spec>
+            </notification-policy>
 
-            <recovery-strategy id="r2">
-                <notification-policy id="np2">
-                    <condition type="goal-failure">
-                        <condition-argument id="target" value="switchOnOven" />
-                    </condition>
-                    <exception-spec id="ovenBroken">
-                        <exception-argument id="faultType" arity="1" />
-                    </exception-spec>
-                    <goal id="notifyProblemWithOven" />
-                </notification-policy>
-                <handling-policy id="handlerOvenProblem">
-                    <condition type="always" />
-                    <goal id="checkOven" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np2" target="switchOnOven">
+                <exception-spec id="ovenBroken">
+                    <exception-argument id="faultType" arity="1" />
+                    <throwing-goal id="notifyProblemWithOven" when="scheme_id(S) &amp; failed(S,switchOnOven)" />
+                    <catching-goal id="checkOven" />
+                </exception-spec>
+            </notification-policy>
 
-            <recovery-strategy id="r3">
-                <notification-policy id="np3">
-                    <condition type="custom">
-                        <condition-argument id="formula" value="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))" />
-                    </condition>
-                    <exception-spec id="cakePreparationFailure" />
-                    <goal id="notifyCakePreparationFailure" />
-                </notification-policy>
-                <handling-policy id="handlerCakePreparationFailure">
-                    <condition type="always" />
-                    <goal id="handleCakePreparationFailure" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np2" target="workspaceSetup">
+                <exception-spec id="cakePreparationFailure">
+                    <throwing-goal id="notifyCakePreparationFailure" when="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))" />
+                    <catching-goal id="cancelOrder" />
+                </exception-spec>
+            </notification-policy>
 
             <mission id="mApprentice" min="1" max="1">
                 <goal id="switchOnOven" />
@@ -110,7 +87,7 @@
             </mission>
             <mission id="mCustomer" min="1" max="1">
                 <goal id="haveCake" />
-                <goal id="handleCakePreparationFailure" />
+                <goal id="cancelOrder" />
             </mission>
 
         </scheme>

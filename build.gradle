@@ -42,11 +42,11 @@ publishing {
 
 dependencies {
     implementation group: 'org.jason-lang', name: 'jason',    version: '2.5.2', changing: false
-    implementation group: 'org.jacamo',     name: 'npl' ,     version: '0.5', changing: true, transitive: false
-    implementation group: 'org.jacamo',     name: 'cartago',  version: '3.0', changing: true
-    implementation group: 'org.jacamo',     name: 'jaca',     version: '3.0', changing: true
+    implementation group: 'org.jacamo',     name: 'npl' ,     version: '0.5',   changing: true, transitive: false
+    implementation group: 'org.jacamo',     name: 'cartago',  version: '3.0',   changing: true
+    implementation group: 'org.jacamo',     name: 'jaca',     version: '3.0',   changing: true
 
-    implementation group: 'junit',      name: 'junit', version: '4.+'
+    testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
 
     implementation group: 'guru.nidi', name: 'graphviz-java', version: '0.7.0'
 
@@ -56,8 +56,11 @@ dependencies {
 
 	sshAntTask 'org.apache.ant:ant-jsch:1.7.1', 'jsch:jsch:0.1.29'
 
-    extraLibs group: 'org.jacamo',     name: 'npl' ,     version: '0.5-SNAPSHOT', changing: true, transitive: false
     extraLibs 'com.google.code.gson:gson:2.8.6'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 jar {
