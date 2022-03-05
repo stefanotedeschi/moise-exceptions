@@ -1,13 +1,13 @@
 /*
     This program was automatically generated from
-    the organisation specification 'atm_exceptions'
-    on dicembre 09, 2021 - 11:06:31
+    the organisation specification 'atm'
+    on marzo 05, 2022 - 12:13:30
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
 */
 
-scope organisation(atm_exceptions) {
+scope organisation(atm) {
 
 
    // Role hierarchy
@@ -319,4 +319,4 @@ scope scheme(atm_sch) {
 
 } // end of scheme atm_sch
 
-} // end of organisation atm_exceptions
+} // end of organisation atm
