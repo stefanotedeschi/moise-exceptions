@@ -6,10 +6,10 @@
 +!getAmountAsString
 	<- .wait(2000);
 	   enableInput;
-	   println("Getting amount...");
+	   .print("Getting amount...");
 	   .wait({+inputReceived});
 	   disableInput;
-	   println("Amount received!").
+	   .print("Amount received!").
 
 // uncomment the include below to have an agent compliant with its organisation
 { include("$moiseJar/asl/org-obedient.asl") }

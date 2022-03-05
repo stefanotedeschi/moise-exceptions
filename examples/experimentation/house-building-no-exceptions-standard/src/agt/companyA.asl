@@ -21,6 +21,6 @@ my_price(300). // initial belief
 // plan to execute organisational goals (not implemented)
 
 +!plumbing_installed   // the organisational goal (created from an obligation)
-   <- println("Installing plumbing...");
+   <- .print("Installing plumbing...");
       installPlumbing; // simulates the action (in GUI artifact)
-      println("Done!").
+      .print("Done!").

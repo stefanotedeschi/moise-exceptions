@@ -1,7 +1,7 @@
 
 +!receiveOrder
 	 : play(Ag,amazonWorker5,gam)
-	<- println("Receiving new order...");
+	<- .print("Receiving new order...");
 	   getOrderRecipient(Recipient);
 	   .send(Ag,tell,recipient(Recipient)).
 

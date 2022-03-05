@@ -22,7 +22,7 @@ my_price(2500). // initial belief
     : (.member(errorCode(flooding),Args) | .member(errorCode(archaeologicalRemains),Args)) &
       loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
-      println("Proposing as handler for site preparation exception...");
+      .print("Proposing as handler for site preparation exception...");
       .send(Sender,tell,handlerProposal(bhsch,site_preparation_exception)).
 
 +handlerProposalAccepted(bhsch,site_preparation_exception)[source(Sender)]
@@ -31,13 +31,13 @@ my_price(2500). // initial belief
    <- logInc[artifact_id(LogArtId)];
       -exception(bhsch,site_preparation_exception,Args)[source(Sender)];
       -handlerProposalAccepted(bhsch,site_preparation_exception)[source(Sender)];
-      println("Inspecting site...");
+      .print("Inspecting site...");
       performSiteAnalysis(Result);
-      println("Done!");
-      println("Fixing flooding...");
+      .print("Done!");
+      .print("Fixing flooding...");
       fixFlooding(Result);
       .send(Sender,tell,handled(bhsch,site_preparation_exception));
-      println("Done!").
+      .print("Done!").
 
 +handlerProposalAccepted(bhsch,site_preparation_exception)[source(Sender)] 
     : exception(bhsch,site_preparation_exception,Args) &
@@ -45,13 +45,13 @@ my_price(2500). // initial belief
    <- logInc[artifact_id(LogArtId)];
       -exception(bhsch,site_preparation_exception,Args)[source(Sender)];
       -handlerProposalAccepted(bhsch,site_preparation_exception)[source(Sender)];
-      println("Inspecting site...");
+      .print("Inspecting site...");
       delimitSite;
-      println("Done!");
-      println("RemovingRemains...");
+      .print("Done!");
+      .print("RemovingRemains...");
       carefullyRemoveRemains;
       .send(Sender,tell,handled(bhsch,site_preparation_exception));
-      println("Done!").
+      .print("Done!").
 
 /* plans for execution phase */
 

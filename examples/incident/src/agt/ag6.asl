@@ -5,10 +5,10 @@
 	   scheme(am_sch,_,SchId) &
 	   group(GroupName,key_account_management_group,_) &
 	   play(C,customer,GroupName)
-	<- println("Please recall...");
+	<- .print("Please recall...");
 	   .send(C,tell,please_recall);
 	   goalAchieved(rec)[artifact_id(SchId)]. 
 	   
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
-{ include("common.asl") }
+{ include("$moiseJar/asl/org-obedient.asl") }

@@ -24,3 +24,4 @@
 
 { include("org_code.asl") }
 { include("org_goals.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }

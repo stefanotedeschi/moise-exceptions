@@ -4,7 +4,7 @@
 	   group(GroupName,key_account_management_group,_) &
 	   play(C,customer,GroupName) &
 	   feedback(F)
-	<- println("Explaining solution...");
+	<- .print("Explaining solution...");
 	   .send(C,tell,solution(F));
 	   goalAchieved(explain_solution)[artifact_id(SchId)].
 	   
@@ -14,10 +14,10 @@
 	   group(GroupName,key_account_management_group,_) &
 	   play(C,customer,GroupName) &
 	   not feedback(F)
-	<- println("Explaining solution...");
+	<- .print("Explaining solution...");
 	   .send(C,tell,solution(reboot));
 	   goalAchieved(explain_solution)[artifact_id(SchId)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
-{ include("common.asl") }
+{ include("$moiseJar/asl/org-obedient.asl") }

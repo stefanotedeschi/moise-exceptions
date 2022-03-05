@@ -4,16 +4,16 @@
 { include("$jacamoJar/templates/common-moise.asl") }
 
 +!turnTableMoveUp
-	<- println("Turning table and moving up...");
-	   println("Unable to move up!");
+	<- .print("Turning table and moving up...");
+	   .print("Unable to move up!");
 	   goalFailed(turnTableMoveUp)
 	   .fail.
 	
 +!turnTableMoveDown
-	<- println("Turning table and moving down...").
+	<- .print("Turning table and moving down...").
 	
 +!notifyStoppedMotorNumber
-	<- println("The broken motor is the number 2");
+	<- .print("The broken motor is the number 2");
 	   throwException(exMotor,[motorNumber(2)]).
 
 // uncomment the include below to have an agent compliant with its organisation

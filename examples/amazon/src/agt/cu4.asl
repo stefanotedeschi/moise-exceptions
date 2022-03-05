@@ -2,7 +2,7 @@
 +!sendOrder
 	 : group(gam,amazon_group,GrArtId) &
 	   play(Ag,customerOrderReceiver,gcu)
-	<- println("Sending order to Amazon...");
+	<- .print("Sending order to Amazon...");
 	   addOrder(Ag);
 	   createScheme(amsch, amazon_sch, SchArtId);
 	   addScheme(amsch)[artifact_id(GrArtId)].

@@ -1,6 +1,6 @@
 
 +!placeBin
-	<- println("Placing items in bin...").
+	<- .print("Placing items in bin...").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

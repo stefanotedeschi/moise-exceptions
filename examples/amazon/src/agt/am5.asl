@@ -2,7 +2,7 @@
 +!sendToCarrier
 	 : group(gca,carrier_group,GrArtId) &
 	   recipient(Recipient)
-	<- println("Sending items to carrier...");
+	<- .print("Sending items to carrier...");
 	   createScheme(casch, carrier_sch, SchArtId);
 	   setArgumentValue(shipOrder,recipient,Recipient)[artifact_id(SchArtId)];
 	   addScheme(casch)[artifact_id(GrArtId)].

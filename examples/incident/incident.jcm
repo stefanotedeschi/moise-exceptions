@@ -83,18 +83,10 @@ mas incident {
 
 
 	organisation o1 : incident-os.xml {
-		group g1 : key_account_management_group {
-			debug
-		}
-		group g2 : first_level_support_group {
-			debug
-		}
-		group g3 : second_level_support_group {
-			debug
-		}
-		group g4 : developer_group {
-			debug
-		}
+		group g1 : key_account_management_group
+		group g2 : first_level_support_group
+		group g3 : second_level_support_group
+		group g4 : developer_group
 	}
 
 }

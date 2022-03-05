@@ -8,24 +8,24 @@
 
 +!start
   <- +start;
-     println("START").
+     .print("START").
 
 +!check
   <- .wait(1000);
      ?start;
-     println("CHECK").
+     .print("CHECK").
 
 +!handleDelay
      : exceptionThrown(_,delay,_) &
        exceptionArgument(_,delay,eta(N)) &
        N < 200
-	<- println("I wait a little bit more...").
+	<- .print("I wait a little bit more...").
 
 +!handleDelay
      : exceptionThrown(_,delay,_) &
        exceptionArgument(_,delay,eta(N)) &
        N >= 200
-	<- println("I give up.");
+	<- .print("I give up.");
 	   goalReleased(task).
 
 // uncomment the include below to have an agent compliant with its organisation

@@ -21,12 +21,12 @@ my_price(2500). // initial belief
       focused(ora4mas,Scheme,ArtId) &
       exceptionThrown(Scheme,site_preparation_exception,_) &
       exceptionArgument(Scheme,site_preparation_exception,errorCode(flooding))
-   <- println("Inspecting site...", Scheme);
+   <- .print("Inspecting site...", Scheme);
       performSiteAnalysis(Result);
-      println("Done!");
-      println("Fixing flooding...");
+      .print("Done!");
+      .print("Fixing flooding...");
       fixFlooding(Result);
-      println("Done!");
+      .print("Done!");
       goalReleased(site_prepared)[artifact_id(ArtId)];
       goalAchieved(inspect_site)[artifact_id(ArtId)].
       
@@ -35,12 +35,12 @@ my_price(2500). // initial belief
       focused(ora4mas,Scheme,ArtId) &
       exceptionThrown(Scheme,site_preparation_exception,_) &
       exceptionArgument(Scheme,site_preparation_exception,errorCode(archaeologicalRemains))
-   <- println("Inspecting site...");
+   <- .print("Inspecting site...");
       delimitSite;
-      println("Done!");
-      println("RemovingRemains...");
+      .print("Done!");
+      .print("RemovingRemains...");
       carefullyRemoveRemains;
-      println("Done!");
+      .print("Done!");
       resetGoal(site_prepared)[artifact_id(ArtId)].
 
 /* plans for execution phase */

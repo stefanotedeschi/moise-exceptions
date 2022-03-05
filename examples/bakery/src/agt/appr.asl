@@ -1,9 +1,9 @@
 
 +!switchOnOven
-	<- println("Switching on oven...").
+	<- .print("Switching on oven...").
 	
 +!bakeCake
-	<- println("Baking cake...").
+	<- .print("Baking cake...").
 	
 
 { include("$jacamoJar/templates/common-cartago.asl") }

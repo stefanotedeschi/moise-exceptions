@@ -1,16 +1,16 @@
 // plan to execute organisational goals
 
 +!site_prepared      // the goal (introduced by the organisational obligation)
-   <- println("Preparing site...");
+   <- .print("Preparing site...");
       prepareSite;
-      println("Done!").
+      .print("Done!").
 
-+!floors_laid                   <- println("Laying floors...");layFloors;println("Done!").
-+!walls_built                   <- println("Building walls...");buildWalls;println("Done!").
-+!roof_built                    <- println("Building roof...");buildRoof;println("Done!").
-//+!windows_fitted                <- println("Fitting windows...");.wait(2000);fitWindows;println("Done!").
-+!doors_fitted                  <- println("Fitting doors...");fitDoors;println("Done!").
-+!electrical_system_installed   <- println("Installing electrical system...");installElectricalSystem;println("Done!").
-+!plumbing_installed            <- println("Installing plumbing...");installPlumbing;println("Done!").
-+!exterior_painted              <- println("Painting exterior...");paintExterior;println("Done!").
-+!interior_painted              <- println("Painting interior...");paintInterior;println("Done!").
++!floors_laid                   <- .print("Laying floors...");layFloors;.print("Done!").
++!walls_built                   <- .print("Building walls...");buildWalls;.print("Done!").
++!roof_built                    <- .print("Building roof...");buildRoof;.print("Done!").
+//+!windows_fitted                <- .print("Fitting windows...");.wait(2000);fitWindows;.print("Done!").
++!doors_fitted                  <- .print("Fitting doors...");fitDoors;.print("Done!").
++!electrical_system_installed   <- .print("Installing electrical system...");installElectricalSystem;.print("Done!").
++!plumbing_installed            <- .print("Installing plumbing...");installPlumbing;.print("Done!").
++!exterior_painted              <- .print("Painting exterior...");paintExterior;.print("Done!").
++!interior_painted              <- .print("Painting interior...");paintInterior;.print("Done!").

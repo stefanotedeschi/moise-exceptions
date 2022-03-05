@@ -5,22 +5,22 @@
 
 +!reachDestination
      : not alternativePath & not wait
-	<- println("Reaching destination...");
+	<- .print("Reaching destination...");
 	   +wait;
 	   .wait(10000);
-	   println("Some roads were closed! I'm late'").
+	   .print("Some roads were closed! I'm late'").
 
 +!reachDestination
      : not alternativePath & wait
-	<- println("Reaching destination... I'm a little bit late");
+	<- .print("Reaching destination... I'm a little bit late");
 	   -wait.
 	   
 +!reachDestination
      : alternativePath
-    <- println("Reaching destination ON ALTERNATIVE PATH...").
+    <- .print("Reaching destination ON ALTERNATIVE PATH...").
 	   
 +!reportDelayReason
-	<- println("*** Reporting closed roads...");
+	<- .print("*** Reporting closed roads...");
 	   throwException(exParcel,[reason(roadworks),closedRoads([mainStreet,fifthAvenue])]).
 	
 

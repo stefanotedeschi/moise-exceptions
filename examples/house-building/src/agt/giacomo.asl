@@ -50,7 +50,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
    <- .print("Error creating artifact ", Code).
 
 +!wait_for_bids
-   <- println("Waiting bids for 5 seconds...");
+   <- .print("Waiting bids for 5 seconds...");
       .wait(5000); // use an internal deadline of 5 seconds to close the auctions
       !show_winners.
 
@@ -58,7 +58,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
    <- for ( currentWinner(Ag)[artifact_id(ArtId)] ) {
          ?currentBid(Price)[artifact_id(ArtId)]; // check the current bid
          ?task(Task)[artifact_id(ArtId)];          // and the task it is for
-         println("Winner of task ", Task," is ", Ag, " for ", Price)
+         .print("Winner of task ", Task," is ", Ag, " for ", Price)
       }.
 
 //+!dispose_auction_artifacts
@@ -70,9 +70,9 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 /* Plans for managing the execution of the house construction */
 
 +!execute
-   <- println;
-      println("*** Execution Phase ***");
-      println;
+   <- .print;
+      .print("*** Execution Phase ***");
+      .print;
 
       // create the group
       .my_name(Me);
@@ -108,11 +108,11 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       .length(L, NS)
    <- for ( currentWinner(Ag)[artifact_id(ArtId)] ) {
             ?task(Task)[artifact_id(ArtId)];
-            println("Contracting ",Ag," for ", Task);
+            .print("Contracting ",Ag," for ", Task);
             .send(Ag, achieve, contract(Task,GroupName)) // sends the message to the agent notifying it about the result
       }.
 +!contract_winners(_)
-   <- println("** I didn't find enough builders!");
+   <- .print("** I didn't find enough builders!");
       .fail.
 
 // plans to wait until the group is well formed
@@ -121,16 +121,18 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
    <- .wait({+formationStatus(ok)[artifact_id(G)]}).
 
 +!house_built // I have an obligation towards the top-level goal of the scheme: finished!
-   <- println("*** Finished ***").
+   <- .print("*** Finished ***").
 
 +!notify_affected_companies
-   <- println("Notifying the companies that we had a problem in site preparation!");
+   <- .print("Notifying the companies that we had a problem in site preparation!");
       // Do something to notify the companies
       .
 
 +!handle_windows_fitting_delay
     : exceptionThrown(bhsch,windows_delay_exception,Company) &
       exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D))
-   <- println("There is a delay in windows fitting by ",Company, " of ",D," weeks!");
+   <- .print("There is a delay in windows fitting by ",Company, " of ",D," weeks!");
       // Do something to handle the delay
       .
+
+{ include("$jacamoJar/templates/common-cartago.asl") }

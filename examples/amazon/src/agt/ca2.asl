@@ -1,6 +1,6 @@
 
 +!loadTruck
-	<- println("Loading truck...").
+	<- .print("Loading truck...").
 
 
 { include("$jacamoJar/templates/common-cartago.asl") }

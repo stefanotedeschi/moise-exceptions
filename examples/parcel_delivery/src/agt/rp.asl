@@ -4,11 +4,11 @@
 { include("$jacamoJar/templates/common-moise.asl") }
 
 +!locateAddress
-	<- println("Locating address...").
+	<- .print("Locating address...").
 
 +!planPath
      : not ignore(I)
-	<- println("Planning path...").
+	<- .print("Planning path...").
 	
 +!planPath
      : ignore(I) &
@@ -19,7 +19,7 @@
 	
 +!updateMap
      : exceptionArgument(psch1,exParcel,closedRoads(I))
-	<- println("*** Adding closed roads to ignore list...");
+	<- .print("*** Adding closed roads to ignore list...");
 	   +ignore(I).
 
 // uncomment the include below to have an agent compliant with its organisation

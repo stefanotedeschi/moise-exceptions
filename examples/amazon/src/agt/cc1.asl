@@ -1,9 +1,9 @@
 
 +!receiveInfo
 	 : play(Ag,creditCardEmployee2,gcc)
-	<- println("Getting credit card balance...");
+	<- .print("Getting credit card balance...");
 	   getBalance(Balance);
-	   println("Balance: ",Balance);
+	   .print("Balance: ",Balance);
 	   .send(Ag,tell,balance(Balance)).
 	   
 { include("$jacamoJar/templates/common-cartago.asl") }

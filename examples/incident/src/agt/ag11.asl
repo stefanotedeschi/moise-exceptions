@@ -5,7 +5,7 @@
 	   group(GroupName,second_level_support_group,_) &
 	   play(Slm,second_level_manager,GroupName) &
 	   unsure(yes)
-	<- println("Handling second level issue...");
+	<- .print("Handling second level issue...");
 	   .send(Slm,tell,unsure(yes));
 	   goalAchieved(handle_2nd_level_issue)[artifact_id(SchId)].
 	   
@@ -16,11 +16,11 @@
 	   play(Slm,second_level_manager,GroupName) &
 	   unsure(no) &
 	   result(R)
-	<- println("Handling second level issue...");
+	<- .print("Handling second level issue...");
 	   .send(Slm,tell,unsure(no));
 	   .send(Slm,tell,result(R));
 	   goalAchieved(handle_2nd_level_issue)[artifact_id(SchId)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
-{ include("common.asl") }
+{ include("$moiseJar/asl/org-obedient.asl") }

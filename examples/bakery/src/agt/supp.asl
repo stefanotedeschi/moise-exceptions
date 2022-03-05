@@ -1,12 +1,12 @@
 
 +!provideIngredients
-	<- println("Providing ingredients...");
-	   println("Some ingredients are missing!");
+	<- .print("Providing ingredients...");
+	   .print("Some ingredients are missing!");
 	   goalFailed(provideIngredients);
 	   .fail.
 	   
 +!notifyIngredientsUnavailability
-	<- println("Notifying that strawberries are missing...");
+	<- .print("Notifying that strawberries are missing...");
 	   throwException(ingredientsUnavailable,[missingIngredients([strawberries])]).
 	   
 { include("$jacamoJar/templates/common-cartago.asl") }

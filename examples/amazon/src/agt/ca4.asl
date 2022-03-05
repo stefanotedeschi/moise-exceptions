@@ -1,7 +1,7 @@
 
 +!notifyCustomer
      : exceptionArgument(_,itemsLost,recipient(Recipient))
-	<- println("Notifying customer...");
+	<- .print("Notifying customer...");
 	   .send(Recipient,tell,problemInOrderDelivery).
 
 

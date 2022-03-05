@@ -1,12 +1,12 @@
 
 +!withdraw
 	<- finishWithdraw;
-	   println("Withdrawal completed").
+	   .print("Withdrawal completed").
 	   
 +!retryLater
 	<- failWithdraw;
 	   goalReleased(withdraw);
-	   println("TRY LATER");
+	   .print("TRY LATER");
 	   .stopMAS.
 	   
 { include("$jacamoJar/templates/common-cartago.asl") }

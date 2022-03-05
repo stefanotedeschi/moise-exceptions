@@ -1,12 +1,12 @@
 
 +!placeOrder
-	<- println("DONE!").
+	<- .print("DONE!").
 
 +!cancelOrder
-	<- println("Order canceled!").
+	<- .print("Order canceled!").
 	
 +!requestRefund
-	<- println("TOO BAD =( I'll request a refund.").
+	<- .print("TOO BAD =( I'll request a refund.").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

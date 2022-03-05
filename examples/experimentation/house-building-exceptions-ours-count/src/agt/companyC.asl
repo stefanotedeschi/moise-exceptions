@@ -64,25 +64,25 @@ available_colors([white,gray,red,orange,cyan]).
 
 +!windows_fitted
     : not hurryUp
-   <- println("Fitting windows...");
+   <- .print("Fitting windows...");
       +hurryUp;
       .random([0,1],N);
       if(N == 0) {
          .wait(1500);
       }
       fitWindows;
-      println("Windows done!").
+      .print("Windows done!").
 
 +!windows_fitted
     : hurryUp
-   <- println("Fitting windows... I Have to hurry!");
+   <- .print("Fitting windows... I Have to hurry!");
       fitWindows;
       -hurryUp;
-      println("Windows done!").
+      .print("Windows done!").
 
 +!notify_windows_fitting_delay[scheme(S)]
 	: focused(ora4mas,S,ArtId)
-   <- println("Notifying weeks of delay");
+   <- .print("Notifying weeks of delay");
       .random([0,1],N);
       if(N == 0) {
          throwException(windows_delay_exception,[weeksOfDelay(1)])[artifact_id(ArtId)];

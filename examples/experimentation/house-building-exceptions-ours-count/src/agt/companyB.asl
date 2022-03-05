@@ -16,13 +16,13 @@ my_price(1500). // initial belief
 /* plans for execution phase */
 
 +!site_prepared  // the organisational goal (created from an obligation)
-   <- println("Preparing site...");
+   <- .print("Preparing site...");
       prepareSite;
-      println("Done!").
+      .print("Done!").
 
 -!site_prepared[env_failure_reason(F),scheme(S)]
     : focused(ora4mas,S,ArtId)
-   <- println("The site is flooded due to ",F,"!");
+   <- .print("The site is flooded due to ",F,"!");
       +failureReason(F);
       goalFailed(site_prepared)[artifact_id(ArtId)];
    	.fail.
@@ -31,7 +31,7 @@ my_price(1500). // initial belief
     : .my_name(Ag) &
       focused(ora4mas,Scheme,ArtId) &
       failureReason(F)
-   <- //println("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE ",F,"!")
+   <- //.print("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE ",F,"!")
       throwException(site_preparation_exception,[errorCode(F)])[artifact_id(ArtId)];
       -failureReason(F);
       goalAchieved(notify_site_preparation_problem)[artifact_id(ArtId)].

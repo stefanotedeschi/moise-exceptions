@@ -1,17 +1,17 @@
 // plan to execute organisational goals
 
 +!site_prepared      // the goal (introduced by the organisational obligation)
-   <- println("Preparing site...");
+   <- .print("Preparing site...");
       .wait(2000);
       prepareSite;
-      println("Done!").
+      .print("Done!").
 
-+!floors_laid                   <- println("Laying floors...");.wait(2000);layFloors;println("Done!").
-+!walls_built                   <- println("Building walls...");.wait(2000);buildWalls;println("Done!").
-+!roof_built                    <- println("Building roof...");.wait(2000);buildRoof;println("Done!").
-//+!windows_fitted                <- println("Fitting windows...");.wait(2000);fitWindows;println("Done!").
-+!doors_fitted                  <- println("Fitting doors...");.wait(2000);fitDoors;println("Done!").
-+!electrical_system_installed   <- println("Installing electrical system...");.wait(2000);installElectricalSystem;println("Done!").
-+!plumbing_installed            <- println("Installing plumbing...");.wait(2000);installPlumbing;println("Done!").
-+!exterior_painted              <- println("Painting exterior...");.wait(2000);paintExterior;println("Done!").
-+!interior_painted              <- println("Painting interior...");.wait(2000);paintInterior;println("Done!").
++!floors_laid                   <- .print("Laying floors...");.wait(2000);layFloors;.print("Done!").
++!walls_built                   <- .print("Building walls...");.wait(2000);buildWalls;.print("Done!").
++!roof_built                    <- .print("Building roof...");.wait(2000);buildRoof;.print("Done!").
+//+!windows_fitted                <- .print("Fitting windows...");.wait(2000);fitWindows;.print("Done!").
++!doors_fitted                  <- .print("Fitting doors...");.wait(2000);fitDoors;.print("Done!").
++!electrical_system_installed   <- .print("Installing electrical system...");.wait(2000);installElectricalSystem;.print("Done!").
++!plumbing_installed            <- .print("Installing plumbing...");.wait(2000);installPlumbing;.print("Done!").
++!exterior_painted              <- .print("Painting exterior...");.wait(2000);paintExterior;.print("Done!").
++!interior_painted              <- .print("Painting interior...");.wait(2000);paintInterior;.print("Done!").

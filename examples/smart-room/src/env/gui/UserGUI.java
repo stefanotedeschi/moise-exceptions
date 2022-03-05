@@ -14,77 +14,77 @@ import cartago.tools.GUIArtifact;
 
 public class UserGUI extends GUIArtifact {
 
-	private InputWindow frame;
+    private InputWindow frame;
 
-	public void setup() {
-		try {
-			frame = new InputWindow(getCreatorId().getAgentName() );
-			frame.pack();
+    public void setup() {
+        try {
+            frame = new InputWindow(getCreatorId().getAgentName() );
+            frame.pack();
 
-			defineObsProperty("activity", "none");
+            defineObsProperty("activity", "none");
 
-			linkActionEventToOp(frame.updateButton,"updateActivity");
-			linkActionEventToOp(frame.exitButton,"exit");
-			linkKeyStrokeToOp(frame.activityField,"ENTER","updateActivity");
+            linkActionEventToOp(frame.updateButton,"updateActivity");
+            linkActionEventToOp(frame.exitButton,"exit");
+            linkKeyStrokeToOp(frame.activityField,"ENTER","updateActivity");
 
-			frame.setVisible(true);
-		} catch (Exception ex){
-			ex.printStackTrace();
-		}
-	}
+            frame.setVisible(true);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
 
-	@OPERATION void updateActivity(ActionEvent ev) {
-		frame.exitButton.setEnabled(true);
-		getObsProperty("activity").updateValue( frame.getActivity() );
-	}
+    @OPERATION void updateActivity(ActionEvent ev) {
+        frame.exitButton.setEnabled(true);
+        getObsProperty("activity").updateValue( frame.getActivity() );
+    }
 
-	@OPERATION void exit(ActionEvent ev) {
-		frame.activityField.setText("none");
-		frame.exitButton.setEnabled(false);
-		getObsProperty("activity").updateValue( "none" );
-	}
-
-
-	private static int nbF = 1;
-
-	class InputWindow extends JFrame {
-
-		private JButton updateButton;
-		private JButton exitButton;
-		private JTextField activityField;
+    @OPERATION void exit(ActionEvent ev) {
+        frame.activityField.setText("none");
+        frame.exitButton.setEnabled(false);
+        getObsProperty("activity").updateValue( "none" );
+    }
 
 
-		public InputWindow(String user){
-			setTitle("..:: User Interface for "+user+" ::..");
+    private static int nbF = 1;
 
-			nbF++;
-			setLocation(30, 80*nbF);
+    class InputWindow extends JFrame {
 
-			JPanel mainPanel = new JPanel();
-			mainPanel.setLayout(new FlowLayout());
-			setContentPane(mainPanel);
+        private JButton updateButton;
+        private JButton exitButton;
+        private JTextField activityField;
 
-			JPanel currentTempPanel = new JPanel();
-			currentTempPanel.setLayout(new FlowLayout());
 
-			activityField = new JTextField(20);
-			activityField.setText("none");
-			activityField.setEditable(true);
+        public InputWindow(String user){
+            setTitle("..:: User Interface for "+user+" ::..");
 
-			updateButton = new JButton("set");
-			exitButton = new JButton("exit");
-			exitButton.setEnabled(false);
+            nbF++;
+            setLocation(30, 80*nbF);
 
-			currentTempPanel.add(new JLabel("Activity: "));
-			currentTempPanel.add(activityField);
-			currentTempPanel.add(updateButton);
-			currentTempPanel.add(exitButton);
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new FlowLayout());
+            setContentPane(mainPanel);
 
-			mainPanel.add(currentTempPanel);
-		}
+            JPanel currentTempPanel = new JPanel();
+            currentTempPanel.setLayout(new FlowLayout());
 
-		public String getActivity() {
-			return activityField.getText().trim();
-		}
-	}
+            activityField = new JTextField(20);
+            activityField.setText("none");
+            activityField.setEditable(true);
+
+            updateButton = new JButton("set");
+            exitButton = new JButton("exit");
+            exitButton.setEnabled(false);
+
+            currentTempPanel.add(new JLabel("Activity: "));
+            currentTempPanel.add(activityField);
+            currentTempPanel.add(updateButton);
+            currentTempPanel.add(exitButton);
+
+            mainPanel.add(currentTempPanel);
+        }
+
+        public String getActivity() {
+            return activityField.getText().trim();
+        }
+    }
 }

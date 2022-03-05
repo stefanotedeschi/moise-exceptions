@@ -66,18 +66,18 @@ available_colors([white,gray,red,orange,cyan]).
 
 +!windows_fitted
     : not hurryUp
-   <- println("Fitting windows...");
+   <- .print("Fitting windows...");
       +hurryUp;
       .random([0,1],N);
       if(N == 0) {
          .wait(1500);
       }
       fitWindows;
-      println("Windows done!").
+      .print("Windows done!").
       
 +!windows_fitted[scheme(S)]
     : hurryUp
-   <- println("Notifying weeks of delay");
+   <- .print("Notifying weeks of delay");
       .random([0,1],N);
       if(N == 0) {
          .broadcast(tell,exception(S,windows_delay_exception,[weeksOfDelay(1)]));
@@ -85,15 +85,15 @@ available_colors([white,gray,red,orange,cyan]).
       else {
          .broadcast(tell,exception(S,windows_delay_exception,[weeksOfDelay(3)]));
       }
-      println("Fitting windows... I Have to hurry!");
+      .print("Fitting windows... I Have to hurry!");
       fitWindows;
       -hurryUp
-      println("Windows done!").
+      .print("Windows done!").
 
 +exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
     : D >= 2 & focused(ora4mas,bhsch,ArtId) & loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
-      println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
+      .print("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
       .send(Sender,tell,handled(S,windows_delay_exception)).
 
 +!exterior_painted

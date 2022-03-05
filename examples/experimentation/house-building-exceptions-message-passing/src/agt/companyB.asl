@@ -16,12 +16,12 @@ my_price(1500). // initial belief
 /* plans for execution phase */
 
 +!site_prepared  // the organisational goal (created from an obligation)
-   <- println("Preparing site...");
+   <- .print("Preparing site...");
       prepareSite;
-      println("Done!").
+      .print("Done!").
 
 -!site_prepared[env_failure_reason(F)]
-   <- println("The site is flooded due to ",F,"!");
+   <- .print("The site is flooded due to ",F,"!");
       //.send(Eng,tell,exception(S,site_preparation_exception,[errorCode(F)]));
  	   //.send(HouseOwner,tell,exception(S,site_preparation_exception,[errorCode(F)]));
       .broadcast(tell,exception(bhsch,site_preparation_exception,[errorCode(F)]));

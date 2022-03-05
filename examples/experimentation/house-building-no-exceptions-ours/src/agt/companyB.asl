@@ -18,6 +18,6 @@ my_price(1500). // initial belief
 { include("org_code.asl") }
 
 +!site_prepared
-   <- println("Preparing site...");
+   <- .print("Preparing site...");
       prepareSite. // simulates the action (in GUI artifact)
 

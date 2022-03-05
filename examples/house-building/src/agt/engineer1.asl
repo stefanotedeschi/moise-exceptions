@@ -18,36 +18,37 @@ my_price(2500). // initial belief
 
 +obligation(Ag,_,done(_,inspect_site,Ag),_)
     : .my_name(Ag) &
-      focused(ora4mas,bhsch,ArtId) &
+      focusing(ArtId,bhsch,_,_,ora4mas,_) &
       exceptionThrown(bhsch,site_preparation_exception,_) &
       exceptionArgument(bhsch,site_preparation_exception,errorCode(flooding))
-   <- println("Inspecting site...");
+   <- .print("Inspecting site...");
       .wait(2000);
       performSiteAnalysis(Result);
-      println("Done!");
-      println("Fixing flooding...");
+      .print("Done!");
+      .print("Fixing flooding...");
       .wait(2000);
       fixFlooding(Result);
-      println("Done!");
+      .print("Done!");
       goalReleased(site_prepared)[artifact_id(ArtId)];
       goalAchieved(inspect_site).
-      
+
 +obligation(Ag,_,done(_,inspect_site,Ag),_)
     : .my_name(Ag) &
       focused(ora4mas,bhsch,ArtId) &
       exceptionThrown(bhsch,site_preparation_exception,_) &
       exceptionArgument(bhsch,site_preparation_exception,errorCode(archaeologicalRemains))
-   <- println("Inspecting site...");
+   <- .print("Inspecting site...");
       .wait(2000);
       delimitSite;
-      println("Done!");
-      println("RemovingRemains...");
+      .print("Done!");
+      .print("RemovingRemains...");
       .wait(2000);
       carefullyRemoveRemains;
-      println("Done!");
+      .print("Done!");
       resetGoal(site_prepared)[artifact_id(ArtId)].
 
 /* plans for execution phase */
 
 { include("common.asl") }
 { include("org_code.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }

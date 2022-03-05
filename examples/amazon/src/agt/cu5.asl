@@ -1,15 +1,15 @@
 
 +!receiveItems
-	<- println("Waiting for items...");
+	<- .print("Waiting for items...");
 	   .wait({+order});
-	   println("Order received!").
+	   .print("Order received!").
 
 +problemInOrderDelivery
 	<- goalFailed(receiveItems).
 
 +obligation(Ag,_,done(_,raiseItemsNotReceived,Ag),_)[artifact_id(ArtId)]
      : .my_name(Ag)
-	<- println("Throwing exception for receive items... Items not received!");
+	<- .print("Throwing exception for receive items... Items not received!");
 	   throwException(itemsNotReceived,[])[artifact_id(ArtId)];
 	   goalAchieved(raiseItemsNotReceived).
 

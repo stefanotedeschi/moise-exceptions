@@ -4,7 +4,7 @@
 	   B - 500 >= 0 &
 	   play(Ag,creditCardEmployee3,gcc)
 	<- -balance(B);
-	   println("Taking payment...");
+	   .print("Taking payment...");
 	   takePayment(700);
 	   .send(Ag,tell,result(ok)).
 
@@ -13,7 +13,7 @@
 	   B - 700 < 0 &
 	   play(Ag,creditCardEmployee3,gcc)
 	<- -balance(B);
-	   println("Balance insufficient!");
+	   .print("Balance insufficient!");
 	   .send(Ag,tell,result(ko)).
 
 { include("$jacamoJar/templates/common-cartago.asl") }

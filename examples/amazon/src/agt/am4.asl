@@ -1,6 +1,6 @@
 
 +!packageItems
-	<- println("Packaging items...").
+	<- .print("Packaging items...").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

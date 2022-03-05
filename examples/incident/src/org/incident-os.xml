@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
-<organisational-specification
-    id="incident" os-version="0.8"
-    xmlns='http://moise.sourceforge.net/os'
-    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-    xsi:schemaLocation='http://moise-exceptions.sourceforge.io/xml/os-exceptions.xsd'>
+
+<organisational-specification id="incident"
+    os-version="1.0" xmlns="https://moise-exceptions.sourceforge.io/os"
+
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
 
     <structural-specification>
         <role-definitions>
@@ -30,7 +30,6 @@
             <role id="developer_worker_2" />
         </role-definitions>
 
-
         <group-specification
             id="incident_management_group">
             <subgroups>
@@ -55,15 +54,16 @@
                         <role id="first_level_worker_4" min="1" max="1" />
                     </roles>
                 </group-specification>
-                <group-specification id="second_level_support_group"> 
+                <group-specification
+                    id="second_level_support_group">
                     <roles>
-                        <role id="second_level_manager" min="1" max="1"/>
-                        <role id="second_level_worker_1" min="1" max="1"/>
-                        <role id="second_level_worker_2" min="1" max="1"/>
-                        <role id="second_level_worker_3" min="1" max="1"/>
-                        <role id="second_level_worker_4" min="1" max="1"/>
-                        <role id="second_level_worker_5" min="1" max="1"/>
-                    </roles> 
+                        <role id="second_level_manager" min="1" max="1" />
+                        <role id="second_level_worker_1" min="1" max="1" />
+                        <role id="second_level_worker_2" min="1" max="1" />
+                        <role id="second_level_worker_3" min="1" max="1" />
+                        <role id="second_level_worker_4" min="1" max="1" />
+                        <role id="second_level_worker_5" min="1" max="1" />
+                    </roles>
                 </group-specification>
                 <group-specification id="developer_group">
                     <roles>
@@ -99,14 +99,16 @@
                     <goal id="explain_solution" />
                 </plan>
             </goal>
-            
+
             <recovery-strategy id="r1">
                 <notification-policy id="np1">
                     <condition type="goal-failure">
-                        <condition-argument id="target" value="ask_1st_level_support" />
+                        <condition-argument id="target"
+                            value="ask_1st_level_support" />
                     </condition>
                     <exception-spec id="account_manager_exception">
-                        <exception-argument id="warrantyStatus" arity="1" />
+                        <exception-argument id="warrantyStatus"
+                            arity="1" />
                     </exception-spec>
                     <goal id="raise_account_manager_exception" />
                 </notification-policy>
@@ -118,7 +120,8 @@
             <recovery-strategy id="r2">
                 <notification-policy id="np2">
                     <condition type="goal-ttf-expiration">
-                        <condition-argument id="target" value="ask_1st_level_support" />
+                        <condition-argument id="target"
+                            value="ask_1st_level_support" />
                     </condition>
                     <exception-spec id="account_manager_timeout" />
                     <goal id="raise_account_manager_timeout" />
@@ -152,7 +155,7 @@
 
         <!-- FIRST LEVEL SUPPORT PROCESS -->
         <scheme id="scheme_1st_level_support">
-        
+
             <goal id="root_1st_level_support">
                 <plan operator="sequence">
                     <goal id="handle_1st_level_issue" ds="handle 1st level issue" />
@@ -170,14 +173,16 @@
                     <goal id="provide_feedback_for_account_manager" />
                 </plan>
             </goal>
-            
+
             <recovery-strategy id="rsFirstLevelSupport1">
                 <notification-policy id="npFirstLevelSupport1">
                     <condition type="goal-failure">
-                        <condition-argument id="target" value="ask_2nd_level_support" />
+                        <condition-argument id="target"
+                            value="ask_2nd_level_support" />
                     </condition>
                     <exception-spec id="first_level_exception">
-                        <exception-argument id="warrantyStatus" arity="1" />
+                        <exception-argument id="warrantyStatus"
+                            arity="1" />
                     </exception-spec>
                     <goal id="raise_first_level_exception" />
                 </notification-policy>
@@ -205,10 +210,10 @@
             </mission>
 
         </scheme>
-        
+
         <!-- SECOND LEVEL SUPPORT PROCESS -->
         <scheme id="scheme_2nd_level_support">
-        
+
             <goal id="root_2nd_level_support">
                 <plan operator="sequence">
                     <goal id="handle_2nd_level_issue" ds="handle 1st level issue" />
@@ -237,14 +242,16 @@
                     <goal id="provide_feedback_for_1st_level_support" />
                 </plan>
             </goal>
-            
+
             <recovery-strategy id="rsSecondLevelSupport1">
                 <notification-policy id="npSecondLevelSupport1">
                     <condition type="goal-failure">
-                        <condition-argument id="target" value="ask_developer" />
+                        <condition-argument id="target"
+                            value="ask_developer" />
                     </condition>
                     <exception-spec id="second_level_exception">
-                        <exception-argument id="warrantyStatus" arity="1" />
+                        <exception-argument id="warrantyStatus"
+                            arity="1" />
                     </exception-spec>
                     <goal id="raise_second_level_exception" />
                 </notification-policy>
@@ -275,9 +282,7 @@
             <mission id="m14" min="1" max="1">
                 <goal id="insert_into_product_backlog" />
             </mission>
-            <!-- <mission id="m15" min="1" max="1">
-                <goal id="expf1ls1" />
-            </mission> -->
+            <!-- <mission id="m15" min="1" max="1"> <goal id="expf1ls1" /> </mission> -->
 
         </scheme>
 
@@ -287,17 +292,20 @@
             <goal id="root_developer" ttf="5 seconds">
                 <plan operator="sequence">
                     <goal id="examine_problem" />
-                    <goal id="provide_feedback_for_2nd_level_support" ttf="5 seconds" />
+                    <goal id="provide_feedback_for_2nd_level_support"
+                        ttf="5 seconds" />
                 </plan>
             </goal>
-            
+
             <recovery-strategy id="rsDeveloper1">
                 <notification-policy id="npDeveloper1">
                     <condition type="goal-failure">
-                        <condition-argument id="target" value="examine_problem" />
+                        <condition-argument id="target"
+                            value="examine_problem" />
                     </condition>
                     <exception-spec id="developer_exception">
-                        <exception-argument id="warrantyStatus" arity="1" />
+                        <exception-argument id="warrantyStatus"
+                            arity="1" />
                     </exception-spec>
                     <goal id="raise_developer_exception" />
                 </notification-policy>
@@ -306,11 +314,12 @@
                     <goal id="handle_developer_exception" />
                 </handling-policy>
             </recovery-strategy>
-            
+
             <recovery-strategy id="rsDeveloper2">
                 <notification-policy id="npDeveloper2">
                     <condition type="goal-ttf-expiration">
-                        <condition-argument id="target" value="provide_feedback_for_2nd_level_support" />
+                        <condition-argument id="target"
+                            value="provide_feedback_for_2nd_level_support" />
                     </condition>
                     <exception-spec id="developer_feedback_delay">
                         <exception-argument id="reason" arity="1" />
@@ -351,8 +360,8 @@
             mission="m2" />
         <norm id="n3" type="obligation" role="key_account_worker_3"
             mission="m3" />
-        <!-- <norm id="n4" type="obligation" role="key_account_worker_4"
-            mission="m4" /> -->
+        <!-- <norm id="n4" type="obligation" role="key_account_worker_4" mission="m4" 
+            /> -->
 
         <norm id="n5" type="obligation" role="first_level_manager"
             mission="m5" />
@@ -362,14 +371,19 @@
             mission="m7" />
         <norm id="n8" type="obligation" role="first_level_worker_3"
             mission="m8" />
-        <!-- <norm id="n9" type="obligation" role="first_level_worker_4"
-            mission="m9" /> -->
+        <!-- <norm id="n9" type="obligation" role="first_level_worker_4" mission="m9" 
+            /> -->
 
-        <norm id="n10" type="obligation" role="second_level_manager" mission="m10"/> 
-        <norm id="n11" type="obligation" role="second_level_worker_1" mission="m11"/> 
-        <norm id="n12" type="obligation" role="second_level_worker_2" mission="m12"/> 
-        <norm id="n13" type="obligation" role="second_level_worker_3" mission="m13"/> 
-        <norm id="n14" type="obligation" role="second_level_worker_4" mission="m14"/> 
+        <norm id="n10" type="obligation" role="second_level_manager"
+            mission="m10" />
+        <norm id="n11" type="obligation" role="second_level_worker_1"
+            mission="m11" />
+        <norm id="n12" type="obligation" role="second_level_worker_2"
+            mission="m12" />
+        <norm id="n13" type="obligation" role="second_level_worker_3"
+            mission="m13" />
+        <norm id="n14" type="obligation" role="second_level_worker_4"
+            mission="m14" />
         <!-- <norm id="n15" type="obligation" role="second_level_worker_5" mission="m15"/> -->
 
         <norm id="n16" type="obligation" role="developer_manager"

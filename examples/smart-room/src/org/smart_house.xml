@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="http://moise.sf.net/xml/os.xsl"
+<?xml-stylesheet href="https://moise-exceptions.sourceforge.io/xml/os.xsl"
                  type="text/xsl" ?>
 <organisational-specification id="room_org"
 
-  os-version="0.11"
-  xmlns='http://moise.sourceforge.net/os'
-  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-  xsi:schemaLocation='http://moise.sourceforge.net/os
-                      http://moise.sourceforge.net/xml/os.xsd' >
+  os-version="1.0"
+  xmlns="https://moise-exceptions.sourceforge.io/os"
+    
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
 
   <structural-specification>
         <group-specification id="room" >

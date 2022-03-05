@@ -17,7 +17,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +!have_a_house
    <- makeArtifact("LogArt", "tools.LoggingArtifact",[], ArtId);
       +loggerArtifact(ArtId);
-      println("Logging artifact created!");
+      .print("Logging artifact created!");
       !contract; // hire the companies that will build the house
       !execute.  // (simulates) the execution of the construction
 
@@ -51,7 +51,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
    <- .print("Error creating artifact ", Code).
 
 +!wait_for_bids
-   <- println("Waiting bids for 5 seconds...");
+   <- .print("Waiting bids for 5 seconds...");
       .wait(5000); // use an internal deadline of 5 seconds to close the auctions
       !show_winners.
 
@@ -59,7 +59,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
    <- for ( currentWinner(Ag)[artifact_id(ArtId)] ) {
          ?currentBid(Price)[artifact_id(ArtId)]; // check the current bid
          ?task(Task)[artifact_id(ArtId)];          // and the task it is for
-         println("Winner of task ", Task," is ", Ag, " for ", Price)
+         .print("Winner of task ", Task," is ", Ag, " for ", Price)
       }.
 
 //+!dispose_auction_artifacts
@@ -72,9 +72,9 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 
 +!execute
 	 : loggerArtifact(LogArtId)
-   <- println;
-      println("*** Execution Phase ***");
-      println;
+   <- .print;
+      .print("*** Execution Phase ***");
+      .print;
 
       // create the group
       .my_name(Me);
@@ -110,11 +110,11 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       .length(L, NS)
    <- for ( currentWinner(Ag)[artifact_id(ArtId)] ) {
             ?task(Task)[artifact_id(ArtId)];
-            println("Contracting ",Ag," for ", Task);
+            .print("Contracting ",Ag," for ", Task);
             .send(Ag, achieve, contract(Task,GroupName)) // sends the message to the agent notifying it about the result
       }.
 +!contract_winners(_)
-   <- println("** I didn't find enough builders!");
+   <- .print("** I didn't find enough builders!");
       .fail.
 
 // plans to wait until the group is well formed
@@ -124,8 +124,8 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 
 +!house_built // I have an obligation towards the top-level goal of the scheme: finished!
     : loggerArtifact(LogArtId)
-   <- println;
-      println("*** Finished ***");
+   <- .print;
+      .print("*** Finished ***");
       .
 
 +goalState(bhsch,house_built,_,_,satisfied)
@@ -137,7 +137,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +exception(bhsch,site_preparation_exception,Args)[source(Sender)]
     : loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
-      println("Notifying the companies that we had a problem in site preparation!");
+      .print("Notifying the companies that we had a problem in site preparation!");
       -exception(bhsch,site_preparation_exception,Args)[source(Sender)];
       // Do something to notify the companies
       .

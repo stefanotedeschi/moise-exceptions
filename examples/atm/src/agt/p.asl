@@ -1,10 +1,10 @@
 +!parseAmount
-	<- println("Parsing amount...");
+	<- .print("Parsing amount...");
 	   .wait(2000);
 	   parseAmount.
 
 -!parseAmount[env_failure_reason(firstNaNIndex(Value))]
-	<- println("The inserted string is not a number!");
+	<- .print("The inserted string is not a number!");
 	   +firstNaNIndex(Value);
 	   goalFailed(parseAmount);
 	   .fail.
@@ -12,7 +12,7 @@
 +!throwNan
      : firstNaNIndex(I)
 	<- .wait(2000);
-	   println("Throwing exception NAN: ", index(I));
+	   .print("Throwing exception NAN: ", index(I));
 	   throwException(nan,[index(I)]);
 	   -firstNaNIndex(I).
 

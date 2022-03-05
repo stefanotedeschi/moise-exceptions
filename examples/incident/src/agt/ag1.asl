@@ -11,18 +11,18 @@
 
 +ask_description[source(Sender)]
 	 : description(D)
-	<- println("Sending description...");
+	<- .print("Sending description...");
 	   .send(Sender,tell,description(D)).
 	   
 +solution(S)
-	<- println("Problem solved through ", S, ". Thank you!").
+	<- .print("Problem solved through ", S, ". Thank you!").
 	
 +problem_request_canceled
-	<- println("Too bad =(").
+	<- .print("Too bad =(").
 		
 +please_recall
-	<- println("I'll recall later.'").
+	<- .print("I'll recall later.'").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
-{ include("common.asl") }
+{ include("$moiseJar/asl/org-obedient.asl") }

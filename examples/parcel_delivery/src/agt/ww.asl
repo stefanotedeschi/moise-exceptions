@@ -4,13 +4,13 @@
 { include("$jacamoJar/templates/common-moise.asl") }
 
 +!takeGoodsFromWarehouse
-	<- println("Taking goods from warehouse...").
+	<- .print("Taking goods from warehouse...").
 	
 +!packUpGoods
-	<- println("Packing up goods...").
+	<- .print("Packing up goods...").
 	
 +!loadOnTruck
-	<- println("Loading parcel on truck...").
+	<- .print("Loading parcel on truck...").
 
 // uncomment the include below to have an agent compliant with its organisation
 { include("$moiseJar/asl/org-obedient.asl") }

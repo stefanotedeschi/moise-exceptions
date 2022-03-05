@@ -10,19 +10,19 @@ inventory([plates(5),screws(100)]).
 
 +!conveyPlateToTable
 	 : not wait
-	<- println("Conveying plate to table... Have to wait for delivery");
+	<- .print("Conveying plate to table... Have to wait for delivery");
 	   +wait;
 	   .wait(10000);
-	   println("Plates delivered! Performing job...").
+	   .print("Plates delivered! Performing job...").
 
 +!conveyPlateToTable
 	 : wait
-	<- println("Conveying plate to table...");
+	<- .print("Conveying plate to table...");
 	   -wait.
 	   
 +!notifyRemainingStock
      : inventory(I) & .member(plates(N),I)
-	<- println("Notifying available plates...");
+	<- .print("Notifying available plates...");
 	   throwException(exStock,[availablePlates(N)]).
 
 // uncomment the include below to have an agent compliant with its organisation

@@ -22,8 +22,8 @@ my_price(300). // initial belief
 // plan to execute organisational goals (not implemented)
 
 +!plumbing_installed   // the organisational goal (created from an obligation)
-   <- println("Installing plumbing...");
+   <- .print("Installing plumbing...");
       installPlumbing;
-      println("Done!").
+      .print("Done!").
 
 { include("exception_logging.asl") }

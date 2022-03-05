@@ -1,22 +1,22 @@
 
 +obligation(Ag,_,done(_,retry,Ag),_)[artifact_id(ArtId)]
      : not alreadyRetried
-	<- println("Retrying once...");
+	<- .print("Retrying once...");
 	   +alreadyRetried;
 	   resetGoal(checkout)[artifact_id(ArtId)].
 	   
 +obligation(Ag,_,done(_,retry,Ag),_)[artifact_id(ArtId)]
      : alreadyRetried
-	<- println("Failed again!");
+	<- .print("Failed again!");
 	   goalFailed(retry)[artifact_id(ArtId)].
 	   
 +obligation(Ag,_,done(_,raiseCheckoutFailed,Ag),_)[artifact_id(ArtId)]
-	<- println("Throwing exception checkout failed...");
+	<- .print("Throwing exception checkout failed...");
 	   throwException(checkoutFailed,[])[artifact_id(ArtId)];
 	   goalAchieved(raiseCheckoutFailed).
 	   
 +!checkout
-	<- println("Checkout completed!").
+	<- .print("Checkout completed!").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

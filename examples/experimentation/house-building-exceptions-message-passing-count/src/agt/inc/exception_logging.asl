@@ -1,19 +1,19 @@
 +exception(_,_,_)
     : loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
-      println("************EXCEPTION").
+      .print("************EXCEPTION").
 
 +handlerProposal(_,_)
     : loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
-      println("************HANDLER PROPOSAL").
+      .print("************HANDLER PROPOSAL").
 
 +handlerProposalAccepted(_,_)
     : loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
-      println("************HANDLER PROPOSAL ACCEPTED").
+      .print("************HANDLER PROPOSAL ACCEPTED").
 
 +handled(_,_)
     : loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
-      println("************HANDLED").
+      .print("************HANDLED").

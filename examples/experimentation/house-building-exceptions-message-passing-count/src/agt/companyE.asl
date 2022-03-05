@@ -36,7 +36,7 @@ sum_of_my_offers(S) :-
 +exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
     : D >= 2 & focused(ora4mas,bhsch,ArtId) & loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
-      println("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
+      .print("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
       .send(Sender,tell,handled(S,windows_delay_exception)).
 
 /* plans for execution phase */

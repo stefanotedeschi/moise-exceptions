@@ -1,9 +1,9 @@
 
 +!browseProducts
-	<- println("Browsing products...").
+	<- .print("Browsing products...").
 
 +!addItems
-	<- println("Adding items to basket...").
+	<- .print("Adding items to basket...").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

@@ -1,7 +1,7 @@
 
 +!sendResult[scheme(Sch)]
      : result(R)
-	<- println("Sending result to customer...");
+	<- .print("Sending result to customer...");
 	   getCreditCardOwner(Owner);
 	   .send(Owner,tell,result(R,Sch)).
 
