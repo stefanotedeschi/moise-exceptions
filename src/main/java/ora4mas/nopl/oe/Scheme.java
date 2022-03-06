@@ -35,7 +35,9 @@ import moise.common.MoiseException;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
-import moise.os.fs.exceptions.HandlingPolicy;
+import moise.os.fs.exceptions.CatchingGoal;
+import moise.os.fs.exceptions.ExceptionSpec;
+import moise.os.fs.exceptions.ThrowingGoal;
 import npl.NPLInterpreter;
 import npl.parser.nplp;
 
@@ -264,26 +266,27 @@ public class Scheme extends CollectiveOE {
 
     public boolean resetExceptions(NPLInterpreter nengine) {
         boolean changed = false;
-        //Iterator<Literal> iThrowns = throwns.iterator();
         for(Literal l : throwns) {
-        //while (iThrowns.hasNext()) {
-            //Literal l = iThrowns.next();
             try {
-                moise.os.fs.exceptions.ExceptionSpec e = spec.getExceptionSpec(l.getTerm(1).toString());
-                LogicalFormula condition = e.getInPolicy().getCondition().getConditionFormula();
+                ExceptionSpec ex = spec.getExceptionSpec(l.getTerm(1).toString());
+                boolean anyConditionHolding = false;
+                for(ThrowingGoal tg : ex.getThrowingGoals()) {
+                
+                    LogicalFormula whenCondition = tg.getWhenCondition();
 
-                nplp parser = new nplp(new StringReader(condition.toString()));
-                parser.setDFP(this);
-                LogicalFormula formula = (LogicalFormula)parser.log_expr();
-                if(!nengine.holds(formula)) {
-                    //iThrowns.remove();
+                    nplp parser = new nplp(new StringReader(whenCondition.toString()));
+                    parser.setDFP(this);
+                    LogicalFormula formula = (LogicalFormula)parser.log_expr();
+                    if(nengine.holds(formula)) {
+                        anyConditionHolding = true;
+                    }
+                }
+                if(!anyConditionHolding) {
                     throwns.remove(l);
-                    
-                    Goal tg = e.getInPolicy().getGoal();
-                    resetGoal(tg);
-                    Set<HandlingPolicy> handlingPolicies = e.getInPolicy().getInStrategy().getHandlingPolicies();
-                    for(HandlingPolicy h : handlingPolicies) {
-                        Goal cg = h.getGoal();
+                    for(ThrowingGoal tg : ex.getThrowingGoals()) {
+                        resetGoal(tg);
+                    }
+                    for(CatchingGoal cg : ex.getCatchingGoals()) {
                         resetGoal(cg);
                     }
                     resetExceptions(nengine);

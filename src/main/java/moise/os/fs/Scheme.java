@@ -26,8 +26,8 @@ import moise.common.MoiseException;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
 import moise.os.fs.exceptions.ExceptionSpec;
+import moise.os.fs.exceptions.NotificationPolicy;
 import moise.os.fs.exceptions.PolicyConditionTemplate;
-import moise.os.fs.exceptions.RecoveryStrategy;
 import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
@@ -51,7 +51,7 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     //protected String                   monitoring  = null;
     protected FS                       fs       = null;
 
-    protected Map<String, RecoveryStrategy> recoveryStrategies = new HashMap<>();
+    protected Map<String, NotificationPolicy> notificationPolicies = new HashMap<>();
     
     protected PolicyConditionTemplate[] policyConditionTemplates;
 
@@ -192,22 +192,23 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
     //
     // Recovery strategies methods
-    public void addRecoveryStrategy(RecoveryStrategy rs) {
-        recoveryStrategies.put(rs.getId(), rs);
+    public void addNotificationPolicy(NotificationPolicy np) {
+        notificationPolicies.put(np.getId(), np);
     }
 
-    public Collection<RecoveryStrategy> getRecoveryStrategies() {
-        return recoveryStrategies.values();
+    public Collection<NotificationPolicy> getNotificationPolicies() {
+        return notificationPolicies.values();
     }
 
     public ExceptionSpec getExceptionSpec(String id) throws MoiseException {
-        for (RecoveryStrategy rs : recoveryStrategies.values()) {
-            ExceptionSpec ex = rs.getNotificationPolicy().getExceptionSpec();
-            if (ex.getId().equals(id)) {
-                return ex;
+        for (NotificationPolicy np : notificationPolicies.values()) {
+            for(ExceptionSpec ex : np.getExceptionSpecs()) {
+                if (ex.getId().equals(id)) {
+                    return ex;
+                }
             }
         }
-        throw new MoiseException("Exception " + id + " undefined in scheme " + this.getId());
+        throw new MoiseException("Exception spec " + id + " undefined in scheme " + this.getId());
     }
 
     /** returns a string representing the goal in Prolog syntax, format:
@@ -253,9 +254,9 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         // goals
         ele.appendChild(getRoot().getAsDOM(document));
 
-        // recovery strategies
-        for (RecoveryStrategy rs : getRecoveryStrategies()) {
-            ele.appendChild(rs.getAsDOM(document));
+        // notification policies
+        for (NotificationPolicy np : getNotificationPolicies()) {
+            ele.appendChild(np.getAsDOM(document));
         }
 
         // missions
@@ -286,11 +287,11 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 //        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
 //        policyConditionTemplates = gson.fromJson(reader, PolicyConditionTemplate[].class);
 
-        // recovery strategies
-        for (Element rsEle : DOMUtils.getDOMDirectChilds(ele, RecoveryStrategy.getXMLTag())) {
-            RecoveryStrategy rs = new RecoveryStrategy(rsEle.getAttribute("id"), this);
-            rs.setFromDOM(rsEle);
-            addRecoveryStrategy(rs);
+        // notification policies
+        for (Element npEle : DOMUtils.getDOMDirectChilds(ele, NotificationPolicy.getXMLTag())) {
+            NotificationPolicy np = new NotificationPolicy(npEle.getAttribute("id"), npEle.getAttribute("target"), this);
+            np.setFromDOM(npEle);
+            addNotificationPolicy(np);
         }
 
         // missions

@@ -1,5 +1,6 @@
 package moise.os.fs.exceptions;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,13 +17,11 @@ import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
-public class NotificationPolicy extends moise.common.MoiseElement implements ToXML, ToProlog, Policy {
+public class NotificationPolicy extends moise.common.MoiseElement implements ToXML, ToProlog {
 
     private String id;
-    private PolicyCondition condition;
-    private ExceptionSpec exceptionSpec;
-    private RecoveryStrategy inStrategy;
-    private ThrowingGoal goal;
+    private Goal target;
+    private HashMap<String,ExceptionSpec> exceptionSpecs = new HashMap<>();
     private Scheme sch;
 
 //    public NotificationPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
@@ -33,10 +32,10 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
 //        this.sch = sch;
 //    }
     
-    public NotificationPolicy(String id, RecoveryStrategy rs, Scheme sch) {
+    public NotificationPolicy(String id, String target, Scheme sch) {
         super();
         this.id = id;
-        inStrategy = rs;
+        this.target = sch.getGoal(target);
         this.sch = sch;
     }
 
@@ -44,71 +43,36 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         return id;
     }
 
-    public PolicyCondition getCondition() {
-        return condition;
+    public Goal getTarget() {
+        return target;
     }
 
-    public ExceptionSpec getExceptionSpec() {
-        return exceptionSpec;
+    public Collection<ExceptionSpec> getExceptionSpecs() {
+        return exceptionSpecs.values();
     }
-
-    public RecoveryStrategy getInStrategy() {
-        return inStrategy;
-    }
-
-    public ThrowingGoal getGoal() {
-        return goal;
+    
+    public void addExceptionSpec(ExceptionSpec ex) {
+        exceptionSpecs.put(ex.getId(), ex);
     }
 
     public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
-        
-        Element condEle = DOMUtils.getDOMDirectChild(ele, "condition");
-        if(condEle != null) {
-            condition = new PolicyCondition(condEle.getAttribute("type"), sch, this);
-            condition.setFromDOM(condEle);
+        for(Element exEle : DOMUtils.getDOMDirectChilds(ele, ExceptionSpec.getXMLTag())) {
+            ExceptionSpec ex = new ExceptionSpec(exEle.getAttribute("id"), this, sch);
+            ex.setFromDOM(exEle);
+            addExceptionSpec(ex);
         }
-        else {
-            throw new MoiseException("Condition missing in notification policy " + id);
-        }
-        
-        
-        Element exEle = DOMUtils.getDOMDirectChild(ele, ExceptionSpec.getXMLTag());
-        if (exEle != null) {
-            exceptionSpec = new ExceptionSpec(exEle.getAttribute("id"), this);
-            exceptionSpec.setFromDOM(exEle);
-        }
-        else {
-            throw new MoiseException("Exception type missing in notification policy " + id);
-        }
-
-        Element gEle = DOMUtils.getDOMDirectChild(ele, Goal.getXMLTag());
-        if (gEle != null) {
-            goal = new ThrowingGoal(gEle.getAttribute("id"), this);
-            goal.setFromDOM(gEle, sch);
-            sch.addGoal(goal);
-        }
-        else {
-            throw new MoiseException("Throwing goal missing in notification policy " + id);
-        }
-        
     }
 
     public Element getAsDOM(Document document) {
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
-        //ele.setAttribute("condition", condition.toString());
+        ele.setAttribute("target", target.getId());
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
         }
-        if(condition != null) {
-            ele.appendChild(condition.getAsDOM(document));
-        }
-        if (exceptionSpec != null) {
-            ele.appendChild(exceptionSpec.getAsDOM(document));
-        }
-        if (goal != null) {
-            ele.appendChild(goal.getAsDOM(document));
+        for(ExceptionSpec ex : exceptionSpecs.values()) {
+            ele.appendChild(ex.getAsDOM(document));
         }
         return ele;
     }

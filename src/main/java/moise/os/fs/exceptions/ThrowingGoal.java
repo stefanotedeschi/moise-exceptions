@@ -1,18 +1,25 @@
 package moise.os.fs.exceptions;
 
-import moise.os.fs.Goal;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-public class ThrowingGoal extends Goal {
+import jason.asSyntax.LogicalFormula;
 
-    private NotificationPolicy inNotificationPolicy;
-    
-    public ThrowingGoal(String goal, NotificationPolicy inNotificationPolicy) {
-        super(goal);
-        this.inNotificationPolicy = inNotificationPolicy;
+public class ThrowingGoal extends ExceptionGoal {
+
+    public ThrowingGoal(String goal, LogicalFormula when, ExceptionSpec inExceptionSpec) {
+        super(goal, when, inExceptionSpec);
     }
 
-    public NotificationPolicy getInNotificationPolicy() {
-        return inNotificationPolicy;
+    public static String getXMLTag() {
+        return "throwing-goal";
+    }
+    
+    @Override
+    public Element getAsDOM(Document document) {
+        Element ele = super.getAsDOM(document);
+        document.renameNode(ele,null,"throwing-goal");
+        return ele;
     }
 
 }

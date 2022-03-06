@@ -8,7 +8,7 @@
     xmlns="https://moise-exceptions.sourceforge.io/os"
     
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
     <structural-specification>
 
@@ -97,45 +97,26 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="rsSitePreparation">
-                <notification-policy id="npSitePreparation">
-                    <condition type="goal-failure">
-                        <condition-argument id="target" value="site_prepared" />
-                    </condition>
-                    <exception-spec id="site_preparation_exception">
-                        <exception-argument id="errorCode" arity="1" />
-                    </exception-spec>
-                    <goal id="notify_site_preparation_problem" />
-                </notification-policy>
-                <handling-policy id="hpSitePreparation">
-                    <condition type="always" />
-                    <goal id="handle_site_problem">
+            <notification-policy id="npSitePreparation" target="site_prepared">
+                <exception-spec id="site_preparation_exception">
+                    <exception-argument id="errorCode" arity="1" />
+                    <throwing-goal id="notify_site_preparation_problem" when="scheme_id(S) &amp; failed(S,site_prepared)"/>
+                    <catching-goal id="handle_site_problem">
                         <plan operator="parallel">
                             <goal id="inspect_site" />
                             <goal id="notify_affected_companies" />
                         </plan>
-                    </goal>
-                </handling-policy>
-            </recovery-strategy>
+                    </catching-goal>
+                </exception-spec>
+            </notification-policy>
             
-            <recovery-strategy id="rsWindowDelay">
-                <notification-policy id="np2">
-                    <condition type="goal-ttf-expiration">
-                        <condition-argument id="target" value="windows_fitted" />
-                    </condition>
-                    <exception-spec id="windows_delay_exception">
-                        <exception-argument id="weeksOfDelay" arity="1" />
-                    </exception-spec>
-                    <goal id="notify_windows_fitting_delay" />
-                </notification-policy>
-                <handling-policy id="hp2">
-                    <condition type="custom">
-                        <condition-argument id="formula" value="thrown(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
-                        <!--<condition-argument id="formula" value="thrown(_,windows_delay_exception),_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />-->
-                    </condition>
-                    <goal id="handle_windows_fitting_delay" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="npWindowDelay" target="windows_fitted">
+                <exception-spec id="windows_delay_exception">
+                    <exception-argument id="weeksOfDelay" arity="1" />
+                    <throwing-goal id="notify_windows_fitting_delay" when="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,windows_fitted,_),_))" />
+                    <catching-goal id="handle_windows_fitting_delay" when="thrown(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
+                </exception-spec>
+            </notification-policy>
 
             <mission id="management_of_house_building" min="1" max="1">
                 <goal id="house_built" />

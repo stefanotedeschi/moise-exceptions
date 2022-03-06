@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm'
-    on marzo 05, 2022 - 16:11:14
+    on marzo 06, 2022 - 20:22:20
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -136,40 +136,24 @@ scope scheme(atm_sch) {
    super_goal(obtainAmount, parseAmount).
    super_goal(withdraw, obtainAmount).
 
-   // recoveryStrategy(id)
-   recoveryStrategy(rec1).
-   recoveryStrategy(rec2).
+   // notificationPolicy(policy id, target id)
+   notificationPolicy(np2,recoverFromNan).
+   notificationPolicy(np1,parseAmount).
 
-   // notificationPolicy(policy id, condition)
-   notificationPolicy(np1,(scheme_id(S) & failed(S,parseAmount))).
-   notificationPolicy(np2,(scheme_id(S) & failed(S,recoverFromNan))).
-
-   // handlingPolicy(policy id, condition)
-   handlingPolicy(hp1,true).
-   handlingPolicy(hp2,true).
-
-   // strategy_policy(strategy id, policy id)
-   strategy_policy(rec1,np1).
-   strategy_policy(rec1,hp1).
-   strategy_policy(rec2,np2).
-   strategy_policy(rec2,hp2).
-
-   // exceptionSpec(exception spec id)
-   exceptionSpec(nan).
-   exceptionSpec(amountUnavailable).
+   // exceptionSpec(exception spec id, policy id)
+   exceptionSpec(amountUnavailable,np2).
+   exceptionSpec(nan,np1).
 
    // exceptionArgument(exception spec id, functor, arity)
    exceptionArgument(nan,index,1).
 
-   // policy_exceptionSpec(policy id, exception spec id)
-   policy_exceptionSpec(np1,nan).
-   policy_exceptionSpec(np2,amountUnavailable).
+   // throwingGoal(goal id, exception spec id, when condition)
+   throwingGoal(throwAmountUnavailable,amountUnavailable,(scheme_id(S) & failed(S,recoverFromNan))).
+   throwingGoal(throwNan,nan,(scheme_id(S) & failed(S,parseAmount))).
 
-   // policy_goal(policy id, goal id)
-   policy_goal(np1,throwNan).
-   policy_goal(hp1,recoverFromNan).
-   policy_goal(np2,throwAmountUnavailable).
-   policy_goal(hp2,retryLater).
+   // catchingGoal(goal id, exception spec id, when condition)
+   catchingGoal(retryLater,amountUnavailable,true).
+   catchingGoal(recoverFromNan,nan,true).
 
    // ** Rules
    mplayers(M,S,V) :- .count(committed(_,M,S),V).
@@ -190,26 +174,25 @@ scope scheme(atm_sch) {
    all_released(S,[G|T]) :- released(S,G) & all_released(S,T).
    all_satisfied_released(_,[]).
    all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).
-   // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
-   enabled(S,TG) :- policy_goal(P,TG) &
-                    notificationPolicy(P,Condition) &
+   throwingGoal(TG,E,Condition) :- throwingGoal(SG,E,Condition) & super_goal(SG,TG).
+
+   catchingGoal(CG,E,Condition) :- catchingGoal(SG,E,Condition) & super_goal(SG,CG).
+
+   // enabled goals (i.e. dependence between goals)
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not (throwingGoal(G,_,_) | catchingGoal(G,_,_)) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not (throwingGoal(G,_,_) | catchingGoal(G,_,_)) & NP \== 0 & all_satisfied_released(S,PCG).
+
+   enabled(S,TG) :- throwingGoal(TG,_,Condition) &
                     Condition &
                     goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
                      (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
                     ).
-   enabled(S,CG) :- policy_goal(HP,CG) &
-                    handlingPolicy(HP,Condition) &
+   enabled(S,CG) :- catchingGoal(CG,E,Condition) &
                     Condition &
-                    recoveryStrategy(ST) &
-                    strategy_policy(ST,HP) &
-                    strategy_policy(ST,NPol) &
-                    policy_exceptionSpec(NPol,E) &
                     thrown(S,E,_,_) &
-                    policy_goal(NPol,TG) &
+                    throwingGoal(TG,E,_) &
                     satisfied(S,TG) &
                     goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
@@ -256,30 +239,25 @@ scope scheme(atm_sch) {
         -> fail(fail_not_enabled_goal(S,G)).
    norm exc_unknown:  
            thrown(S,E,Ag,Args) &
-           not exceptionSpec(E)
+           not exceptionSpec(E,_)
         -> fail(exc_unknown(S,E,Ag)).
    norm exc_agent_not_allowed:  
            thrown(S,E,Ag,Args) &
-           exceptionSpec(E) &
+           exceptionSpec(E,_) &
            mission_goal(M,TG) &
-           policy_exceptionSpec(NP,E) &
-           policy_goal(NP,TG) &
+           throwingGoal(TG,E,_) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
            thrown(S,E,Ag,Args) &
-           exceptionSpec(E) &
-           policy_exceptionSpec(NP,E) &
-           notificationPolicy(NP,Condition) &
-           policy_goal(NP,TG) &
-           not (Condition | done(S,TG,Ag))
+           exceptionSpec(E,_) &
+           not (throwingGoal(TG,E,Condition) &
+           (Condition | done(S,TG,Ag)))
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
    norm ach_thr_goal_exc_not_thrown:  
            done(S,TG,Ag) &
-           exceptionSpec(E) &
-           policy_exceptionSpec(NP,E) &
-           policy_goal(NP,TG) &
-           not super_goal(SG,TG) &
+           throwingGoal(TG,E,_) &
+           not super_goal(_,TG) &
            not thrown(S,E,_,_)
         -> fail(ach_thr_goal_exc_not_thrown(S,G,E,Ag)).
    norm exc_arg_not_ground:  

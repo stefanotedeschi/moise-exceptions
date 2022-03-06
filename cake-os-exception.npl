@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on marzo 05, 2022 - 16:11:14
+    on marzo 06, 2022 - 20:22:20
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -111,7 +111,7 @@ scope scheme(cake_sch) {
    mission_goal(mBaker,checkOven).
    mission_goal(mBaker,notifyCakePreparationFailure).
    mission_goal(mCustomer,haveCake).
-   mission_goal(mCustomer,handleCakePreparationFailure).
+   mission_goal(mCustomer,cancelOrder).
    mission_goal(mSupplier,notifyIngredientsUnavailability).
    mission_goal(mSupplier,provideIngredients).
    mission_goal(mApprentice,bakeCake).
@@ -123,13 +123,13 @@ scope scheme(cake_sch) {
    goal([mCustomer],haveCake,dep(and,[bakeCake]),performance,all,`1 year`).
    goal([mApprentice],bakeCake,dep(and,[mixIngredients]),performance,all,`1 year`).
    goal([mBaker],dealWithMissingIngredients,dep(and,[]),performance,all,`1 year`).
+   goal([mCustomer],cancelOrder,dep(and,[]),performance,all,`1 year`).
    goal([],workspaceSetup,dep(and,[provideIngredients, switchOnOven]),performance,0,`1 year`).
    goal([mBaker],checkOven,dep(and,[]),performance,all,`1 year`).
    goal([mApprentice],notifyProblemWithOven,dep(and,[]),performance,all,`1 year`).
    goal([mSupplier],notifyIngredientsUnavailability,dep(and,[]),performance,all,`1 year`).
    goal([mSupplier],provideIngredients,dep(and,[]),performance,all,`1 year`).
    goal([mBaker],notifyCakePreparationFailure,dep(and,[]),performance,all,`1 year`).
-   goal([mCustomer],handleCakePreparationFailure,dep(and,[]),performance,all,`1 year`).
    goal([mApprentice],switchOnOven,dep(and,[]),performance,all,`1 year`).
    super_goal(haveCake, mixIngredients).
    super_goal(haveCake, bakeCake).
@@ -137,50 +137,24 @@ scope scheme(cake_sch) {
    super_goal(workspaceSetup, provideIngredients).
    super_goal(workspaceSetup, switchOnOven).
 
-   // recoveryStrategy(id)
-   recoveryStrategy(r2).
-   recoveryStrategy(r3).
-   recoveryStrategy(r1).
+   // notificationPolicy(policy id, target id)
+   notificationPolicy(np2,workspaceSetup).
+   notificationPolicy(np1,provideIngredients).
 
-   // notificationPolicy(policy id, condition)
-   notificationPolicy(np2,(scheme_id(S) & failed(S,switchOnOven))).
-   notificationPolicy(np3,(scheme_id(S) & (failed(S,dealWithMissingIngredients) | failed(S,checkOven)))).
-   notificationPolicy(np1,(scheme_id(S) & failed(S,provideIngredients))).
-
-   // handlingPolicy(policy id, condition)
-   handlingPolicy(handlerOvenProblem,true).
-   handlingPolicy(handlerCakePreparationFailure,true).
-   handlingPolicy(handlerIngredientsUnavailable,true).
-
-   // strategy_policy(strategy id, policy id)
-   strategy_policy(r2,np2).
-   strategy_policy(r2,handlerOvenProblem).
-   strategy_policy(r3,np3).
-   strategy_policy(r3,handlerCakePreparationFailure).
-   strategy_policy(r1,np1).
-   strategy_policy(r1,handlerIngredientsUnavailable).
-
-   // exceptionSpec(exception spec id)
-   exceptionSpec(ovenBroken).
-   exceptionSpec(cakePreparationFailure).
-   exceptionSpec(ingredientsUnavailable).
+   // exceptionSpec(exception spec id, policy id)
+   exceptionSpec(cakePreparationFailure,np2).
+   exceptionSpec(ingredientsUnavailable,np1).
 
    // exceptionArgument(exception spec id, functor, arity)
-   exceptionArgument(ovenBroken,faultType,1).
    exceptionArgument(ingredientsUnavailable,missingIngredients,1).
 
-   // policy_exceptionSpec(policy id, exception spec id)
-   policy_exceptionSpec(np2,ovenBroken).
-   policy_exceptionSpec(np3,cakePreparationFailure).
-   policy_exceptionSpec(np1,ingredientsUnavailable).
+   // throwingGoal(goal id, exception spec id, when condition)
+   throwingGoal(notifyCakePreparationFailure,cakePreparationFailure,(scheme_id(S) & (failed(S,dealWithMissingIngredients) | failed(S,checkOven)))).
+   throwingGoal(notifyIngredientsUnavailability,ingredientsUnavailable,(scheme_id(S) & failed(S,provideIngredients))).
 
-   // policy_goal(policy id, goal id)
-   policy_goal(np2,notifyProblemWithOven).
-   policy_goal(handlerOvenProblem,checkOven).
-   policy_goal(np3,notifyCakePreparationFailure).
-   policy_goal(handlerCakePreparationFailure,handleCakePreparationFailure).
-   policy_goal(np1,notifyIngredientsUnavailability).
-   policy_goal(handlerIngredientsUnavailable,dealWithMissingIngredients).
+   // catchingGoal(goal id, exception spec id, when condition)
+   catchingGoal(cancelOrder,cakePreparationFailure,true).
+   catchingGoal(dealWithMissingIngredients,ingredientsUnavailable,true).
 
    // ** Rules
    mplayers(M,S,V) :- .count(committed(_,M,S),V).
@@ -200,26 +174,25 @@ scope scheme(cake_sch) {
    all_released(S,[G|T]) :- released(S,G) & all_released(S,T).
    all_satisfied_released(_,[]).
    all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).
-   // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not policy_goal(_,G) & NP \== 0 & all_satisfied_released(S,PCG).
 
-   enabled(S,TG) :- policy_goal(P,TG) &
-                    notificationPolicy(P,Condition) &
+   throwingGoal(TG,E,Condition) :- throwingGoal(SG,E,Condition) & super_goal(SG,TG).
+
+   catchingGoal(CG,E,Condition) :- catchingGoal(SG,E,Condition) & super_goal(SG,CG).
+
+   // enabled goals (i.e. dependence between goals)
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not (throwingGoal(G,_,_) | catchingGoal(G,_,_)) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not (throwingGoal(G,_,_) | catchingGoal(G,_,_)) & NP \== 0 & all_satisfied_released(S,PCG).
+
+   enabled(S,TG) :- throwingGoal(TG,_,Condition) &
                     Condition &
                     goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
                      (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
                     ).
-   enabled(S,CG) :- policy_goal(HP,CG) &
-                    handlingPolicy(HP,Condition) &
+   enabled(S,CG) :- catchingGoal(CG,E,Condition) &
                     Condition &
-                    recoveryStrategy(ST) &
-                    strategy_policy(ST,HP) &
-                    strategy_policy(ST,NPol) &
-                    policy_exceptionSpec(NPol,E) &
                     thrown(S,E,_,_) &
-                    policy_goal(NPol,TG) &
+                    throwingGoal(TG,E,_) &
                     satisfied(S,TG) &
                     goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
@@ -266,30 +239,25 @@ scope scheme(cake_sch) {
         -> fail(fail_not_enabled_goal(S,G)).
    norm exc_unknown:  
            thrown(S,E,Ag,Args) &
-           not exceptionSpec(E)
+           not exceptionSpec(E,_)
         -> fail(exc_unknown(S,E,Ag)).
    norm exc_agent_not_allowed:  
            thrown(S,E,Ag,Args) &
-           exceptionSpec(E) &
+           exceptionSpec(E,_) &
            mission_goal(M,TG) &
-           policy_exceptionSpec(NP,E) &
-           policy_goal(NP,TG) &
+           throwingGoal(TG,E,_) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
            thrown(S,E,Ag,Args) &
-           exceptionSpec(E) &
-           policy_exceptionSpec(NP,E) &
-           notificationPolicy(NP,Condition) &
-           policy_goal(NP,TG) &
-           not (Condition | done(S,TG,Ag))
+           exceptionSpec(E,_) &
+           not (throwingGoal(TG,E,Condition) &
+           (Condition | done(S,TG,Ag)))
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
    norm ach_thr_goal_exc_not_thrown:  
            done(S,TG,Ag) &
-           exceptionSpec(E) &
-           policy_exceptionSpec(NP,E) &
-           policy_goal(NP,TG) &
-           not super_goal(SG,TG) &
+           throwingGoal(TG,E,_) &
+           not super_goal(_,TG) &
            not thrown(S,E,_,_)
         -> fail(ach_thr_goal_exc_not_thrown(S,G,E,Ag)).
    norm exc_arg_not_ground:  
