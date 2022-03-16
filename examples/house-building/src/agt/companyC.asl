@@ -44,7 +44,7 @@ my_price("Painting",        1100).
 +!windows_fitted
     : not hurryUp
    <- .print("Fitting windows...");
-      +hurryUp
+      +hurryUp;
       .wait(8000);
       fitWindows;
       .print("Windows done!").

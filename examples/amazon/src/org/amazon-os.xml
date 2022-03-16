@@ -8,7 +8,7 @@
     xmlns="https://moise-exceptions.sourceforge.io/os"
     
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
     <structural-specification>
 
@@ -94,49 +94,27 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="r1">
-                <notification-policy id="np1">
-                    <condition type="goal-failure">
-                        <condition-argument id="target" value="payOrder" />
-                    </condition>
-                    <exception-spec id="paymentRefused">
-                        <exception-argument id="balance" arity="1" />
-                    </exception-spec>
-                    <goal id="raisePaymentRefused" />
-                </notification-policy>
-                <handling-policy id="handlerPaymentRefused">
-                    <condition type="always"/>
-                    <goal id="retry" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np1" target="payOrder">
+                <exception-spec id="paymentRefused">
+                    <exception-argument id="balance" arity="1" />
+                    <throwing-goal id="raisePaymentRefused" when="scheme_id(S) &amp; failed(S,payOrder)"/>
+                    <catching-goal id="retry" />
+                </exception-spec>
+            </notification-policy>
 
-            <recovery-strategy id="r2">
-                <notification-policy id="np2">
-                    <condition type="goal-failure">
-                        <condition-argument id="target" value="retry" />
-                    </condition>
-                    <exception-spec id="checkoutFailed" />
-                    <goal id="raiseCheckoutFailed" />
-                </notification-policy>
-                <handling-policy id="handlerCheckoutFailed">
-                    <condition type="always"/>
-                    <goal id="cancelOrder" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np2" target="retry">
+                <exception-spec id="checkoutFailed">
+                    <throwing-goal id="raiseCheckoutFailed" when="scheme_id(S) &amp; failed(S,retry)" />
+                    <catching-goal id="cancelOrder" />
+                </exception-spec>
+            </notification-policy>
 
-            <recovery-strategy id="r3">
-                <notification-policy id="np3">
-                    <condition type="goal-failure">
-                        <condition-argument id="target" value="receiveItems" />
-                    </condition>
-                    <exception-spec id="itemsNotReceived" />
-                    <goal id="raiseItemsNotReceived" />
-                </notification-policy>
-                <handling-policy id="handlerItemsNotReceived">
-                    <condition type="always"/>
-                    <goal id="requestRefund" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np3" target="receiveItems">
+                <exception-spec id="itemsNotReceived">
+                    <throwing-goal id="raiseItemsNotReceived" when="scheme_id(S) &amp; failed(S,receiveItems)" />
+                    <catching-goal id="requestRefund" />
+                </exception-spec>
+            </notification-policy>
 
             <mission id="mCustomer1" min="1" max="1">
                 <goal id="browseProducts" />
@@ -220,21 +198,13 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="r4">
-                <notification-policy id="np4">
-                    <condition type="goal-failure">
-                        <condition-argument id="target" value="deliverItems" />
-                    </condition>
-                    <exception-spec id="itemsLost">
-                        <exception-argument id="recipient" arity="1" />
-                    </exception-spec>
-                    <goal id="raiseItemsLost" />
-                </notification-policy>
-                <handling-policy id="handlerItemsLost">
-                    <condition type="always"/>
-                    <goal id="notifyCustomer" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np4" target="deliverItems">
+                <exception-spec id="itemsLost">
+                    <exception-argument id="recipient" arity="1" />
+                    <throwing-goal id="raiseItemsLost" when="scheme_id(S) &amp; failed(S,deliverItems)" />
+                    <catching-goal id="notifyCustomer" />
+                </exception-spec>
+            </notification-policy>
 
             <mission id="mCarrier1" min="1" max="1">
                 <goal id="pickItems" />

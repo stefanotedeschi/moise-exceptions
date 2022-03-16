@@ -28,7 +28,7 @@ my_price(1500). // initial belief
 -!site_prepared[env_failure_reason(F)]
     : focused(ora4mas,bhsch,ArtId)
    <- .print("The site is flooded due to ",F,"!");
-      +failureReason(F)
+      +failureReason(F);
       goalFailed(site_prepared)[artifact_id(ArtId)];
    	  .fail.
 
@@ -36,7 +36,7 @@ my_price(1500). // initial belief
     : .my_name(Ag) &
       focusing(ArtId,bhsch,_,_,ora4mas,_) &
       failureReason(F)
-   <- .print("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE ",F,"!")
+   <- .print("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE ",F,"!");
       throwException(site_preparation_exception,[errorCode(F)])[artifact_id(ArtId)];
       -failureReason(F);
       goalAchieved(notify_site_preparation_problem).

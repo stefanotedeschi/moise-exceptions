@@ -1,7 +1,7 @@
 // Agent sample_agent in project parseInt
 
 +!provideMoney
-	<- .print("Delivering money...")
+	<- .print("Delivering money...");
 	   giveMoney;
 	   .wait(10000).
 
