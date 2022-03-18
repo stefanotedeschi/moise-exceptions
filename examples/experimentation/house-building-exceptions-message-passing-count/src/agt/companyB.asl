@@ -45,3 +45,4 @@ my_price(1500). // initial belief
 
 { include("org_code.asl") }
 { include("exception_logging.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }

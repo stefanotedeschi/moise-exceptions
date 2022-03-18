@@ -134,3 +134,5 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
     : loggerArtifact(LogArtId)
    <- logFinish[artifact_id(LogArtId)];
       .stopMAS.
+
+{ include("$jacamoJar/templates/common-cartago.asl") }

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+<?xml-stylesheet href="https://moise-exceptions.sourceforge.io/xml/os.xsl" type="text/xsl" ?>
 
 <organisational-specification
-    id="house_contruction"
-    os-version="0.8"
+    id="house_contruction" os-version="1.0"
 
-    xmlns='http://moise.sourceforge.net/os'
-    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-    xsi:schemaLocation='http://moise.sourceforge.net/os
-                        http://moise.sourceforge.net/xml/os.xsd' >
+    xmlns="https://moise-exceptions.sourceforge.io/os"
+    
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
 <structural-specification>
 
@@ -124,4 +123,3 @@
 </normative-specification>
 
 </organisational-specification>
-

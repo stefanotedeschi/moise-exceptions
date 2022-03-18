@@ -37,3 +37,4 @@ my_price(1500). // initial belief
       goalAchieved(notify_site_preparation_problem)[artifact_id(ArtId)].
    	  
  { include("org_code.asl") }
+ { include("$jacamoJar/templates/common-cartago.asl") }

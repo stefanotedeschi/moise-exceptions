@@ -35,3 +35,4 @@ sum_of_my_offers(S) :-
 
 { include("org_code.asl") }
 { include("org_goals.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }

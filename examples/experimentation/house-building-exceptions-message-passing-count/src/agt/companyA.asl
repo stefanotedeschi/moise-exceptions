@@ -27,3 +27,4 @@ my_price(300). // initial belief
       .print("Done!").
 
 { include("exception_logging.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }

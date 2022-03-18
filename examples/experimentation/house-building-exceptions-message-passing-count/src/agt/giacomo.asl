@@ -158,3 +158,4 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 
 
 { include("exception_logging.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }

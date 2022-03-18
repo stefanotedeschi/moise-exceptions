@@ -36,14 +36,14 @@ available_colors([white,gray,red,orange,cyan]).
 !discover_logging_art.
 
 +!setup_initial_colors
-   <- .random([0,1],R1)
+   <- .random([0,1],R1);
       if(R1 == 0) {
          +exterior_color(yellow);
       }
       else {
          +exterior_color(red);
       }
-      .random([0,1],R2)
+      .random([0,1],R2);
       if(R2 == 0) {
          +interior_color(green);
       }
@@ -87,7 +87,7 @@ available_colors([white,gray,red,orange,cyan]).
       }
       .print("Fitting windows... I Have to hurry!");
       fitWindows;
-      -hurryUp
+      -hurryUp;
       .print("Windows done!").
 
 +exception(bhsch,windows_delay_exception,[weeksOfDelay(D)])[source(Sender)]
@@ -123,3 +123,4 @@ available_colors([white,gray,red,orange,cyan]).
 { include("org_code.asl") }
 { include("org_goals.asl") }
 { include("exception_logging.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }

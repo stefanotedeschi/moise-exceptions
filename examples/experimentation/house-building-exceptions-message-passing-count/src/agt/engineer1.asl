@@ -58,3 +58,4 @@ my_price(2500). // initial belief
 { include("common.asl") }
 { include("org_code.asl") }
 { include("exception_logging.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }

@@ -25,3 +25,4 @@ my_price(300). // initial belief
       installPlumbing;
       .print("Done!").
 
+{ include("$jacamoJar/templates/common-cartago.asl") }

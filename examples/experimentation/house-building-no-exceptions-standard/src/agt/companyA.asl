@@ -24,3 +24,5 @@ my_price(300). // initial belief
    <- .print("Installing plumbing...");
       installPlumbing; // simulates the action (in GUI artifact)
       .print("Done!").
+
+{ include("$jacamoJar/templates/common-cartago.asl") }

@@ -74,7 +74,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
     : loggerArtifact(LogArtId)
    <- .print;
       .print("*** Execution Phase ***");
-      .print
+      .print;
 
       logStart[artifact_id(LogArtId)];
 
@@ -133,7 +133,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +goalState(bhsch,house_built,_,_,satisfied)
     : loggerArtifact(LogArtId)
    <- logFinish[artifact_id(LogArtId)];
-      .stopMAS;
+      //.stopMAS;
       .
 
 +!notify_affected_companies
@@ -154,3 +154,5 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       goalState(bhsch,interior_painted,_,_,failed) &
       .member(gray,L)
    <- .send(Company,tell,newColor(gray)).
+
+   { include("$jacamoJar/templates/common-cartago.asl") }

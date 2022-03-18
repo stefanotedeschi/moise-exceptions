@@ -74,7 +74,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
     : loggerArtifact(LogArtId)
    <- .print;
       .print("*** Execution Phase ***");
-      .print
+      .print;
 
       // create the group
       .my_name(Me);
@@ -170,3 +170,5 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
          Goal=choose_new_color
       ) & loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)].
+
+{ include("$jacamoJar/templates/common-cartago.asl") }

@@ -21,3 +21,4 @@ my_price(1500). // initial belief
    <- .print("Preparing site...");
       prepareSite. // simulates the action (in GUI artifact)
 
+{ include("$jacamoJar/templates/common-cartago.asl") }

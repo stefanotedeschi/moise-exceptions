@@ -34,14 +34,14 @@ available_colors([white,gray,red,orange,cyan]).
 !discover_art("auction_for_Painting").
 
 +!setup_initial_colors
-   <- .random([0,1],R1)
+   <- .random([0,1],R1);
       if(R1 == 0) {
          +exterior_color(yellow);
       }
       else {
          +exterior_color(red);
       }
-      .random([0,1],R2)
+      .random([0,1],R2);
       if(R2 == 0) {
          +interior_color(green);
       }
@@ -124,3 +124,4 @@ available_colors([white,gray,red,orange,cyan]).
 
 { include("org_code.asl") }
 { include("org_goals.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }
