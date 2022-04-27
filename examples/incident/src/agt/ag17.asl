@@ -13,7 +13,7 @@
 	 : .my_name(Ag) &
 	   scheme(dev_sch,_,DevSchId)
 	<- .print("I'm late in providing feedback to second level support!");
-	   throwException(developer_feedback_delay,[reason(too_much_work)])[artifact_id(SchId)];
+	   raiseException(developer_feedback_delay,[reason(too_much_work)])[artifact_id(SchId)];
 	   goalAchieved(raise_developer_feedback_delay)[artifact_id(DevSchId)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }

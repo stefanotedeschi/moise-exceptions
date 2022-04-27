@@ -30,7 +30,7 @@ count(0).
      : .my_name(Ag)
 	<- .print("Raising exception for pay order...");
 	   getBalance(B);
-	   throwException(paymentRefused,[balance(B)])[artifact_id(ArtId)];
+	   raiseException(paymentRefused,[balance(B)])[artifact_id(ArtId)];
 	   goalAchieved(raisePaymentRefused)[artifact_id(ArtId)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }

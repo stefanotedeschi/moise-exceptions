@@ -46,7 +46,7 @@
 	   exceptionThrown(dev_sch,developer_exception,_) &
 	   exceptionArgument(dev_sch,developer_exception,warrantyStatus(no))
 	<- .print("Raising second level exception! Product out of warranty");
-	   throwException(second_level_exception,[warrantyStatus(no)])[artifact_id(SlsSchId)];
+	   raiseException(second_level_exception,[warrantyStatus(no)])[artifact_id(SlsSchId)];
 	   goalAchieved(raise_second_level_exception)[artifact_id(SlsSchId)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }

@@ -5,7 +5,7 @@
 
 +!explainDelay
 	<- .print("Delay of ",300," seconds...");
-	   throwException(delay,[eta(300)]).
+	   raiseException(delay,[eta(300)]).
 
 // uncomment the include below to have an agent compliant with its organisation
 { include("$moiseJar/asl/org-obedient.asl") }

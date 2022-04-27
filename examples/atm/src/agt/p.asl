@@ -13,7 +13,7 @@
      : firstNaNIndex(I)
 	<- .wait(2000);
 	   .print("Raising exception NAN: ", index(I));
-	   throwException(nan,[index(I)]);
+	   raiseException(nan,[index(I)]);
 	   -firstNaNIndex(I).
 
 { include("$jacamoJar/templates/common-cartago.asl") }

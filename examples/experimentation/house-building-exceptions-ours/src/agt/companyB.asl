@@ -31,8 +31,8 @@ my_price(1500). // initial belief
     : .my_name(Ag) &
       focused(ora4mas,Scheme,ArtId) &
       failureReason(F)
-   <- //.print("THROWING SITE PREPARATION EXCEPTION WITH ERROR CODE ",F,"!")
-      throwException(site_preparation_exception,[errorCode(F)])[artifact_id(ArtId)];
+   <- //.print("RAISING SITE PREPARATION EXCEPTION WITH ERROR CODE ",F,"!")
+      raiseException(site_preparation_exception,[errorCode(F)])[artifact_id(ArtId)];
       -failureReason(F);
       goalAchieved(notify_site_preparation_problem)[artifact_id(ArtId)].
    	  

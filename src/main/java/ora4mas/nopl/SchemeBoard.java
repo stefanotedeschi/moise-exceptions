@@ -361,12 +361,12 @@ public class SchemeBoard extends OrgArt {
     }
 
     @OPERATION
-    public void throwException(String exception, Object[] arguments) throws CartagoException {
-        throwException(getOpUserName(), exception, arguments);
+    public void raiseException(String exception, Object[] arguments) throws CartagoException {
+        raiseException(getOpUserName(), exception, arguments);
     }
 
     @OPERATION
-    public void throwException(final String agent, String exception, Object[] arguments) throws CartagoException {
+    public void raiseException(final String agent, String exception, Object[] arguments) throws CartagoException {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
                 getSchState().addThrown(agent, exception, arguments);

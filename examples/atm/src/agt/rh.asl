@@ -26,7 +26,7 @@ count(1).
 +obligation(Ag,_,done(_,throwAmountUnavailable,Ag),_)
 	 : .my_name(Ag)
 	<- .print("Raising exception AMOUNT UNAVAILABLE!");
-	   throwException(amountUnavailable,[]);
+	   raiseException(amountUnavailable,[]);
 	   goalAchieved(throwAmountUnavailable).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
