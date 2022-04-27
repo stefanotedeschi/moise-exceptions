@@ -47,25 +47,25 @@
                 </plan>
             </goal>
 
-            <notification-policy id="np1" target="provideIngredients">
+            <notification-policy id="np1" target="provideIngredients" condition="scheme_id(S) &amp; failed(S,provideIngredients)">
                 <exception-spec id="ingredientsUnavailable">
                     <exception-argument id="missingIngredients" arity="1" />
-                    <raising-goal id="notifyIngredientsUnavailability" when="scheme_id(S) &amp; failed(S,provideIngredients)"/>
+                    <raising-goal id="notifyIngredientsUnavailability"/>
                     <handling-goal id="dealWithMissingIngredients" />
                 </exception-spec>
             </notification-policy>
 
-            <notification-policy id="np2" target="switchOnOven">
+            <notification-policy id="np2" target="switchOnOven" condition="scheme_id(S) &amp; failed(S,switchOnOven)">
                 <exception-spec id="ovenBroken">
                     <exception-argument id="faultType" arity="1" />
-                    <raising-goal id="notifyProblemWithOven" when="scheme_id(S) &amp; failed(S,switchOnOven)" />
+                    <raising-goal id="notifyProblemWithOven"/>
                     <handling-goal id="checkOven" />
                 </exception-spec>
             </notification-policy>
 
-            <notification-policy id="np3" target="haveCake">
+            <notification-policy id="np3" target="haveCake" condition="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))">
                 <exception-spec id="cakePreparationFailure">
-                    <raising-goal id="notifyCakePreparationFailure" when="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))" />
+                    <raising-goal id="notifyCakePreparationFailure"/>
                     <handling-goal id="handleCakePreparationFailure" />
                 </exception-spec>
             </notification-policy>

@@ -52,17 +52,17 @@
                 </plan>
             </goal>
 
-            <notification-policy id="np1" target="parseAmount">
+            <notification-policy id="np1" target="parseAmount" condition="scheme_id(S) &amp; failed(S,parseAmount)">
                 <exception-spec id="nan">
                     <exception-argument id="index" arity="1" />
-                    <raising-goal id="throwNan" when="scheme_id(S) &amp; failed(S,parseAmount)" />
+                    <raising-goal id="throwNan"/>
                     <handling-goal id="recoverFromNan" />
                 </exception-spec>
             </notification-policy>
 
-            <notification-policy id="np2" target="recoverFromNan">
+            <notification-policy id="np2" target="recoverFromNan" condition="scheme_id(S) &amp; failed(S,recoverFromNan)">
                 <exception-spec id="amountUnavailable">
-                    <raising-goal id="throwAmountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)" />
+                    <raising-goal id="throwAmountUnavailable"/>
                     <handling-goal id="retryLater" />
                 </exception-spec>
             </notification-policy>

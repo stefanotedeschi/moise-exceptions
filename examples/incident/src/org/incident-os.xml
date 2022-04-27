@@ -4,7 +4,7 @@
     os-version="1.0" xmlns="https://moise-exceptions.sourceforge.io/os"
 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
     <structural-specification>
         <role-definitions>

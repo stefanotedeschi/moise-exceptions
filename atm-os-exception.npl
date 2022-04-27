@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'atm'
-    on aprile 27, 2022 - 12:29:12
+    on aprile 27, 2022 - 18:55:05
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -136,9 +136,9 @@ scope scheme(atm_sch) {
    super_goal(obtainAmount, parseAmount).
    super_goal(withdraw, obtainAmount).
 
-   // notificationPolicy(policy id, target id)
-   notificationPolicy(np2,recoverFromNan).
-   notificationPolicy(np1,parseAmount).
+   // notificationPolicy(policy id, target id, condition formula)
+   notificationPolicy(np2,recoverFromNan,(scheme_id(S) & failed(S,recoverFromNan))).
+   notificationPolicy(np1,parseAmount,(scheme_id(S) & failed(S,parseAmount))).
 
    // exceptionSpec(exception spec id, policy id)
    exceptionSpec(amountUnavailable,np2).
@@ -148,8 +148,8 @@ scope scheme(atm_sch) {
    exceptionArgument(nan,index,1).
 
    // raisingGoal(goal id, exception spec id, when condition)
-   raisingGoal(throwAmountUnavailable,amountUnavailable,(scheme_id(S) & failed(S,recoverFromNan))).
-   raisingGoal(throwNan,nan,(scheme_id(S) & failed(S,parseAmount))).
+   raisingGoal(throwAmountUnavailable,amountUnavailable,true).
+   raisingGoal(throwNan,nan,true).
 
    // handlingGoal(goal id, exception spec id, when condition)
    handlingGoal(retryLater,amountUnavailable,true).
@@ -179,14 +179,17 @@ scope scheme(atm_sch) {
    enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not (raisingGoal(G,_,_) | handlingGoal(G,_,_)) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
    enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not (raisingGoal(G,_,_) | handlingGoal(G,_,_)) & NP \== 0 & all_satisfied_released(S,PCG).
 
-   enabled(S,TG) :- raisingGoal(TG,_,Condition) &
+   enabled(S,TG) :- raisingGoal(TG,E,When) &
+                    When &
+                    notificationPolicy(NPol,_,Condition) &
+                    exceptionSpec(E,NPol) &
                     Condition &
                     goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
                      (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
                     ).
-   enabled(S,CG) :- handlingGoal(CG,E,Condition) &
-                    Condition &
+   enabled(S,CG) :- handlingGoal(CG,E,When) &
+                    When &
                     thrown(S,E,_,_) &
                     raisingGoal(TG,E,_) &
                     satisfied(S,TG) &
@@ -246,8 +249,9 @@ scope scheme(atm_sch) {
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
            thrown(S,E,Ag,Args) &
-           exceptionSpec(E,_) &
-           not (raisingGoal(TG,E,Condition) &
+           exceptionSpec(E,NP) &
+           notificationPolicy(NP,_,Condition) &
+           not (raisingGoal(TG,E,_) &
            (Condition | done(S,TG,Ag)))
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
    norm ach_thr_goal_exc_not_thrown:  

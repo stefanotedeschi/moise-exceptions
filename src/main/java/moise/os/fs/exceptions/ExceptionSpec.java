@@ -83,7 +83,7 @@ public class ExceptionSpec extends moise.common.MoiseElement implements ToXML, T
             try {
                 LogicalFormula whenFormula = ASSyntax.parseFormula("true");
                 String when = tgEle.getAttribute("when");
-                if(when != null) {
+                if(when != null && when != "") {
                     whenFormula = ASSyntax.parseFormula(when);
                 }
                 RaisingGoal tg = new RaisingGoal(tgEle.getAttribute("id"), whenFormula, this);

@@ -97,7 +97,7 @@ public class os2nopl {
         condCode.put(PROP_ExcAgNotAllowed,
                 "thrown(S,E,Ag,Args) & exceptionSpec(E,_) & mission_goal(M,TG) & raisingGoal(TG,E,_) & not committed(Ag,M,S)");
         condCode.put(PROP_ExcCondNotHolding,
-                "thrown(S,E,Ag,Args) & exceptionSpec(E,_) & not (raisingGoal(TG,E,Condition) & (Condition | done(S,TG,Ag)))");
+                "thrown(S,E,Ag,Args) & exceptionSpec(E,NP) & notificationPolicy(NP,_,Condition) & not (raisingGoal(TG,E,_) & (Condition | done(S,TG,Ag)))");
         condCode.put(PROP_AchThrGoalExcNotThrown,
                 "done(S,TG,Ag) & raisingGoal(TG,E,_) & not super_goal(_,TG) & not thrown(S,E,_,_)");
         condCode.put(PROP_ExcArgNotGround,
@@ -327,14 +327,14 @@ public class os2nopl {
         }
         np.append(superGoal.toString());
 
-        String notificationPolicy = "\n   // notificationPolicy(policy id, target id)\n";
+        String notificationPolicy = "\n   // notificationPolicy(policy id, target id, condition formula)\n";
         String exceptionSpec =      "\n   // exceptionSpec(exception spec id, policy id)\n";
         String exceptionArgument =  "\n   // exceptionArgument(exception spec id, functor, arity)\n";
-        String raisingGoal =       "\n   // raisingGoal(goal id, exception spec id, when condition)\n";
+        String raisingGoal =        "\n   // raisingGoal(goal id, exception spec id, when condition)\n";
         String handlingGoal =       "\n   // handlingGoal(goal id, exception spec id, when condition)\n";
 
         for (NotificationPolicy npol : sch.getNotificationPolicies()) {
-            notificationPolicy += "   notificationPolicy(" + npol.getId() + "," + npol.getTarget() + ").\n";
+            notificationPolicy += "   notificationPolicy(" + npol.getId() + "," + npol.getTarget() + "," + npol.getCondition().toString() + ").\n";
             for(ExceptionSpec ex : npol.getExceptionSpecs()) {
                 exceptionSpec += "   exceptionSpec(" + ex.getId() + "," + npol.getId() + ").\n";
                 for(Literal l : ex.getExceptionArguments()) {
@@ -393,16 +393,19 @@ public class os2nopl {
         np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not (raisingGoal(G,_,_) | handlingGoal(G,_,_)) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
         np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not (raisingGoal(G,_,_) | handlingGoal(G,_,_)) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
 
-        np.append("   enabled(S,TG) :- raisingGoal(TG,_,Condition) &\r\n"
-                + "                    Condition &\r\n"             
+        np.append("   enabled(S,TG) :- raisingGoal(TG,E,When) &\r\n"
+                + "                    When &\r\n"             
                 //+ "                    not failed(S,TG) &\r\n"
                 //+ "                    not released(S,TG) &\r\n" 
+                + "                    notificationPolicy(NPol,_,Condition) &\r\n"
+                + "                    exceptionSpec(E,NPol) &\r\n"
+                + "                    Condition &\r\n"   
                 + "                    goal(_, TG,  Dep, _, NP, _) & NP \\== 0 & \r\n"
                 + "                    ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n"
                 + "                     (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))\r\n"
                 + "                    ).\r\n");
-        np.append("   enabled(S,CG) :- handlingGoal(CG,E,Condition) &\r\n" 
-                + "                    Condition &\r\n"
+        np.append("   enabled(S,CG) :- handlingGoal(CG,E,When) &\r\n" 
+                + "                    When &\r\n"
                 //+ "                    not failed(S,CG) &\r\n"
                 //+ "                    not released(S,CG) &\r\n"
                 + "                    thrown(S,E,_,_) &\r\n"

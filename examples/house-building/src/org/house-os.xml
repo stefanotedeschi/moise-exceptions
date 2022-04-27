@@ -97,10 +97,10 @@
                 </plan>
             </goal>
 
-            <notification-policy id="npSitePreparation" target="site_prepared">
+            <notification-policy id="npSitePreparation" target="site_prepared" condition="scheme_id(S) &amp; failed(S,site_prepared)">
                 <exception-spec id="site_preparation_exception">
                     <exception-argument id="errorCode" arity="1" />
-                    <raising-goal id="notify_site_preparation_problem" when="scheme_id(S) &amp; failed(S,site_prepared)"/>
+                    <raising-goal id="notify_site_preparation_problem"/>
                     <handling-goal id="handle_site_problem">
                         <plan operator="parallel">
                             <goal id="inspect_site" />
@@ -110,10 +110,10 @@
                 </exception-spec>
             </notification-policy>
             
-            <notification-policy id="npWindowDelay" target="windows_fitted">
+            <notification-policy id="npWindowDelay" target="windows_fitted" condition="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,windows_fitted,_),_))">
                 <exception-spec id="windows_delay_exception">
                     <exception-argument id="weeksOfDelay" arity="1" />
-                    <raising-goal id="notify_windows_fitting_delay" when="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,windows_fitted,_),_))" />
+                    <raising-goal id="notify_windows_fitting_delay"/>
                     <handling-goal id="handle_windows_fitting_delay" when="thrown(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
                 </exception-spec>
             </notification-policy>

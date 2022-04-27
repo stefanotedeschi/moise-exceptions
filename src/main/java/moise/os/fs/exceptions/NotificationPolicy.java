@@ -21,6 +21,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
 
     private String id;
     private Goal target;
+    private LogicalFormula condition;
     private HashMap<String,ExceptionSpec> exceptionSpecs = new HashMap<>();
     private Scheme sch;
 
@@ -32,10 +33,11 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
 //        this.sch = sch;
 //    }
     
-    public NotificationPolicy(String id, String target, Scheme sch) {
+    public NotificationPolicy(String id, String target, LogicalFormula condition, Scheme sch) {
         super();
         this.id = id;
         this.target = sch.getGoal(target);
+        this.condition = condition;
         this.sch = sch;
     }
 
@@ -45,6 +47,10 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
 
     public Goal getTarget() {
         return target;
+    }
+
+    public LogicalFormula getCondition() {
+        return condition;
     }
 
     public Collection<ExceptionSpec> getExceptionSpecs() {
@@ -68,6 +74,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
         ele.setAttribute("target", target.getId());
+        ele.setAttribute("condition", condition.toString());
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
         }
