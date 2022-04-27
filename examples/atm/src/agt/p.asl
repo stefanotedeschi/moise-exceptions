@@ -12,7 +12,7 @@
 +!throwNan
      : firstNaNIndex(I)
 	<- .wait(2000);
-	   .print("Throwing exception NAN: ", index(I));
+	   .print("Raising exception NAN: ", index(I));
 	   throwException(nan,[index(I)]);
 	   -firstNaNIndex(I).
 

@@ -25,7 +25,7 @@ count(1).
    
 +obligation(Ag,_,done(_,throwAmountUnavailable,Ag),_)
 	 : .my_name(Ag)
-	<- .print("Throwing exception AMOUNT UNAVAILABLE!");
+	<- .print("Raising exception AMOUNT UNAVAILABLE!");
 	   throwException(amountUnavailable,[]);
 	   goalAchieved(throwAmountUnavailable).
 

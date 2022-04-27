@@ -35,9 +35,9 @@ import moise.common.MoiseException;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
-import moise.os.fs.exceptions.CatchingGoal;
+import moise.os.fs.exceptions.HandlingGoal;
 import moise.os.fs.exceptions.ExceptionSpec;
-import moise.os.fs.exceptions.ThrowingGoal;
+import moise.os.fs.exceptions.RaisingGoal;
 import npl.NPLInterpreter;
 import npl.parser.nplp;
 
@@ -270,7 +270,7 @@ public class Scheme extends CollectiveOE {
             try {
                 ExceptionSpec ex = spec.getExceptionSpec(l.getTerm(1).toString());
                 boolean anyConditionHolding = false;
-                for(ThrowingGoal tg : ex.getThrowingGoals()) {
+                for(RaisingGoal tg : ex.getRaisingGoals()) {
                 
                     LogicalFormula whenCondition = tg.getWhenCondition();
 
@@ -283,10 +283,10 @@ public class Scheme extends CollectiveOE {
                 }
                 if(!anyConditionHolding) {
                     throwns.remove(l);
-                    for(ThrowingGoal tg : ex.getThrowingGoals()) {
+                    for(RaisingGoal tg : ex.getRaisingGoals()) {
                         resetGoal(tg);
                     }
-                    for(CatchingGoal cg : ex.getCatchingGoals()) {
+                    for(HandlingGoal cg : ex.getHandlingGoals()) {
                         resetGoal(cg);
                     }
                     resetExceptions(nengine);

@@ -97,22 +97,22 @@
             <notification-policy id="np1" target="payOrder">
                 <exception-spec id="paymentRefused">
                     <exception-argument id="balance" arity="1" />
-                    <throwing-goal id="raisePaymentRefused" when="scheme_id(S) &amp; failed(S,payOrder)"/>
-                    <catching-goal id="retry" />
+                    <raising-goal id="raisePaymentRefused" when="scheme_id(S) &amp; failed(S,payOrder)"/>
+                    <handling-goal id="retry" />
                 </exception-spec>
             </notification-policy>
 
             <notification-policy id="np2" target="retry">
                 <exception-spec id="checkoutFailed">
-                    <throwing-goal id="raiseCheckoutFailed" when="scheme_id(S) &amp; failed(S,retry)" />
-                    <catching-goal id="cancelOrder" />
+                    <raising-goal id="raiseCheckoutFailed" when="scheme_id(S) &amp; failed(S,retry)" />
+                    <handling-goal id="cancelOrder" />
                 </exception-spec>
             </notification-policy>
 
             <notification-policy id="np3" target="receiveItems">
                 <exception-spec id="itemsNotReceived">
-                    <throwing-goal id="raiseItemsNotReceived" when="scheme_id(S) &amp; failed(S,receiveItems)" />
-                    <catching-goal id="requestRefund" />
+                    <raising-goal id="raiseItemsNotReceived" when="scheme_id(S) &amp; failed(S,receiveItems)" />
+                    <handling-goal id="requestRefund" />
                 </exception-spec>
             </notification-policy>
 
@@ -201,8 +201,8 @@
             <notification-policy id="np4" target="deliverItems">
                 <exception-spec id="itemsLost">
                     <exception-argument id="recipient" arity="1" />
-                    <throwing-goal id="raiseItemsLost" when="scheme_id(S) &amp; failed(S,deliverItems)" />
-                    <catching-goal id="notifyCustomer" />
+                    <raising-goal id="raiseItemsLost" when="scheme_id(S) &amp; failed(S,deliverItems)" />
+                    <handling-goal id="notifyCustomer" />
                 </exception-spec>
             </notification-policy>
 

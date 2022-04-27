@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on marzo 16, 2022 - 17:30:32
+    on aprile 27, 2022 - 12:29:12
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -148,13 +148,13 @@ scope scheme(cake_sch) {
    // exceptionArgument(exception spec id, functor, arity)
    exceptionArgument(ingredientsUnavailable,missingIngredients,1).
 
-   // throwingGoal(goal id, exception spec id, when condition)
-   throwingGoal(notifyCakePreparationFailure,cakePreparationFailure,(scheme_id(S) & (failed(S,dealWithMissingIngredients) | failed(S,checkOven)))).
-   throwingGoal(notifyIngredientsUnavailability,ingredientsUnavailable,(scheme_id(S) & failed(S,provideIngredients))).
+   // raisingGoal(goal id, exception spec id, when condition)
+   raisingGoal(notifyCakePreparationFailure,cakePreparationFailure,(scheme_id(S) & (failed(S,dealWithMissingIngredients) | failed(S,checkOven)))).
+   raisingGoal(notifyIngredientsUnavailability,ingredientsUnavailable,(scheme_id(S) & failed(S,provideIngredients))).
 
-   // catchingGoal(goal id, exception spec id, when condition)
-   catchingGoal(cancelOrder,cakePreparationFailure,true).
-   catchingGoal(dealWithMissingIngredients,ingredientsUnavailable,true).
+   // handlingGoal(goal id, exception spec id, when condition)
+   handlingGoal(cancelOrder,cakePreparationFailure,true).
+   handlingGoal(dealWithMissingIngredients,ingredientsUnavailable,true).
 
    // ** Rules
    mplayers(M,S,V) :- .count(committed(_,M,S),V).
@@ -176,19 +176,19 @@ scope scheme(cake_sch) {
    all_satisfied_released(S,[G|T]) :- (satisfied(S,G) | released(S,G)) & all_satisfied_released(S,T).
 
    // enabled goals (i.e. dependence between goals)
-   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not (throwingGoal(G,_,_) | catchingGoal(G,_,_)) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
-   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not (throwingGoal(G,_,_) | catchingGoal(G,_,_)) & NP \== 0 & all_satisfied_released(S,PCG).
+   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not (raisingGoal(G,_,_) | handlingGoal(G,_,_)) & NP \== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).
+   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not (raisingGoal(G,_,_) | handlingGoal(G,_,_)) & NP \== 0 & all_satisfied_released(S,PCG).
 
-   enabled(S,TG) :- throwingGoal(TG,_,Condition) &
+   enabled(S,TG) :- raisingGoal(TG,_,Condition) &
                     Condition &
                     goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
                      (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))
                     ).
-   enabled(S,CG) :- catchingGoal(CG,E,Condition) &
+   enabled(S,CG) :- handlingGoal(CG,E,Condition) &
                     Condition &
                     thrown(S,E,_,_) &
-                    throwingGoal(TG,E,_) &
+                    raisingGoal(TG,E,_) &
                     satisfied(S,TG) &
                     goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
@@ -241,18 +241,18 @@ scope scheme(cake_sch) {
            thrown(S,E,Ag,Args) &
            exceptionSpec(E,_) &
            mission_goal(M,TG) &
-           throwingGoal(TG,E,_) &
+           raisingGoal(TG,E,_) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
            thrown(S,E,Ag,Args) &
            exceptionSpec(E,_) &
-           not (throwingGoal(TG,E,Condition) &
+           not (raisingGoal(TG,E,Condition) &
            (Condition | done(S,TG,Ag)))
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
    norm ach_thr_goal_exc_not_thrown:  
            done(S,TG,Ag) &
-           throwingGoal(TG,E,_) &
+           raisingGoal(TG,E,_) &
            not super_goal(_,TG) &
            not thrown(S,E,_,_)
         -> fail(ach_thr_goal_exc_not_thrown(S,G,E,Ag)).

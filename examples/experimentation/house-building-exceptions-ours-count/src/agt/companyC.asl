@@ -88,7 +88,7 @@ available_colors([white,gray,red,orange,cyan]).
          throwException(windows_delay_exception,[weeksOfDelay(1)])[artifact_id(ArtId)];
       }
       else {
-         throwException(windows_delay_exception,[weeksOfDelay(3)]); // This exception would enable the catching goal
+         throwException(windows_delay_exception,[weeksOfDelay(3)]); // This exception would enable the handling goal
       }
       .
 

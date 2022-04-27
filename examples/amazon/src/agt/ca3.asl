@@ -16,7 +16,7 @@ problem.
 +obligation(Ag,_,done(_,raiseItemsLost,Ag),_)[artifact_id(ArtId)]
      : .my_name(Ag) &
        goalArgument(_,shipOrder,"recipient",Recipient)
-	<- .print("Throwing exception for deliver items... Items lost!");
+	<- .print("Raising exception for deliver items... Items lost!");
 	   throwException(itemsLost,[recipient(Recipient)])[artifact_id(ArtId)];
 	   goalAchieved(raiseItemsLost).
 

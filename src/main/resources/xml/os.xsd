@@ -74,8 +74,8 @@
     <xsd:complexType name="exceptionSpec">
         <xsd:sequence>
            <xsd:element maxOccurs="unbounded" minOccurs="0" name="exception-argument" type="moise:exceptionArgumentType"/>
-           <xsd:element maxOccurs="unbounded" minOccurs="1" name="throwing-goal" type="moise:exGoalDefType"/>
-           <xsd:element maxOccurs="unbounded" minOccurs="1" name="catching-goal" type="moise:exGoalDefType"/>
+           <xsd:element maxOccurs="unbounded" minOccurs="1" name="raising-goal" type="moise:exGoalDefType"/>
+           <xsd:element maxOccurs="unbounded" minOccurs="1" name="handling-goal" type="moise:exGoalDefType"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="xsd:string" use="required" />
     </xsd:complexType>

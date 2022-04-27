@@ -5,20 +5,20 @@ import org.w3c.dom.Element;
 
 import jason.asSyntax.LogicalFormula;
 
-public class ThrowingGoal extends ExceptionGoal {
+public class HandlingGoal extends ExceptionGoal {
 
-    public ThrowingGoal(String goal, LogicalFormula when, ExceptionSpec inExceptionSpec) {
+    public HandlingGoal(String goal, LogicalFormula when, ExceptionSpec inExceptionSpec) {
         super(goal, when, inExceptionSpec);
     }
 
     public static String getXMLTag() {
-        return "throwing-goal";
+        return "handling-goal";
     }
     
     @Override
     public Element getAsDOM(Document document) {
         Element ele = super.getAsDOM(document);
-        document.renameNode(ele,null,"throwing-goal");
+        document.renameNode(ele,null,"handling-goal");
         return ele;
     }
 

@@ -378,7 +378,7 @@ public class SchemeBoard extends OrgArt {
                             createAtom(exception), ASSyntax.parseLiteral((String) a)));
                 }
             }
-        }, "Error throwing exception " + exception);
+        }, "Error raising exception " + exception);
     }
 
     /** The agent executing this operation sets a value for a goal argument.

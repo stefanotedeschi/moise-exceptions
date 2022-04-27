@@ -50,23 +50,23 @@
             <notification-policy id="np1" target="provideIngredients">
                 <exception-spec id="ingredientsUnavailable">
                     <exception-argument id="missingIngredients" arity="1" />
-                    <throwing-goal id="notifyIngredientsUnavailability" when="scheme_id(S) &amp; failed(S,provideIngredients)" />
-                    <catching-goal id="dealWithMissingIngredients" />
+                    <raising-goal id="notifyIngredientsUnavailability" when="scheme_id(S) &amp; failed(S,provideIngredients)" />
+                    <handling-goal id="dealWithMissingIngredients" />
                 </exception-spec>
             </notification-policy>
 
             <notification-policy id="np2" target="switchOnOven">
                 <exception-spec id="ovenBroken">
                     <exception-argument id="faultType" arity="1" />
-                    <throwing-goal id="notifyProblemWithOven" when="scheme_id(S) &amp; failed(S,switchOnOven)" />
-                    <catching-goal id="checkOven" />
+                    <raising-goal id="notifyProblemWithOven" when="scheme_id(S) &amp; failed(S,switchOnOven)" />
+                    <handling-goal id="checkOven" />
                 </exception-spec>
             </notification-policy>
 
             <notification-policy id="np2" target="workspaceSetup">
                 <exception-spec id="cakePreparationFailure">
-                    <throwing-goal id="notifyCakePreparationFailure" when="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))" />
-                    <catching-goal id="cancelOrder" />
+                    <raising-goal id="notifyCakePreparationFailure" when="scheme_id(S) &amp; (failed(S,dealWithMissingIngredients) | failed(S,checkOven))" />
+                    <handling-goal id="cancelOrder" />
                 </exception-spec>
             </notification-policy>
 

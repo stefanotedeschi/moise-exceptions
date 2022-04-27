@@ -16,7 +16,7 @@
 
 +obligation(Ag,_,thrown(_,throw_pff2ls),_)
 	 : .my_name(Ag)
-	<- .print("Throwing exception explaining failure...");
+	<- .print("Raising exception explaining failure...");
 	   exceptionThrown(throw_pff2ls,fail_dev).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
