@@ -100,33 +100,33 @@
                 </plan>
             </goal>
 
-            <notification-policy id="npSitePreparation" target="site_prepared">
-                <exception-spec id="site_preparation_exception">
+            <notification-policy id="npSitePreparation" target="site_prepared" condition="scheme_id(S) &amp; failed(S,site_prepared)">
+                <exception-specification id="site_preparation_exception">
                     <exception-argument id="errorCode" arity="1" />
-                    <raising-goal id="notify_site_preparation_problem" when="scheme_id(S) &amp; failed(S,site_prepared)"/>
+                    <raising-goal id="notify_site_preparation_problem"/>
                     <handling-goal id="handle_site_problem">
                         <plan operator="parallel">
                             <goal id="inspect_site" />
                             <goal id="notify_affected_companies" />
                         </plan>
                     </handling-goal>
-                </exception-spec>
+                </exception-specification>
             </notification-policy>
 
-            <notification-policy id="npWindowDelay" target="windows_fitted">
-                <exception-spec id="windows_delay_exception">
+            <notification-policy id="npWindowDelay" target="windows_fitted" condition="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,windows_fitted,_),_))">
+                <exception-specification id="windows_delay_exception">
                     <exception-argument id="weeksOfDelay" arity="1" />
-                    <raising-goal id="notify_windows_fitting_delay" when="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,windows_fitted,_),_))" />
-                    <handling-goal id="handle_windows_fitting_delay" when="thrown(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
-                </exception-spec>
+                    <raising-goal id="notify_windows_fitting_delay"/>
+                    <handling-goal id="handle_windows_fitting_delay" when="raised(_,windows_delay_exception,_,Args) &amp; .member(weeksOfDelay(D),Args) &amp; D &gt;=2" />
+                </exception-specification>
             </notification-policy>
 
-            <notification-policy id="npPaint" target="house_built">
-                <exception-spec id="paint_exception">
+            <notification-policy id="npPaint" target="house_built" condition="scheme_id(S) &amp; (failed(S,interior_painted) | failed(S,exterior_painted))">
+                <exception-specification id="paint_exception">
                     <exception-argument id="alternativeColors" arity="1" />
-                    <raising-goal id="notify_painting_failure" when="scheme_id(S) &amp; (failed(S,interior_painted) | failed(S,exterior_painted))"/>
+                    <raising-goal id="notify_painting_failure"/>
                     <handling-goal id="choose_new_color" />
-                </exception-spec>
+                </exception-specification>
             </notification-policy>
 
             <mission id="management_of_house_building" min="1" max="1">

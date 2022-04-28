@@ -9,7 +9,7 @@
 	   goalFailed(parseAmount);
 	   .fail.
 
-+!throwNan
++!raiseNan
      : firstNaNIndex(I)
 	<- .wait(2000);
 	   .print("Raising exception NAN: ", index(I));

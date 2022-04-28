@@ -95,25 +95,25 @@
             </goal>
 
             <notification-policy id="np1" target="payOrder" condition="scheme_id(S) &amp; failed(S,payOrder)">
-                <exception-spec id="paymentRefused">
+                <exception-specification id="paymentRefused">
                     <exception-argument id="balance" arity="1" />
                     <raising-goal id="raisePaymentRefused"/>
                     <handling-goal id="retry" />
-                </exception-spec>
+                </exception-specification>
             </notification-policy>
 
             <notification-policy id="np2" target="retry" condition="scheme_id(S) &amp; failed(S,retry)">
-                <exception-spec id="checkoutFailed">
+                <exception-specification id="checkoutFailed">
                     <raising-goal id="raiseCheckoutFailed"/>
                     <handling-goal id="cancelOrder" />
-                </exception-spec>
+                </exception-specification>
             </notification-policy>
 
             <notification-policy id="np3" target="receiveItems" condition="scheme_id(S) &amp; failed(S,receiveItems)">
-                <exception-spec id="itemsNotReceived">
+                <exception-specification id="itemsNotReceived">
                     <raising-goal id="raiseItemsNotReceived"/>
                     <handling-goal id="requestRefund" />
-                </exception-spec>
+                </exception-specification>
             </notification-policy>
 
             <mission id="mCustomer1" min="1" max="1">
@@ -199,11 +199,11 @@
             </goal>
 
             <notification-policy id="np4" target="deliverItems" condition="scheme_id(S) &amp; failed(S,deliverItems)">
-                <exception-spec id="itemsLost">
+                <exception-specification id="itemsLost">
                     <exception-argument id="recipient" arity="1" />
                     <raising-goal id="raiseItemsLost"/>
                     <handling-goal id="notifyCustomer" />
-                </exception-spec>
+                </exception-specification>
             </notification-policy>
 
             <mission id="mCarrier1" min="1" max="1">

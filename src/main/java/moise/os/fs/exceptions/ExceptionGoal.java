@@ -8,12 +8,12 @@ import moise.os.fs.Goal;
 
 public class ExceptionGoal extends Goal {
 
-    private ExceptionSpec inExceptionSpec;
+    private ExceptionSpecification inExceptionSpecification;
     private LogicalFormula when;
     
-    public ExceptionGoal(String goal, LogicalFormula when, ExceptionSpec inExceptionSpec) {
+    public ExceptionGoal(String goal, LogicalFormula when, ExceptionSpecification inExceptionSpecification) {
         super(goal);
-        this.inExceptionSpec = inExceptionSpec;
+        this.inExceptionSpecification = inExceptionSpecification;
         this.when = when;
     }
     

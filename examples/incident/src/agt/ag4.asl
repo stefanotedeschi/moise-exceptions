@@ -47,7 +47,7 @@
 +obligation(Ag,_,done(am_sch,raise_account_manager_exception,Ag),_)
 	 : .my_name(Ag) &
 	   scheme(am_sch,_,AmSchId) &
-	   exceptionThrown(fls_sch,first_level_exception,_) &
+	   exceptionRaised(fls_sch,first_level_exception,_) &
 	   exceptionArgument(fls_sch,first_level_exception,warrantyStatus(no))
 	<- .print("Raising account manager exception! Product out of warranty");
 	   raiseException(account_manager_exception,[warrantyStatus(no)])[artifact_id(AmSchId)];

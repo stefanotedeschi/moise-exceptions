@@ -23,11 +23,11 @@ count(1).
       .print("Maximum number of attempts reached");
       goalFailed(recoverFromNan).
    
-+obligation(Ag,_,done(_,throwAmountUnavailable,Ag),_)
++obligation(Ag,_,done(_,raiseAmountUnavailable,Ag),_)
 	 : .my_name(Ag)
 	<- .print("Raising exception AMOUNT UNAVAILABLE!");
 	   raiseException(amountUnavailable,[]);
-	   goalAchieved(throwAmountUnavailable).
+	   goalAchieved(raiseAmountUnavailable).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

@@ -7,8 +7,8 @@ import jason.asSyntax.LogicalFormula;
 
 public class HandlingGoal extends ExceptionGoal {
 
-    public HandlingGoal(String goal, LogicalFormula when, ExceptionSpec inExceptionSpec) {
-        super(goal, when, inExceptionSpec);
+    public HandlingGoal(String goal, LogicalFormula when, ExceptionSpecification inExceptionSpecification) {
+        super(goal, when, inExceptionSpecification);
     }
 
     public static String getXMLTag() {

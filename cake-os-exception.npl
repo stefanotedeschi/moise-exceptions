@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on aprile 27, 2022 - 18:55:05
+    on aprile 28, 2022 - 16:24:11
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -141,9 +141,9 @@ scope scheme(cake_sch) {
    notificationPolicy(np2,workspaceSetup,(scheme_id(S) & (failed(S,dealWithMissingIngredients) | failed(S,checkOven)))).
    notificationPolicy(np1,provideIngredients,(scheme_id(S) & failed(S,provideIngredients))).
 
-   // exceptionSpec(exception spec id, policy id)
-   exceptionSpec(cakePreparationFailure,np2).
-   exceptionSpec(ingredientsUnavailable,np1).
+   // exceptionSpecification(exception spec id, policy id)
+   exceptionSpecification(cakePreparationFailure,np2).
+   exceptionSpecification(ingredientsUnavailable,np1).
 
    // exceptionArgument(exception spec id, functor, arity)
    exceptionArgument(ingredientsUnavailable,missingIngredients,1).
@@ -182,7 +182,7 @@ scope scheme(cake_sch) {
    enabled(S,TG) :- raisingGoal(TG,E,When) &
                     When &
                     notificationPolicy(NPol,_,Condition) &
-                    exceptionSpec(E,NPol) &
+                    exceptionSpecification(E,NPol) &
                     Condition &
                     goal(_, TG,  Dep, _, NP, _) & NP \== 0 & 
                     ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |
@@ -190,7 +190,7 @@ scope scheme(cake_sch) {
                     ).
    enabled(S,CG) :- handlingGoal(CG,E,When) &
                     When &
-                    thrown(S,E,_,_) &
+                    raised(S,E,_,_) &
                     raisingGoal(TG,E,_) &
                     satisfied(S,TG) &
                     goal(_, CG,  Dep, _, NP, _) & NP \== 0 &
@@ -237,46 +237,46 @@ scope scheme(cake_sch) {
            not enabled(S,G)
         -> fail(fail_not_enabled_goal(S,G)).
    norm exc_unknown:  
-           thrown(S,E,Ag,Args) &
-           not exceptionSpec(E,_)
+           raised(S,E,Ag,Args) &
+           not exceptionSpecification(E,_)
         -> fail(exc_unknown(S,E,Ag)).
    norm exc_agent_not_allowed:  
-           thrown(S,E,Ag,Args) &
-           exceptionSpec(E,_) &
+           raised(S,E,Ag,Args) &
+           exceptionSpecification(E,_) &
            mission_goal(M,TG) &
            raisingGoal(TG,E,_) &
            not committed(Ag,M,S)
         -> fail(exc_agent_not_allowed(S,E,Ag)).
    norm exc_condition_not_holding:  
-           thrown(S,E,Ag,Args) &
-           exceptionSpec(E,NP) &
+           raised(S,E,Ag,Args) &
+           exceptionSpecification(E,NP) &
            notificationPolicy(NP,_,Condition) &
            not (raisingGoal(TG,E,_) &
            (Condition | done(S,TG,Ag)))
         -> fail(exc_condition_not_holding(S,E,Ag,Condition)).
-   norm ach_thr_goal_exc_not_thrown:  
+   norm ach_thr_goal_exc_not_raised:  
            done(S,TG,Ag) &
            raisingGoal(TG,E,_) &
            not super_goal(_,TG) &
-           not thrown(S,E,_,_)
-        -> fail(ach_thr_goal_exc_not_thrown(S,G,E,Ag)).
+           not raised(S,E,_,_)
+        -> fail(ach_thr_goal_exc_not_raised(S,G,E,Ag)).
    norm exc_arg_not_ground:  
-           thrown(S,E,Ag,Args) &
-           exceptionSpec(E) &
+           raised(S,E,Ag,Args) &
+           exceptionSpecification(E) &
            .member(Arg,Args) &
            not .ground(Arg)
         -> fail(exc_arg_not_ground(S,E,Arg)).
    norm exc_arg_missing:  
-           thrown(S,E,Ag,Args) &
-           exceptionSpec(E) &
+           raised(S,E,Ag,Args) &
+           exceptionSpecification(E) &
            exceptionArgument(E,ArgFunctor,ArgArity) &
            not (.member(Arg,Args) &
            Arg=..[ArgFunctor,T,A] &
            .length(T,ArgArity))
         -> fail(exc_arg_missing(S,E,ArgFunctor,ArgArity)).
    norm exc_arg_unknown:  
-           thrown(S,E,Ag,Args) &
-           exceptionSpec(E) &
+           raised(S,E,Ag,Args) &
+           exceptionSpecification(E) &
            .member(Arg,Args) &
            Arg=..[ArgFunctor,T,A] &
            .length(T,ArgArity) &

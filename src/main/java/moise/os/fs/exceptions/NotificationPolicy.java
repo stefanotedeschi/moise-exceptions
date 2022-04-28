@@ -22,7 +22,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
     private String id;
     private Goal target;
     private LogicalFormula condition;
-    private HashMap<String,ExceptionSpec> exceptionSpecs = new HashMap<>();
+    private HashMap<String,ExceptionSpecification> exceptionSpecifications = new HashMap<>();
     private Scheme sch;
 
 //    public NotificationPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
@@ -53,20 +53,20 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         return condition;
     }
 
-    public Collection<ExceptionSpec> getExceptionSpecs() {
-        return exceptionSpecs.values();
+    public Collection<ExceptionSpecification> getExceptionSpecifications() {
+        return exceptionSpecifications.values();
     }
     
-    public void addExceptionSpec(ExceptionSpec ex) {
-        exceptionSpecs.put(ex.getId(), ex);
+    public void addExceptionSpecification(ExceptionSpecification ex) {
+        exceptionSpecifications.put(ex.getId(), ex);
     }
 
     public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
-        for(Element exEle : DOMUtils.getDOMDirectChilds(ele, ExceptionSpec.getXMLTag())) {
-            ExceptionSpec ex = new ExceptionSpec(exEle.getAttribute("id"), this, sch);
+        for(Element exEle : DOMUtils.getDOMDirectChilds(ele, ExceptionSpecification.getXMLTag())) {
+            ExceptionSpecification ex = new ExceptionSpecification(exEle.getAttribute("id"), this, sch);
             ex.setFromDOM(exEle);
-            addExceptionSpec(ex);
+            addExceptionSpecification(ex);
         }
     }
 
@@ -78,7 +78,7 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
         }
-        for(ExceptionSpec ex : exceptionSpecs.values()) {
+        for(ExceptionSpecification ex : exceptionSpecifications.values()) {
             ele.appendChild(ex.getAsDOM(document));
         }
         return ele;

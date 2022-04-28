@@ -142,14 +142,14 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       .
 
 +!choose_new_color
-	 : exceptionThrown(bhsch,paint_exception,Company) &
+	 : exceptionRaised(bhsch,paint_exception,Company) &
       exceptionArgument(bhsch,paint_exception,alternativeColors(L)) &
       goalState(bhsch,exterior_painted,_,_,failed) &
       .member(white,L)
    <- .send(Company,tell,newColor(white)).
 
 +!choose_new_color
-    : exceptionThrown(bhsch,paint_exception,Company) &
+    : exceptionRaised(bhsch,paint_exception,Company) &
       exceptionArgument(bhsch,paint_exception,alternativeColors(L)) &
       goalState(bhsch,interior_painted,_,_,failed) &
       .member(gray,L)

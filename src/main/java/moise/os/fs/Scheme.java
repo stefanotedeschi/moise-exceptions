@@ -28,7 +28,7 @@ import moise.common.MoiseElement;
 import moise.common.MoiseException;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
-import moise.os.fs.exceptions.ExceptionSpec;
+import moise.os.fs.exceptions.ExceptionSpecification;
 import moise.os.fs.exceptions.NotificationPolicy;
 import moise.os.fs.exceptions.PolicyConditionTemplate;
 import moise.os.fs.exceptions.RaisingGoal;
@@ -204,9 +204,9 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         return notificationPolicies.values();
     }
 
-    public ExceptionSpec getExceptionSpec(String id) throws MoiseException {
+    public ExceptionSpecification getExceptionSpecification(String id) throws MoiseException {
         for (NotificationPolicy np : notificationPolicies.values()) {
-            for(ExceptionSpec ex : np.getExceptionSpecs()) {
+            for(ExceptionSpecification ex : np.getExceptionSpecifications()) {
                 if (ex.getId().equals(id)) {
                     return ex;
                 }

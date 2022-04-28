@@ -129,7 +129,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
       .
 
 +!handle_windows_fitting_delay
-    : exceptionThrown(bhsch,windows_delay_exception,Company) &
+    : exceptionRaised(bhsch,windows_delay_exception,Company) &
       exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D))
    <- .print("There is a delay in windows fitting by ",Company, " of ",D," weeks!");
       // Do something to handle the delay

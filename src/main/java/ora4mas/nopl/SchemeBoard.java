@@ -369,9 +369,9 @@ public class SchemeBoard extends OrgArt {
     public void raiseException(final String agent, String exception, Object[] arguments) throws CartagoException {
         ora4masOperationTemplate(new Operation() {
             public void exec() throws NormativeFailureException, Exception {
-                getSchState().addThrown(agent, exception, arguments);
+                getSchState().addRaised(agent, exception, arguments);
                 nengine.verifyNorms();
-                exceptionsObsProps.add(defineObsProperty("exceptionThrown", createAtom(getId().getName()),
+                exceptionsObsProps.add(defineObsProperty("exceptionRaised", createAtom(getId().getName()),
                         createAtom(exception), createAtom(agent)));
                 for (Object a : arguments) {
                     exceptionArgumentsObsProps.add(defineObsProperty("exceptionArgument", createAtom(getId().getName()),
@@ -658,7 +658,7 @@ public class SchemeBoard extends OrgArt {
         Iterator<ObsProperty> i = exceptionsObsProps.iterator();
         while (i.hasNext()) {
             ObsProperty op = i.next();
-            Literal l = createLiteral("thrown", new VarTerm("SID"), ASSyntax.createAtom(op.getValue(1).toString()), new VarTerm("Ag"));
+            Literal l = createLiteral("raised", new VarTerm("SID"), ASSyntax.createAtom(op.getValue(1).toString()), new VarTerm("Ag"));
             
             if (!nengine.holds(new NPLLiteral(l, this))) {
                 Iterator<ObsProperty> iArgs = exceptionArgumentsObsProps.iterator();
