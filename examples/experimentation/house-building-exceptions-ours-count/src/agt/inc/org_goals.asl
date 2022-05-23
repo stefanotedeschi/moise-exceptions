@@ -16,7 +16,7 @@
 +!interior_painted              <- .print("Painting interior...");paintInterior;.print("Done!").
 
 +!handle_windows_fitting_delay
-    : exceptionThrown(bhsch,windows_delay_exception,Company) &
+    : exceptionRaised(bhsch,windows_delay_exception,Company) &
       exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D)) &
       not .my_name(Company)
    <- .print("There is a delay in windows fitting by ",Company, " of ",D," weeks! I can reschedule my tasks");
@@ -24,7 +24,7 @@
       .
 
 +!handle_windows_fitting_delay
-    : exceptionThrown(bhsch,windows_delay_exception,Company) &
+    : exceptionRaised(bhsch,windows_delay_exception,Company) &
       exceptionArgument(bhsch,windows_delay_exception,weeksOfDelay(D)) &
       .my_name(Company)
    <- .print("There is a delay in windows fitting but I already know it... It's my fault");

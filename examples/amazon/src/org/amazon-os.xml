@@ -94,26 +94,26 @@
                 </plan>
             </goal>
 
-            <notification-policy id="np1" target="payOrder">
-                <exception-spec id="paymentRefused">
+            <notification-policy id="np1" target="payOrder" condition="scheme_id(S) &amp; failed(S,payOrder)">
+                <exception-specification id="paymentRefused">
                     <exception-argument id="balance" arity="1" />
-                    <throwing-goal id="raisePaymentRefused" when="scheme_id(S) &amp; failed(S,payOrder)"/>
-                    <catching-goal id="retry" />
-                </exception-spec>
+                    <raising-goal id="raisePaymentRefused"/>
+                    <handling-goal id="retry" />
+                </exception-specification>
             </notification-policy>
 
-            <notification-policy id="np2" target="retry">
-                <exception-spec id="checkoutFailed">
-                    <throwing-goal id="raiseCheckoutFailed" when="scheme_id(S) &amp; failed(S,retry)" />
-                    <catching-goal id="cancelOrder" />
-                </exception-spec>
+            <notification-policy id="np2" target="retry" condition="scheme_id(S) &amp; failed(S,retry)">
+                <exception-specification id="checkoutFailed">
+                    <raising-goal id="raiseCheckoutFailed"/>
+                    <handling-goal id="cancelOrder" />
+                </exception-specification>
             </notification-policy>
 
-            <notification-policy id="np3" target="receiveItems">
-                <exception-spec id="itemsNotReceived">
-                    <throwing-goal id="raiseItemsNotReceived" when="scheme_id(S) &amp; failed(S,receiveItems)" />
-                    <catching-goal id="requestRefund" />
-                </exception-spec>
+            <notification-policy id="np3" target="receiveItems" condition="scheme_id(S) &amp; failed(S,receiveItems)">
+                <exception-specification id="itemsNotReceived">
+                    <raising-goal id="raiseItemsNotReceived"/>
+                    <handling-goal id="requestRefund" />
+                </exception-specification>
             </notification-policy>
 
             <mission id="mCustomer1" min="1" max="1">
@@ -198,12 +198,12 @@
                 </plan>
             </goal>
 
-            <notification-policy id="np4" target="deliverItems">
-                <exception-spec id="itemsLost">
+            <notification-policy id="np4" target="deliverItems" condition="scheme_id(S) &amp; failed(S,deliverItems)">
+                <exception-specification id="itemsLost">
                     <exception-argument id="recipient" arity="1" />
-                    <throwing-goal id="raiseItemsLost" when="scheme_id(S) &amp; failed(S,deliverItems)" />
-                    <catching-goal id="notifyCustomer" />
-                </exception-spec>
+                    <raising-goal id="raiseItemsLost"/>
+                    <handling-goal id="notifyCustomer" />
+                </exception-specification>
             </notification-policy>
 
             <mission id="mCarrier1" min="1" max="1">

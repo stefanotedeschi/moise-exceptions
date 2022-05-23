@@ -8,7 +8,7 @@
     xmlns="https://moise-exceptions.sourceforge.io/os"
     
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
 
     <structural-specification>
@@ -33,35 +33,13 @@
 
             <goal id="task" ttf="5 seconds" />
 
-            <recovery-strategy id="rec1">
-
-                <notification-policy id="np1">
-
-                    <!-- CONDITION -->
-                    <condition type="goal-ttf-expiration">
-                        <condition-argument id="target" value="task" />
-                    </condition>
-
-                    <exception-spec id="delay">
+                <notification-policy id="np1" target="task" condition="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,task,_),_))">
+                    <exception-specification id="delay">
                         <exception-argument id="eta" arity="1" />
-                    </exception-spec>
-
-                    <!-- THROWING GOAL -->
-                    <goal id="explainDelay"/>
-
+                        <raising-goal id="explainDelay"/>
+                        <handling-goal id="handleDelay" />
+                    </exception-specification>
                 </notification-policy>
-
-                <handling-policy id="hp1">
-
-                    <!-- CONDITION -->
-                   <condition type="always"/>
-
-                    <!-- CATCHING GOAL -->
-                    <goal id="handleDelay" />
-
-                </handling-policy>
-
-            </recovery-strategy>
 
             <mission id="mWorker" min="1" max="1">
                 <goal id="task" />

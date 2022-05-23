@@ -14,7 +14,7 @@
 	
 +!notifyStoppedMotorNumber
 	<- .print("The broken motor is the number 2");
-	   throwException(exMotor,[motorNumber(2)]).
+	   raiseException(exMotor,[motorNumber(2)]).
 
 // uncomment the include below to have an agent compliant with its organisation
 { include("$moiseJar/asl/org-obedient.asl") }

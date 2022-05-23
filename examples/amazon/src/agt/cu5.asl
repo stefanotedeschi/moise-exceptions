@@ -9,8 +9,8 @@
 
 +obligation(Ag,_,done(_,raiseItemsNotReceived,Ag),_)[artifact_id(ArtId)]
      : .my_name(Ag)
-	<- .print("Throwing exception for receive items... Items not received!");
-	   throwException(itemsNotReceived,[])[artifact_id(ArtId)];
+	<- .print("Raising exception for receive items... Items not received!");
+	   raiseException(itemsNotReceived,[])[artifact_id(ArtId)];
 	   goalAchieved(raiseItemsNotReceived).
 
 { include("$jacamoJar/templates/common-cartago.asl") }

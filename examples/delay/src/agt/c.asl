@@ -16,13 +16,13 @@
      .print("CHECK").
 
 +!handleDelay
-     : exceptionThrown(_,delay,_) &
+     : exceptionRaised(_,delay,_) &
        exceptionArgument(_,delay,eta(N)) &
        N < 200
 	<- .print("I wait a little bit more...").
 
 +!handleDelay
-     : exceptionThrown(_,delay,_) &
+     : exceptionRaised(_,delay,_) &
        exceptionArgument(_,delay,eta(N)) &
        N >= 200
 	<- .print("I give up.");

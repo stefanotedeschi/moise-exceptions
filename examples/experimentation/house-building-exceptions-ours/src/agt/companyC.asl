@@ -85,10 +85,10 @@ available_colors([white,gray,red,orange,cyan]).
    <- .print("Notifying weeks of delay");
       .random([0,1],N);
       if(N == 0) {
-         throwException(windows_delay_exception,[weeksOfDelay(1)])[artifact_id(ArtId)];
+         raiseException(windows_delay_exception,[weeksOfDelay(1)])[artifact_id(ArtId)];
       }
       else {
-         throwException(windows_delay_exception,[weeksOfDelay(3)]); // This exception would enable the catching goal
+         raiseException(windows_delay_exception,[weeksOfDelay(3)]); // This exception would enable the handling goal
       }
       .
 
@@ -106,7 +106,7 @@ available_colors([white,gray,red,orange,cyan]).
 
 +!notify_painting_failure[scheme(S)]
     : focused(ora4mas,S,ArtId) & available_colors(L)
-   <- throwException(paint_exception,[alternativeColors(L)])[artifact_id(ArtId)].
+   <- raiseException(paint_exception,[alternativeColors(L)])[artifact_id(ArtId)].
 
 +newColor(C)
     : focused(ora4mas,bhsch,ArtId) &

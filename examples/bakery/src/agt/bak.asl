@@ -3,7 +3,7 @@ available(raspberries).
 available(chocolate).
 
 +!dealWithMissingIngredients
-     : exceptionThrown(_,ingredientsUnavailable,_) &
+     : exceptionRaised(_,ingredientsUnavailable,_) &
        exceptionArgument(_,ingredientsUnavailable,missingIngredients(I)) &
        .member(strawberries,I) &
        available(raspberries)

@@ -57,8 +57,8 @@ my_price("Painting",        1100).
 
 +!notify_windows_fitting_delay
    <- .print("Notifying weeks of delay");
-      throwException(windows_delay_exception,[weeksOfDelay(1)]).
-      //throwException(windows_delay_exception,[weeksOfDelay(3)]). // This exception would enable the catching goal
+      raiseException(windows_delay_exception,[weeksOfDelay(1)]).
+      //raiseException(windows_delay_exception,[weeksOfDelay(3)]). // This exception would enable the handling goal
 
 { include("org_code.asl") }
 { include("org_goals.asl") }

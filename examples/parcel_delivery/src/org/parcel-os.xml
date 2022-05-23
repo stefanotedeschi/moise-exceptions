@@ -8,7 +8,7 @@
     xmlns="https://moise-exceptions.sourceforge.io/os"
     
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
     <structural-specification>
 
@@ -63,22 +63,15 @@
                 </plan>
             </goal>
             
-            <recovery-strategy id="strParcel">
-                <notification-policy id="npParcel">
-                    <condition type="goal-ttf-expiration">
-                        <condition-argument id="target" value="reachDestination" />
-                    </condition>
-                    <exception-spec id="exParcel">
-                        <exception-argument id="reason" arity="1" />
-                        <exception-argument id="closedRoads" arity="1" />
-                    </exception-spec>
-                    <goal id="reportDelayReason" />
-                </notification-policy>
-                <handling-policy id="hpParcel">
-                    <condition type="always" />
-                    <goal id="updateMap" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="npParcel" target="reachDestination"
+                                 condition="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,reachDestination,_),_))">
+                <exception-specification id="exParcel">
+                    <exception-argument id="reason" arity="1" />
+                    <exception-argument id="closedRoads" arity="1" />
+                    <raising-goal id="reportDelayReason" />
+                    <handling-goal id="updateMap" />
+                </exception-specification>
+            </notification-policy>
 
             <mission id="mWarehouseWorker" min="1" max="1">
                 <goal id="takeGoodsFromWarehouse" />

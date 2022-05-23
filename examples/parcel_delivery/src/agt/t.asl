@@ -21,7 +21,7 @@
 	   
 +!reportDelayReason
 	<- .print("*** Reporting closed roads...");
-	   throwException(exParcel,[reason(roadworks),closedRoads([mainStreet,fifthAvenue])]).
+	   raiseException(exParcel,[reason(roadworks),closedRoads([mainStreet,fifthAvenue])]).
 	
 
 // uncomment the include below to have an agent compliant with its organisation

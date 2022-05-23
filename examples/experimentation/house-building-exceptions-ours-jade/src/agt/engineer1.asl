@@ -19,7 +19,7 @@ my_price(2500). // initial belief
 +obligation(Ag,_,done(Scheme,inspect_site,Ag),_)
     : .my_name(Ag) &
       focused(ora4mas,Scheme,ArtId) &
-      exceptionThrown(Scheme,site_preparation_exception,_) &
+      exceptionRaised(Scheme,site_preparation_exception,_) &
       exceptionArgument(Scheme,site_preparation_exception,errorCode(flooding))
    <- .print("Inspecting site...", Scheme);
       performSiteAnalysis(Result);
@@ -33,7 +33,7 @@ my_price(2500). // initial belief
 +obligation(Ag,_,done(Scheme,inspect_site,Ag),_)
     : .my_name(Ag) &
       focused(ora4mas,Scheme,ArtId) &
-      exceptionThrown(Scheme,site_preparation_exception,_) &
+      exceptionRaised(Scheme,site_preparation_exception,_) &
       exceptionArgument(Scheme,site_preparation_exception,errorCode(archaeologicalRemains))
    <- .print("Inspecting site...");
       delimitSite;

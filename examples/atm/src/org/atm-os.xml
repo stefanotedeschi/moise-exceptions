@@ -50,19 +50,19 @@
                 </plan>
             </goal>
 
-            <notification-policy id="np1" target="parseAmount">
-                <exception-spec id="nan">
+            <notification-policy id="np1" target="parseAmount"  condition="scheme_id(S) &amp; failed(S,parseAmount)">
+                <exception-specification id="nan">
                     <exception-argument id="index" arity="1" />
-                    <throwing-goal id="throwNan" when="scheme_id(S) &amp; failed(S,parseAmount)" />
-                    <catching-goal id="recoverFromNan" />
-                </exception-spec>
+                    <raising-goal id="raiseNan"/>
+                    <handling-goal id="recoverFromNan" />
+                </exception-specification>
             </notification-policy>
 
-            <notification-policy id="np2" target="recoverFromNan">
-                <exception-spec id="amountUnavailable">
-                    <throwing-goal id="throwAmountUnavailable" when="scheme_id(S) &amp; failed(S,recoverFromNan)" />
-                    <catching-goal id="retryLater" />
-                </exception-spec>
+            <notification-policy id="np2" target="recoverFromNan" condition="scheme_id(S) &amp; failed(S,recoverFromNan)">
+                <exception-specification id="amountUnavailable">
+                    <raising-goal id="raiseAmountUnavailable"/>
+                    <handling-goal id="retryLater" />
+                </exception-specification>
             </notification-policy>
 
             <mission id="mGetAmountAsString" min="1" max="1">
@@ -70,11 +70,11 @@
             </mission>
             <mission id="mParseAmount" min="1" max="1">
                 <goal id="parseAmount" />
-                <goal id="throwNan" />
+                <goal id="raiseNan" />
             </mission>
             <mission id="mObtainAmount" min="1" max="1">
                 <goal id="obtainAmount" />
-                <goal id="throwAmountUnavailable" />
+                <goal id="raiseAmountUnavailable" />
                 <goal id="recoverFromNan" />
             </mission>
             <mission id="mProvideMoney" min="1" max="1">

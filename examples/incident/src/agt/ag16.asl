@@ -9,7 +9,7 @@
 	 : .my_name(Ag) &
 	   scheme(dev_sch,_,SchId)
 	<- .print("Cannot examine problem, the product is out of warranty");
-	   throwException(developer_exception,[warrantyStatus(no)])[artifact_id(SchId)];
+	   raiseException(developer_exception,[warrantyStatus(no)])[artifact_id(SchId)];
 	   goalAchieved(raise_developer_exception)[artifact_id(SchId)].
 	   
 { include("$jacamoJar/templates/common-cartago.asl") }

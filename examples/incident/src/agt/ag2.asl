@@ -28,7 +28,7 @@
 +obligation(Ag,_,done(am_sch,cancel_problem_request,Ag),_)
 	 : .my_name(Ag) &
 	   scheme(am_sch,_,AmSchId) &
-	   exceptionThrown(am_sch,account_manager_exception,_) &
+	   exceptionRaised(am_sch,account_manager_exception,_) &
 	   exceptionArgument(am_sch,account_manager_exception,warrantyStatus(no)) &
 	   group(GroupName,key_account_management_group,_) &
 	   play(C,customer,GroupName)

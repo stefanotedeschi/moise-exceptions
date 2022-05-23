@@ -18,10 +18,10 @@ import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
 import moise.os.fs.Scheme;
-import moise.os.fs.exceptions.CatchingGoal;
-import moise.os.fs.exceptions.ExceptionSpec;
+import moise.os.fs.exceptions.HandlingGoal;
+import moise.os.fs.exceptions.ExceptionSpecification;
 import moise.os.fs.exceptions.NotificationPolicy;
-import moise.os.fs.exceptions.ThrowingGoal;
+import moise.os.fs.exceptions.RaisingGoal;
 import moise.os.ns.NS;
 import moise.os.ns.NS.OpTypes;
 import moise.os.ns.Norm;
@@ -59,14 +59,14 @@ public class os2nopl {
     public static final String PROP_ExcArgNotGround = "exc_arg_not_ground";
     public static final String PROP_ExcArgMissing = "exc_arg_missing";
     public static final String PROP_ExcArgUnknown = "exc_arg_unknown";
-    public static final String PROP_AchThrGoalExcNotThrown = "ach_thr_goal_exc_not_thrown";
+    public static final String PROP_AchThrGoalExcNotRaised = "ach_thr_goal_exc_not_raised";
 
     // properties for groups
     public static final String[] NOP_GR_PROPS  = new String[] { PROP_RoleInGroup, PROP_RoleCardinality, PROP_RoleCompatibility, PROP_WellFormedResponsible, PROP_SubgroupInGroup, PROP_SubgroupCardinality};
     // properties for schemes
     public static final String[] NOP_SCH_PROPS = new String[] { //PROP_NotCompGoal,
             PROP_LeaveMission, PROP_AchNotEnabledGoal, PROP_AchNotCommGoal, PROP_MissionPermission,
-            PROP_MissionCardinality, PROP_FailNotEnabledGoal, PROP_ExcUnknown, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotThrown, PROP_ExcArgNotGround, PROP_ExcArgMissing, PROP_ExcArgUnknown };
+            PROP_MissionCardinality, PROP_FailNotEnabledGoal, PROP_ExcUnknown, PROP_ExcAgNotAllowed, PROP_ExcCondNotHolding, PROP_AchThrGoalExcNotRaised, PROP_ExcArgNotGround, PROP_ExcArgMissing, PROP_ExcArgUnknown };
     // properties for norms
     public static final String[] NOP_NS_PROPS = new String[] {  };
 
@@ -93,19 +93,19 @@ public class os2nopl {
         condCode.put(PROP_FailNotEnabledGoal, 
                 "failed(S,G) & mission_goal(M,G) & not mission_accomplished(S,M) & not enabled(S,G)");
         condCode.put(PROP_ExcUnknown,
-                "thrown(S,E,Ag,Args) & not exceptionSpec(E,_)");
+                "raised(S,E,Ag,Args) & not exceptionSpecification(E,_)");
         condCode.put(PROP_ExcAgNotAllowed,
-                "thrown(S,E,Ag,Args) & exceptionSpec(E,_) & mission_goal(M,TG) & throwingGoal(TG,E,_) & not committed(Ag,M,S)");
+                "raised(S,E,Ag,Args) & exceptionSpecification(E,_) & mission_goal(M,TG) & raisingGoal(TG,E,_) & not committed(Ag,M,S)");
         condCode.put(PROP_ExcCondNotHolding,
-                "thrown(S,E,Ag,Args) & exceptionSpec(E,_) & not (throwingGoal(TG,E,Condition) & (Condition | done(S,TG,Ag)))");
-        condCode.put(PROP_AchThrGoalExcNotThrown,
-                "done(S,TG,Ag) & throwingGoal(TG,E,_) & not super_goal(_,TG) & not thrown(S,E,_,_)");
+                "raised(S,E,Ag,Args) & exceptionSpecification(E,NP) & notificationPolicy(NP,_,Condition) & not (raisingGoal(TG,E,_) & (Condition | done(S,TG,Ag)))");
+        condCode.put(PROP_AchThrGoalExcNotRaised,
+                "done(S,TG,Ag) & raisingGoal(TG,E,_) & not super_goal(_,TG) & not raised(S,E,_,_)");
         condCode.put(PROP_ExcArgNotGround,
-                "thrown(S,E,Ag,Args) & exceptionSpec(E) & .member(Arg,Args) & not .ground(Arg)");
+                "raised(S,E,Ag,Args) & exceptionSpecification(E) & .member(Arg,Args) & not .ground(Arg)");
         condCode.put(PROP_ExcArgMissing,
-                "thrown(S,E,Ag,Args) & exceptionSpec(E) & exceptionArgument(E,ArgFunctor,ArgArity) & not (.member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity))");
+                "raised(S,E,Ag,Args) & exceptionSpecification(E) & exceptionArgument(E,ArgFunctor,ArgArity) & not (.member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity))");
         condCode.put(PROP_ExcArgUnknown,
-                "thrown(S,E,Ag,Args) & exceptionSpec(E) & .member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity) & not exceptionArgument(E,ArgFunctor,ArgArity)");
+                "raised(S,E,Ag,Args) & exceptionSpecification(E) & .member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity) & not exceptionArgument(E,ArgFunctor,ArgArity)");
         
     }
     // arguments that 'explains' the property
@@ -132,7 +132,7 @@ public class os2nopl {
         argsCode.put(PROP_ExcAgNotAllowed, "S,E,Ag");
         argsCode.put(PROP_ExcCondNotHolding, "S,E,Ag,Condition");
         argsCode.put(PROP_ExcArgNotGround, "S,E,Arg");
-        argsCode.put(PROP_AchThrGoalExcNotThrown, "S,G,E,Ag");
+        argsCode.put(PROP_AchThrGoalExcNotRaised, "S,G,E,Ag");
         argsCode.put(PROP_ExcArgMissing, "S,E,ArgFunctor,ArgArity");
         argsCode.put(PROP_ExcArgUnknown, "S,E,Arg");
     }
@@ -327,39 +327,39 @@ public class os2nopl {
         }
         np.append(superGoal.toString());
 
-        String notificationPolicy = "\n   // notificationPolicy(policy id, target id)\n";
-        String exceptionSpec =      "\n   // exceptionSpec(exception spec id, policy id)\n";
+        String notificationPolicy = "\n   // notificationPolicy(policy id, target id, condition formula)\n";
+        String exceptionSpecification =      "\n   // exceptionSpecification(exception spec id, policy id)\n";
         String exceptionArgument =  "\n   // exceptionArgument(exception spec id, functor, arity)\n";
-        String throwingGoal =       "\n   // throwingGoal(goal id, exception spec id, when condition)\n";
-        String catchingGoal =       "\n   // catchingGoal(goal id, exception spec id, when condition)\n";
+        String raisingGoal =        "\n   // raisingGoal(goal id, exception spec id, when condition)\n";
+        String handlingGoal =       "\n   // handlingGoal(goal id, exception spec id, when condition)\n";
 
         for (NotificationPolicy npol : sch.getNotificationPolicies()) {
-            notificationPolicy += "   notificationPolicy(" + npol.getId() + "," + npol.getTarget() + ").\n";
-            for(ExceptionSpec ex : npol.getExceptionSpecs()) {
-                exceptionSpec += "   exceptionSpec(" + ex.getId() + "," + npol.getId() + ").\n";
+            notificationPolicy += "   notificationPolicy(" + npol.getId() + "," + npol.getTarget() + "," + npol.getCondition().toString() + ").\n";
+            for(ExceptionSpecification ex : npol.getExceptionSpecifications()) {
+                exceptionSpecification += "   exceptionSpecification(" + ex.getId() + "," + npol.getId() + ").\n";
                 for(Literal l : ex.getExceptionArguments()) {
                     exceptionArgument += "   exceptionArgument("+ex.getId()+","+l.getFunctor().toString()+","+l.getArity()+").\n";
                 }
-                for(ThrowingGoal tg : ex.getThrowingGoals()) {
-                    throwingGoal += "   throwingGoal("+tg.getId()+","+ex.getId()+","+tg.getWhenCondition().toString()+").\n";
+                for(RaisingGoal tg : ex.getRaisingGoals()) {
+                    raisingGoal += "   raisingGoal("+tg.getId()+","+ex.getId()+","+tg.getWhenCondition().toString()+").\n";
                     for(Goal sg : tg.getSubGoals()) {
-                        throwingGoal += "   throwingGoal("+sg.getId()+","+ex.getId()+","+tg.getWhenCondition().toString()+").\n";
+                        raisingGoal += "   raisingGoal("+sg.getId()+","+ex.getId()+","+tg.getWhenCondition().toString()+").\n";
                     }
                 }
-                for(CatchingGoal cg : ex.getCatchingGoals()) {
-                    catchingGoal += "   catchingGoal("+cg.getId()+","+ex.getId()+","+cg.getWhenCondition().toString()+").\n";
+                for(HandlingGoal cg : ex.getHandlingGoals()) {
+                    handlingGoal += "   handlingGoal("+cg.getId()+","+ex.getId()+","+cg.getWhenCondition().toString()+").\n";
                     for(Goal sg : cg.getSubGoals()) {
-                        catchingGoal += "   catchingGoal("+sg.getId()+","+ex.getId()+","+cg.getWhenCondition().toString()+").\n";
+                        handlingGoal += "   handlingGoal("+sg.getId()+","+ex.getId()+","+cg.getWhenCondition().toString()+").\n";
                     }
                 }
             }
         }
         
         np.append(notificationPolicy);
-        np.append(exceptionSpec);
+        np.append(exceptionSpecification);
         np.append(exceptionArgument);
-        np.append(throwingGoal);
-        np.append(catchingGoal);
+        np.append(raisingGoal);
+        np.append(handlingGoal);
 
         np.append("\n   // ** Rules\n");
 
@@ -390,23 +390,26 @@ public class os2nopl {
         np.append("   // enabled goals (i.e. dependence between goals)\n");
         //np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & NP \\== 0 & any_satisfied(S,PCG).\n");
         //np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & NP \\== 0 & all_satisfied(S,PCG).\n");
-        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not (throwingGoal(G,_,_) | catchingGoal(G,_,_)) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
-        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not (throwingGoal(G,_,_) | catchingGoal(G,_,_)) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
+        np.append("   enabled(S,G) :- goal(_, G,  dep(or,PCG), _, NP, _) & not (raisingGoal(G,_,_) | handlingGoal(G,_,_)) & NP \\== 0 & (any_satisfied(S,PCG) | all_released(S,PCG)).\n");
+        np.append("   enabled(S,G) :- goal(_, G, dep(and,PCG), _, NP, _) & not (raisingGoal(G,_,_) | handlingGoal(G,_,_)) & NP \\== 0 & all_satisfied_released(S,PCG).\n\n");
 
-        np.append("   enabled(S,TG) :- throwingGoal(TG,_,Condition) &\r\n"
-                + "                    Condition &\r\n"             
+        np.append("   enabled(S,TG) :- raisingGoal(TG,E,When) &\r\n"
+                + "                    When &\r\n"             
                 //+ "                    not failed(S,TG) &\r\n"
                 //+ "                    not released(S,TG) &\r\n" 
+                + "                    notificationPolicy(NPol,_,Condition) &\r\n"
+                + "                    exceptionSpecification(E,NPol) &\r\n"
+                + "                    Condition &\r\n"   
                 + "                    goal(_, TG,  Dep, _, NP, _) & NP \\== 0 & \r\n"
                 + "                    ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n"
                 + "                     (Dep = dep(and,PCG) & all_satisfied_released(S,PCG))\r\n"
                 + "                    ).\r\n");
-        np.append("   enabled(S,CG) :- catchingGoal(CG,E,Condition) &\r\n" 
-                + "                    Condition &\r\n"
+        np.append("   enabled(S,CG) :- handlingGoal(CG,E,When) &\r\n" 
+                + "                    When &\r\n"
                 //+ "                    not failed(S,CG) &\r\n"
                 //+ "                    not released(S,CG) &\r\n"
-                + "                    thrown(S,E,_,_) &\r\n"
-                + "                    throwingGoal(TG,E,_) &\r\n" 
+                + "                    raised(S,E,_,_) &\r\n"
+                + "                    raisingGoal(TG,E,_) &\r\n" 
                 + "                    satisfied(S,TG) &\r\n"
                 + "                    goal(_, CG,  Dep, _, NP, _) & NP \\== 0 &\r\n"
                 + "                    ((Dep = dep(or,PCG)  & (any_satisfied(S,PCG) | all_released(S,PCG))) |\r\n"

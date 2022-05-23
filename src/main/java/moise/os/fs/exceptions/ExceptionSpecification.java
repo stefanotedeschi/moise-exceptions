@@ -22,7 +22,7 @@ import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
 
-public class ExceptionSpec extends moise.common.MoiseElement implements ToXML, ToProlog {
+public class ExceptionSpecification extends moise.common.MoiseElement implements ToXML, ToProlog {
     
     private String id;
     
@@ -30,12 +30,12 @@ public class ExceptionSpec extends moise.common.MoiseElement implements ToXML, T
     
     private List<Literal> exceptionArguments = new ArrayList<>();
     
-    private HashMap<String, ThrowingGoal> throwingGoals = new HashMap<>();
-    private HashMap<String, CatchingGoal> catchingGoals = new HashMap<>();
+    private HashMap<String, RaisingGoal> raisingGoals = new HashMap<>();
+    private HashMap<String, HandlingGoal> handlingGoals = new HashMap<>();
     
     private Scheme sch;
     
-    public ExceptionSpec(String id, NotificationPolicy inPolicy, Scheme sch) {
+    public ExceptionSpecification(String id, NotificationPolicy inPolicy, Scheme sch) {
         super();
         this.id = id;
         this.inPolicy = inPolicy;
@@ -54,16 +54,16 @@ public class ExceptionSpec extends moise.common.MoiseElement implements ToXML, T
         return exceptionArguments;
     }
     
-    public Collection<ThrowingGoal> getThrowingGoals() {
-        return throwingGoals.values();
+    public Collection<RaisingGoal> getRaisingGoals() {
+        return raisingGoals.values();
     }
     
-    public Collection<CatchingGoal> getCatchingGoals() {
-        return catchingGoals.values();
+    public Collection<HandlingGoal> getHandlingGoals() {
+        return handlingGoals.values();
     }
 
     public static String getXMLTag() {
-        return "exception-spec";
+        return "exception-specification";
     }
     
     public void setFromDOM(Element ele) throws MoiseException {
@@ -79,16 +79,16 @@ public class ExceptionSpec extends moise.common.MoiseElement implements ToXML, T
             exceptionArguments.add(l);
         }
         
-        for(Element tgEle: DOMUtils.getDOMDirectChilds(ele, "throwing-goal")) {
+        for(Element tgEle: DOMUtils.getDOMDirectChilds(ele, "raising-goal")) {
             try {
                 LogicalFormula whenFormula = ASSyntax.parseFormula("true");
                 String when = tgEle.getAttribute("when");
-                if(when != null) {
+                if(when != null && when != "") {
                     whenFormula = ASSyntax.parseFormula(when);
                 }
-                ThrowingGoal tg = new ThrowingGoal(tgEle.getAttribute("id"), whenFormula, this);
+                RaisingGoal tg = new RaisingGoal(tgEle.getAttribute("id"), whenFormula, this);
                 tg.setFromDOM(tgEle, sch);
-                throwingGoals.put(tg.getId(),tg);
+                raisingGoals.put(tg.getId(),tg);
                 sch.addGoal(tg);
             }
             catch(ParseException e) {
@@ -96,16 +96,16 @@ public class ExceptionSpec extends moise.common.MoiseElement implements ToXML, T
             }  
         }
         
-        for(Element cgEle: DOMUtils.getDOMDirectChilds(ele, "catching-goal")) {
+        for(Element cgEle: DOMUtils.getDOMDirectChilds(ele, "handling-goal")) {
             try {
                 LogicalFormula whenFormula = ASSyntax.parseFormula("true");
                 String when = cgEle.getAttribute("when");
                 if(when != null && when != "") {
                     whenFormula = ASSyntax.parseFormula(when);
                 }
-                CatchingGoal cg = new CatchingGoal(cgEle.getAttribute("id"), whenFormula, this);
+                HandlingGoal cg = new HandlingGoal(cgEle.getAttribute("id"), whenFormula, this);
                 cg.setFromDOM(cgEle, sch);
-                catchingGoals.put(cg.getId(),cg);
+                handlingGoals.put(cg.getId(),cg);
                 sch.addGoal(cg);
             }
             catch(ParseException e) {
@@ -127,10 +127,10 @@ public class ExceptionSpec extends moise.common.MoiseElement implements ToXML, T
             argEle.setAttribute("arity", String.valueOf(arg.getArity()));
             ele.appendChild(argEle);
         }
-        for(ThrowingGoal tg : throwingGoals.values()) {
+        for(RaisingGoal tg : raisingGoals.values()) {
             ele.appendChild(tg.getAsDOM(document));
         }
-        for(CatchingGoal cg : catchingGoals.values()) {
+        for(HandlingGoal cg : handlingGoals.values()) {
             ele.appendChild(cg.getAsDOM(document));
         }
         return ele;

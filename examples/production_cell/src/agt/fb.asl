@@ -23,7 +23,7 @@ inventory([plates(5),screws(100)]).
 +!notifyRemainingStock
      : inventory(I) & .member(plates(N),I)
 	<- .print("Notifying available plates...");
-	   throwException(exStock,[availablePlates(N)]).
+	   raiseException(exStock,[availablePlates(N)]).
 
 // uncomment the include below to have an agent compliant with its organisation
 { include("$moiseJar/asl/org-obedient.asl") }

@@ -21,7 +21,8 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
 
     private String id;
     private Goal target;
-    private HashMap<String,ExceptionSpec> exceptionSpecs = new HashMap<>();
+    private LogicalFormula condition;
+    private HashMap<String,ExceptionSpecification> exceptionSpecifications = new HashMap<>();
     private Scheme sch;
 
 //    public NotificationPolicy(String id, LogicalFormula condition, RecoveryStrategy rs, Scheme sch) {
@@ -32,10 +33,11 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
 //        this.sch = sch;
 //    }
     
-    public NotificationPolicy(String id, String target, Scheme sch) {
+    public NotificationPolicy(String id, String target, LogicalFormula condition, Scheme sch) {
         super();
         this.id = id;
         this.target = sch.getGoal(target);
+        this.condition = condition;
         this.sch = sch;
     }
 
@@ -47,20 +49,24 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         return target;
     }
 
-    public Collection<ExceptionSpec> getExceptionSpecs() {
-        return exceptionSpecs.values();
+    public LogicalFormula getCondition() {
+        return condition;
+    }
+
+    public Collection<ExceptionSpecification> getExceptionSpecifications() {
+        return exceptionSpecifications.values();
     }
     
-    public void addExceptionSpec(ExceptionSpec ex) {
-        exceptionSpecs.put(ex.getId(), ex);
+    public void addExceptionSpecification(ExceptionSpecification ex) {
+        exceptionSpecifications.put(ex.getId(), ex);
     }
 
     public void setFromDOM(Element ele) throws MoiseException {
         setPropertiesFromDOM(ele);
-        for(Element exEle : DOMUtils.getDOMDirectChilds(ele, ExceptionSpec.getXMLTag())) {
-            ExceptionSpec ex = new ExceptionSpec(exEle.getAttribute("id"), this, sch);
+        for(Element exEle : DOMUtils.getDOMDirectChilds(ele, ExceptionSpecification.getXMLTag())) {
+            ExceptionSpecification ex = new ExceptionSpecification(exEle.getAttribute("id"), this, sch);
             ex.setFromDOM(exEle);
-            addExceptionSpec(ex);
+            addExceptionSpecification(ex);
         }
     }
 
@@ -68,10 +74,11 @@ public class NotificationPolicy extends moise.common.MoiseElement implements ToX
         Element ele = (Element) document.createElement(getXMLTag());
         ele.setAttribute("id", getId());
         ele.setAttribute("target", target.getId());
+        ele.setAttribute("condition", condition.toString());
         if (getProperties().size() > 0) {
             ele.appendChild(getPropertiesAsDOM(document));
         }
-        for(ExceptionSpec ex : exceptionSpecs.values()) {
+        for(ExceptionSpecification ex : exceptionSpecifications.values()) {
             ele.appendChild(ex.getAsDOM(document));
         }
         return ele;

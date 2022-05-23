@@ -4,7 +4,7 @@
     os-version="1.0" xmlns="https://moise-exceptions.sourceforge.io/os"
 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
     <structural-specification>
         <role-definitions>
@@ -100,37 +100,21 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="r1">
-                <notification-policy id="np1">
-                    <condition type="goal-failure">
-                        <condition-argument id="target"
-                            value="ask_1st_level_support" />
-                    </condition>
-                    <exception-spec id="account_manager_exception">
-                        <exception-argument id="warrantyStatus"
-                            arity="1" />
-                    </exception-spec>
-                    <goal id="raise_account_manager_exception" />
-                </notification-policy>
-                <handling-policy id="hp1">
-                    <condition type="always" />
-                    <goal id="cancel_problem_request" />
-                </handling-policy>
-            </recovery-strategy>
-            <recovery-strategy id="r2">
-                <notification-policy id="np2">
-                    <condition type="goal-ttf-expiration">
-                        <condition-argument id="target"
-                            value="ask_1st_level_support" />
-                    </condition>
-                    <exception-spec id="account_manager_timeout" />
-                    <goal id="raise_account_manager_timeout" />
-                </notification-policy>
-                <handling-policy id="hp2">
-                    <condition type="always" />
-                    <goal id="invite_to_recall" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np1" target="ask_1st_level_support" condition="scheme_id(S) &amp; failed(S,ask_1st_level_support)">
+                <exception-specification id="account_manager_exception">
+                    <exception-argument id="warrantyStatus" arity="1" />
+                    <raising-goal id="raise_account_manager_exception" />
+                    <handling-goal id="cancel_problem_request" />
+                </exception-specification>
+            </notification-policy>
+
+            <notification-policy id="np2" target="ask_1st_level_support"
+                                 condition="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,ask_1st_level_support,_),_))">
+                <exception-specification id="account_manager_timeout">
+                    <raising-goal id="raise_account_manager_timeout" />
+                    <handling-goal id="invite_to_recall" />
+                </exception-specification>
+            </notification-policy>
 
             <mission id="m0" min="1" max="1">
                 <goal id="root_account_manager" />
@@ -174,23 +158,13 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="rsFirstLevelSupport1">
-                <notification-policy id="npFirstLevelSupport1">
-                    <condition type="goal-failure">
-                        <condition-argument id="target"
-                            value="ask_2nd_level_support" />
-                    </condition>
-                    <exception-spec id="first_level_exception">
-                        <exception-argument id="warrantyStatus"
-                            arity="1" />
-                    </exception-spec>
-                    <goal id="raise_first_level_exception" />
-                </notification-policy>
-                <handling-policy id="rsFirstLevelSupport1">
-                    <condition type="always" />
-                    <goal id="handle_first_level_exception" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np3" target="ask_2nd_level_support" condition="scheme_id(S) &amp; failed(S,ask_2nd_level_support)">
+                <exception-specification id="first_level_exception">
+                    <exception-argument id="warrantyStatus" arity="1" />
+                    <raising-goal id="raise_first_level_exception" />
+                    <handling-goal id="handle_first_level_exception" />
+                </exception-specification>
+            </notification-policy>
 
             <mission id="m5" min="1" max="1">
                 <goal id="root_1st_level_support" />
@@ -243,23 +217,13 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="rsSecondLevelSupport1">
-                <notification-policy id="npSecondLevelSupport1">
-                    <condition type="goal-failure">
-                        <condition-argument id="target"
-                            value="ask_developer" />
-                    </condition>
-                    <exception-spec id="second_level_exception">
-                        <exception-argument id="warrantyStatus"
-                            arity="1" />
-                    </exception-spec>
-                    <goal id="raise_second_level_exception" />
-                </notification-policy>
-                <handling-policy id="rsSecondLevelSupport1">
-                    <condition type="always" />
-                    <goal id="handle_second_level_exception" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np4" target="ask_developer" condition="scheme_id(S) &amp; failed(S,ask_developer)">
+                <exception-specification id="second_level_exception">
+                    <exception-argument id="warrantyStatus" arity="1" />
+                    <raising-goal id="raise_second_level_exception" />
+                    <handling-goal id="handle_second_level_exception" />
+                </exception-specification>
+            </notification-policy>
 
             <mission id="m10" min="1" max="1">
                 <goal id="root_2nd_level_support" />
@@ -297,40 +261,22 @@
                 </plan>
             </goal>
 
-            <recovery-strategy id="rsDeveloper1">
-                <notification-policy id="npDeveloper1">
-                    <condition type="goal-failure">
-                        <condition-argument id="target"
-                            value="examine_problem" />
-                    </condition>
-                    <exception-spec id="developer_exception">
-                        <exception-argument id="warrantyStatus"
-                            arity="1" />
-                    </exception-spec>
-                    <goal id="raise_developer_exception" />
-                </notification-policy>
-                <handling-policy id="hpDeveloper1">
-                    <condition type="always" />
-                    <goal id="handle_developer_exception" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np5" target="examine_problem" condition="scheme_id(S) &amp; failed(S,examine_problem)">
+                <exception-specification id="developer_exception">
+                    <exception-argument id="warrantyStatus" arity="1" />
+                    <raising-goal id="raise_developer_exception" />
+                    <handling-goal id="handle_developer_exception" />
+                </exception-specification>
+            </notification-policy>
 
-            <recovery-strategy id="rsDeveloper2">
-                <notification-policy id="npDeveloper2">
-                    <condition type="goal-ttf-expiration">
-                        <condition-argument id="target"
-                            value="provide_feedback_for_2nd_level_support" />
-                    </condition>
-                    <exception-spec id="developer_feedback_delay">
-                        <exception-argument id="reason" arity="1" />
-                    </exception-spec>
-                    <goal id="raise_developer_feedback_delay" />
-                </notification-policy>
-                <handling-policy id="hpDeveloper2">
-                    <condition type="always" />
-                    <goal id="handle_developer_feedback_delay" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="np6" target="provide_feedback_for_2nd_level_support"
+                                 condition="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,provide_feedback_for_2nd_level_support,_),_))">
+                <exception-specification id="developer_feedback_delay">
+                    <exception-argument id="reason" arity="1" />
+                    <raising-goal id="raise_developer_feedback_delay" />
+                    <handling-goal id="handle_developer_feedback_delay" />
+                </exception-specification>
+            </notification-policy>
 
             <mission id="m16" min="1" max="1">
                 <goal id="root_developer" />

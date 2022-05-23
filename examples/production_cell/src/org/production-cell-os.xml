@@ -8,7 +8,7 @@
     xmlns="https://moise-exceptions.sourceforge.io/os"
     
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/os.xsd">
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
 
     <structural-specification>
 
@@ -73,79 +73,45 @@
                 </plan>
             </goal>
             
-            <recovery-strategy id="strStock">
-                <notification-policy id="npStock">
-                    <condition type="goal-ttf-expiration">
-                        <condition-argument id="target"
-                                            value="conveyPlateToTable" />
-                    </condition>
-                    <exception-spec id="exStock">
-                        <exception-argument id="availablePlates" arity="1" />
-                    </exception-spec>
-                    <goal id="notifyRemainingStock" />
-                </notification-policy>
-                <handling-policy id="hpStock">
-                    <condition type="custom">
-                        <condition-argument id="formula" value="thrown(_,exStock,_,Args) &amp; .member(availablePlates(N),Args) &amp; N &lt;= 10" />
-                    </condition>
-                    <goal id="slowDownProduction" />
-                </handling-policy>
-            </recovery-strategy>
-            
-            <recovery-strategy id="strMotor">
-                <notification-policy id="npMotor">
-                    <condition type="goal-failure">
-                        <condition-argument id="target"
-                                            value="turnTableMoveUp" />
-                    </condition>
-                    <exception-spec id="exMotor">
-                        <exception-argument id="motorNumber"
-                                            arity="1" />
-                    </exception-spec>
-                    <goal id="notifyStoppedMotorNumber" />
-                </notification-policy>
-                <handling-policy id="hpMotor">
-                    <condition type="always" />
-                    <goal id="motorFix">
+            <notification-policy id="npStock" target="conveyPlateToTable"
+                                    condition="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,conveyPlateToTable,_),_))">
+                <exception-specification id="exStock">
+                    <exception-argument id="availablePlates" arity="1" />
+                    <raising-goal id="notifyRemainingStock" />
+                    <handling-goal id="slowDownProduction" when="raised(_,exStock,_,Args) &amp; .member(availablePlates(N),Args) &amp; N &lt;= 10" />
+                </exception-specification>
+            </notification-policy>
+        
+            <notification-policy id="npMotor" target="turnTableMoveUp" condition="scheme_id(S) &amp; failed(S,turnTableMoveUp)">
+                <exception-specification id="exMotor">
+                    <exception-argument id="motorNumber" arity="1" />
+                    <raising-goal id="notifyStoppedMotorNumber" />
+                    <handling-goal id="motorFix">
                         <plan operator="parallel">
                             <goal id="scheduleTableMotorFix" />
                             <goal id="pauseProduction" />
                         </plan>
-                    </goal>
-                </handling-policy>
-            </recovery-strategy>
+                    </handling-goal>
+                </exception-specification>
+            </notification-policy>
             
-            <recovery-strategy id="strPress">
-                <notification-policy id="npHuman">
-                    <condition type="goal-ttf-expiration">
-                        <condition-argument id="target"
-                                            value="movePressDownUp" />
-                    </condition>
-                    <exception-spec id="exHuman">
-                        <exception-argument id="slowdownCode"
-                                            arity="1" />
-                        <exception-argument id="humanCoords"
-                                            arity="2" />
-                    </exception-spec>
-                    <goal id="explainSlowdownReason" />
-                </notification-policy>
-                <handling-policy id="hpHuman">
-                    <condition type="custom">
-                        <condition-argument id="formula" value="thrown(_,exHuman,_,Args) &amp; .member(humanCoords(X,Y),Args) &amp; X &lt; 2 &amp; Y &lt; 3" />
-                    </condition>
-                    <goal id="emergencyStop" />
-                </handling-policy>
-            </recovery-strategy>
+            <notification-policy id="npPress" target="movePressDownUp"
+                                    condition="scheme_id(S) &amp; unfulfilled(obligation(_,_,done(S,movePressDownUp,_),_))">
+                <exception-specification id="exHuman">
+                    <exception-argument id="slowdownCode" arity="1" />
+                    <exception-argument id="humanCoords"  arity="2" />
+                    <raising-goal id="explainSlowdownReason" />
+                    <handling-goal id="emergencyStop" when="raised(_,exHuman,_,Args) &amp; .member(humanCoords(X,Y),Args) &amp; X &lt; 2 &amp; Y &lt; 3"/>
+                </exception-specification>
+            </notification-policy>
 
             <mission id="mFeedBelt" min="1" max="1">
                 <goal id="conveyPlateToTable" />
-                
                 <goal id="notifyRemainingStock" />
             </mission>
             <mission id="mElevatingRotaryTable" min="1" max="1">
                 <goal id="turnTableMoveUp" />
                 <goal id="turnTableMoveDown" />
-                
                 <goal id="notifyStoppedMotorNumber" />
             </mission>
             <mission id="mRobot" min="1" max="1">
@@ -160,7 +126,6 @@
                 <goal id="movePlateOnBelt" />
                 <goal id="releasePlateOnBelt" />
                 <goal id="retractArm2" />
-                
                 <goal id="slowDownProduction" />
                 <goal id="scheduleTableMotorFix" />
                 <goal id="pauseProduction" />
@@ -168,7 +133,6 @@
             </mission>
             <mission id="mPress" min="1" max="1">
                 <goal id="movePressDownUp" />
-                
                 <goal id="explainSlowdownReason" />
             </mission>
             <mission id="mDepositBelt" min="1" max="1">

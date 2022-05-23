@@ -28,9 +28,9 @@ count(0).
 	   
 +obligation(Ag,_,done(_,raisePaymentRefused,Ag),_)[artifact_id(ArtId)]
      : .my_name(Ag)
-	<- .print("Throwing exception for pay order...");
+	<- .print("Raising exception for pay order...");
 	   getBalance(B);
-	   throwException(paymentRefused,[balance(B)])[artifact_id(ArtId)];
+	   raiseException(paymentRefused,[balance(B)])[artifact_id(ArtId)];
 	   goalAchieved(raisePaymentRefused)[artifact_id(ArtId)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }

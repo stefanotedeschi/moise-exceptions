@@ -14,10 +14,10 @@
 	<- .print("Failure in providing feedback to second level support!");
 	   goalFailed(pff2ls)[artifact_id(SchId)].
 
-+obligation(Ag,_,thrown(_,throw_pff2ls),_)
++obligation(Ag,_,raised(_,raise_pff2ls),_)
 	 : .my_name(Ag)
-	<- .print("Throwing exception explaining failure...");
-	   exceptionThrown(throw_pff2ls,fail_dev).
+	<- .print("Raising exception explaining failure...");
+	   exceptionRaised(raise_pff2ls,fail_dev).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

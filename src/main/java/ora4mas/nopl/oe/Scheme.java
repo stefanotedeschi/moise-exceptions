@@ -35,9 +35,9 @@ import moise.common.MoiseException;
 import moise.os.fs.Goal;
 import moise.os.fs.Mission;
 import moise.os.fs.Plan.PlanOpType;
-import moise.os.fs.exceptions.CatchingGoal;
-import moise.os.fs.exceptions.ExceptionSpec;
-import moise.os.fs.exceptions.ThrowingGoal;
+import moise.os.fs.exceptions.HandlingGoal;
+import moise.os.fs.exceptions.ExceptionSpecification;
+import moise.os.fs.exceptions.RaisingGoal;
 import npl.NPLInterpreter;
 import npl.parser.nplp;
 
@@ -61,7 +61,7 @@ public class Scheme extends CollectiveOE {
         createLiteral(Group.playPI.getFunctor(), new VarTerm("Ag"), new VarTerm("Role"), new VarTerm("Gr")), // from group
         createLiteral(Group.responsiblePI.getFunctor(), new VarTerm("Gr"), new VarTerm("Sch")),               // from group
         createLiteral("failed",new VarTerm("SID"), new VarTerm("Goal")),
-        createLiteral("thrown", new VarTerm("SID"), new VarTerm("Exception"), new VarTerm("Ag"), new VarTerm("Args")),
+        createLiteral("raised", new VarTerm("SID"), new VarTerm("Exception"), new VarTerm("Ag"), new VarTerm("Args")),
         createLiteral("released", new VarTerm("SID"), new VarTerm("Goal")),
     };
 
@@ -72,7 +72,7 @@ public class Scheme extends CollectiveOE {
     public final static PredicateIndicator donePI        = dynamicFacts[3].getPredicateIndicator();
     public final static PredicateIndicator satisfiedPI   = dynamicFacts[4].getPredicateIndicator();
     public final static PredicateIndicator failedPI      = dynamicFacts[7].getPredicateIndicator();
-    public final static PredicateIndicator thrownPI      = dynamicFacts[8].getPredicateIndicator();
+    public final static PredicateIndicator raisedPI      = dynamicFacts[8].getPredicateIndicator();
     public final static PredicateIndicator releasedPI    = dynamicFacts[9].getPredicateIndicator();
 
     // specification
@@ -94,8 +94,8 @@ public class Scheme extends CollectiveOE {
     // values for goal arguments (key = goal + arg, value = value)
     private HashMap<Pair<String,String>,Object> goalArgs = new HashMap<>();
 
-    // the literal is thrown(schemeId, exceptionId, agent name, arguments)
-    private List<Literal> throwns = new CopyOnWriteArrayList<>();
+    // the literal is raised(schemeId, exceptionId, agent name, arguments)
+    private List<Literal> raiseds = new CopyOnWriteArrayList<>();
 
     // list of satisfied goals
     private Set<String> satisfiedGoals = new HashSet<>(); // we use "contains" a lot, so remains HashSet
@@ -132,7 +132,7 @@ public class Scheme extends CollectiveOE {
         releasedGoals.add(createLiteral(releasedPI.getFunctor(), termId, createAtom(goal)));
     }
 
-    public void addThrown(String ag, String exception, Object[] arguments) throws ParseException {
+    public void addRaised(String ag, String exception, Object[] arguments) throws ParseException {
         String argS = "[";
         int i = 0;
         while(i < arguments.length -1) {
@@ -143,7 +143,7 @@ public class Scheme extends CollectiveOE {
             argS += arguments[arguments.length-1];
         }
         argS += "]";
-        throwns.add(createLiteral(thrownPI.getFunctor(), termId, createAtom(exception), createAtom(ag), ASSyntax.parseList(argS)));
+        raiseds.add(createLiteral(raisedPI.getFunctor(), termId, createAtom(exception), createAtom(ag), ASSyntax.parseList(argS)));
     }
 
     public Term getTermId() {
@@ -199,20 +199,20 @@ public class Scheme extends CollectiveOE {
         return r;
     }
 
-    public boolean removeThrown(moise.os.fs.exceptions.ExceptionSpec exceptionSpec) {
+    public boolean removeRaised(moise.os.fs.exceptions.ExceptionSpecification exceptionSpecification) {
         boolean r = false;
-        Atom eAtom = createAtom(exceptionSpec.getId());
-        for(Literal l : throwns) {
+        Atom eAtom = createAtom(exceptionSpecification.getId());
+        for(Literal l : raiseds) {
             if (l.getTerm(1).equals(eAtom)) {
-                throwns.remove(l);
+                raiseds.remove(l);
                 r = true;
             }
         }
-//        Iterator<Literal> iThrowns = throwns.iterator();
-//        while (iThrowns.hasNext()) {
-//            Literal l = iThrowns.next();
+//        Iterator<Literal> iRaiseds = raiseds.iterator();
+//        while (iRaiseds.hasNext()) {
+//            Literal l = iRaiseds.next();
 //            if (l.getTerm(1).equals(eAtom)) {
-//                iThrowns.remove();
+//                iRaiseds.remove();
 //                r = true;
 //            }
 //        }
@@ -266,11 +266,11 @@ public class Scheme extends CollectiveOE {
 
     public boolean resetExceptions(NPLInterpreter nengine) {
         boolean changed = false;
-        for(Literal l : throwns) {
+        for(Literal l : raiseds) {
             try {
-                ExceptionSpec ex = spec.getExceptionSpec(l.getTerm(1).toString());
+                ExceptionSpecification ex = spec.getExceptionSpecification(l.getTerm(1).toString());
                 boolean anyConditionHolding = false;
-                for(ThrowingGoal tg : ex.getThrowingGoals()) {
+                for(RaisingGoal tg : ex.getRaisingGoals()) {
                 
                     LogicalFormula whenCondition = tg.getWhenCondition();
 
@@ -282,11 +282,11 @@ public class Scheme extends CollectiveOE {
                     }
                 }
                 if(!anyConditionHolding) {
-                    throwns.remove(l);
-                    for(ThrowingGoal tg : ex.getThrowingGoals()) {
+                    raiseds.remove(l);
+                    for(RaisingGoal tg : ex.getRaisingGoals()) {
                         resetGoal(tg);
                     }
-                    for(CatchingGoal cg : ex.getCatchingGoals()) {
+                    for(HandlingGoal cg : ex.getHandlingGoals()) {
                         resetGoal(cg);
                     }
                     resetExceptions(nengine);
@@ -361,8 +361,8 @@ public class Scheme extends CollectiveOE {
             else
                 return LogExpr.EMPTY_UNIF_LIST.iterator();
 
-        } else if (pi.equals(thrownPI)) {
-            return consultFromCollection(l, u, throwns);
+        } else if (pi.equals(raisedPI)) {
+            return consultFromCollection(l, u, raiseds);
 
         } else if (pi.equals(donePI)) {
             return consultFromCollection(l, u, doneGoals);
@@ -514,7 +514,7 @@ public class Scheme extends CollectiveOE {
         g.groups.addAll(this.groups);
         g.doneGoals.addAll(this.doneGoals);
         g.failedGoals.addAll(this.failedGoals);
-        g.throwns.addAll(this.throwns);
+        g.raiseds.addAll(this.raiseds);
         g.releasedGoals.addAll(this.releasedGoals);
         //g.accomplisedMissions.addAll(this.accomplisedMissions);
         g.satisfiedGoals.addAll(this.satisfiedGoals);

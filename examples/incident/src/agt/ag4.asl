@@ -47,17 +47,17 @@
 +obligation(Ag,_,done(am_sch,raise_account_manager_exception,Ag),_)
 	 : .my_name(Ag) &
 	   scheme(am_sch,_,AmSchId) &
-	   exceptionThrown(fls_sch,first_level_exception,_) &
+	   exceptionRaised(fls_sch,first_level_exception,_) &
 	   exceptionArgument(fls_sch,first_level_exception,warrantyStatus(no))
 	<- .print("Raising account manager exception! Product out of warranty");
-	   throwException(account_manager_exception,[warrantyStatus(no)])[artifact_id(AmSchId)];
+	   raiseException(account_manager_exception,[warrantyStatus(no)])[artifact_id(AmSchId)];
 	   goalAchieved(raise_account_manager_exception)[artifact_id(AmSchId)].
 	   
 +obligation(Ag,_,done(am_sch,raise_account_manager_timeout,Ag),_)
 	 : .my_name(Ag) &
 	   scheme(am_sch,_,AmSchId)
 	<- .print("Raising account manager timeout!");
-	   throwException(account_manager_timeout,[])[artifact_id(AmSchId)];
+	   raiseException(account_manager_timeout,[])[artifact_id(AmSchId)];
 	   goalAchieved(raise_account_manager_timeout)[artifact_id(AmSchId)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }

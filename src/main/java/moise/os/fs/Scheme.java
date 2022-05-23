@@ -20,14 +20,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
+import jason.asSyntax.ASSyntax;
+import jason.asSyntax.LogicalFormula;
+import jason.asSyntax.parser.ParseException;
 import moise.common.MoiseConsistencyException;
 import moise.common.MoiseElement;
 import moise.common.MoiseException;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
-import moise.os.fs.exceptions.ExceptionSpec;
+import moise.os.fs.exceptions.ExceptionSpecification;
 import moise.os.fs.exceptions.NotificationPolicy;
 import moise.os.fs.exceptions.PolicyConditionTemplate;
+import moise.os.fs.exceptions.RaisingGoal;
 import moise.prolog.ToProlog;
 import moise.xml.DOMUtils;
 import moise.xml.ToXML;
@@ -200,9 +204,9 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         return notificationPolicies.values();
     }
 
-    public ExceptionSpec getExceptionSpec(String id) throws MoiseException {
+    public ExceptionSpecification getExceptionSpecification(String id) throws MoiseException {
         for (NotificationPolicy np : notificationPolicies.values()) {
-            for(ExceptionSpec ex : np.getExceptionSpecs()) {
+            for(ExceptionSpecification ex : np.getExceptionSpecifications()) {
                 if (ex.getId().equals(id)) {
                     return ex;
                 }
@@ -289,9 +293,19 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 
         // notification policies
         for (Element npEle : DOMUtils.getDOMDirectChilds(ele, NotificationPolicy.getXMLTag())) {
-            NotificationPolicy np = new NotificationPolicy(npEle.getAttribute("id"), npEle.getAttribute("target"), this);
-            np.setFromDOM(npEle);
-            addNotificationPolicy(np);
+            try {
+                LogicalFormula conditionFormula = ASSyntax.parseFormula("true");
+                String condition = npEle.getAttribute("condition");
+                if(condition != null) {
+                    conditionFormula = ASSyntax.parseFormula(condition);
+                }
+                NotificationPolicy np = new NotificationPolicy(npEle.getAttribute("id"), npEle.getAttribute("target"), conditionFormula, this);
+                np.setFromDOM(npEle);
+                addNotificationPolicy(np);
+            }
+            catch(ParseException e) {
+                throw new MoiseException(e.getMessage());
+            }
         }
 
         // missions

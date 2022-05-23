@@ -37,19 +37,19 @@
 	<- .print("Retracting robotic arm 2...").
 	
 +!slowDownProduction
-     : exceptionThrown(_,exStock,_) &
+     : exceptionRaised(_,exStock,_) &
        exceptionArgument(_,exStock,availablePlates(N)) &
        N >= 5
 	<- .print("Setting production speed to 70%...").
 	
 +!slowDownProduction
-     : exceptionThrown(_,exStock,_) &
+     : exceptionRaised(_,exStock,_) &
        exceptionArgument(_,exStock,availablePlates(N)) &
        N >= 2
 	<- .print("Setting production speed to 30%...").
 	
 +!slowDownProduction
-     : exceptionThrown(_,exStock,_) &
+     : exceptionRaised(_,exStock,_) &
        exceptionArgument(_,exStock,availablePlates(N)) &
        N <= 1
 	<- .print("Temporarily stopping production...").
