@@ -11,7 +11,7 @@ count(0).
 	   -count(C);
 	   +count(C+1);
 	   createScheme(Scheme, credit_card_sch, SchArtId);
-	   addScheme(Scheme)[artifact_id(GrArtId)].
+	   addSchemeWhenFormationOk(Scheme)[artifact_id(GrArtId)].
 	   
 +result(ok,Sch) : cu_scheme_id(ArtId)
 	<- .print("Payment completed!");
