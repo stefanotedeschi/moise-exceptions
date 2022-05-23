@@ -133,7 +133,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +goalState(bhsch,house_built,_,_,satisfied)
     : loggerArtifact(LogArtId)
    <- logFinish[artifact_id(LogArtId)];
-      .stopMAS;
+      .stopMAS(3000);
       .
 
 +exception(bhsch,site_preparation_exception,Args)[source(Sender)]
@@ -145,11 +145,11 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +exception(S,exterior_paint_exception,Args)[source(Sender)]
     : .member(alternativeColors(L),Args) &
       .member(white,L)
-   <- .send(Sender,tell,newColor(white)).
+   <- .send(Sender,tell,newExteriorColor(white)).
 
 +exception(S,interior_paint_exception,Args)[source(Sender)]
     : .member(alternativeColors(L),Args) &
       .member(gray,L)
-   <- .send(Sender,tell,newColor(gray)).
+   <- .send(Sender,tell,newInteriorColor(gray)).
 
 { include("$jacamoJar/templates/common-cartago.asl") }

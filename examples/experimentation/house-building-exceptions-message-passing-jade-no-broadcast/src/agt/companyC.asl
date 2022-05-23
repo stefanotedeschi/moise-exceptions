@@ -97,21 +97,29 @@ available_colors([white,gray,red,orange,cyan]).
     : play(HouseOwner,house_owner,hsh_group) &
       exterior_color(C) & available_colors(L) & not .member(C,L)
    <- .send(HouseOwner,tell,exception(bhsch,exterior_paint_exception,[alternativeColors(L)]));
-      .wait({+newColor(NC)});
-      -exterior_color(C);
+      .suspend;
+      !exterior_painted;
+      .
+
++newExteriorColor(NC)
+    : exterior_color(C)
+   <- -exterior_color(C);
       +exterior_color(NC);
-      !exterior_painted.
-      //resetGoal(exterior_painted)[artifact_id(ArtId)].
+      .resume(exterior_painted).
 
 +!interior_painted[scheme(S)]
     : play(HouseOwner,house_owner,hsh_group) &
       interior_color(C) & available_colors(L) & not .member(C,L)
    <- .send(HouseOwner,tell,exception(bhsch,interior_paint_exception,[alternativeColors(L)]));
-      .wait({+newColor(NC)});
-      -interior_color(C);
+      .suspend;
+      !interior_painted;
+      .
+
++newInteriorColor(NC)
+    : interior_color(C)
+   <- -interior_color(C);
       +interior_color(NC);
-      !interior_painted.
-      //resetGoal(interior_painted)[artifact_id(ArtId)].
+      .resume(interior_painted).
 
 { include("org_code.asl") }
 { include("org_goals.asl") }
