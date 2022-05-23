@@ -133,7 +133,7 @@ number_of_tasks(NS) :- .findall( S, task(S), L) & .length(L,NS).
 +goalState(bhsch,house_built,_,_,satisfied)
     : loggerArtifact(LogArtId)
    <- logFinish[artifact_id(LogArtId)];
-      .stopMAS;
+      .stopMAS(2000);
       .
 
 +!notify_affected_companies
