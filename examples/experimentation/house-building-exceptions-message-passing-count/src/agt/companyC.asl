@@ -94,7 +94,7 @@ available_colors([white,gray,red,orange,cyan]).
     : D >= 2 & focused(ora4mas,bhsch,ArtId) & loggerArtifact(LogArtId)
    <- logInc[artifact_id(LogArtId)];
       .print("There is a delay in windows fitting by ",Sender, " of ",D," weeks! I can reschedule my tasks");
-      .send(Sender,tell,handled(S,windows_delay_exception)).
+      .send(Sender,tell,handled(bhsch,windows_delay_exception)).
 
 +!exterior_painted
     : play(HouseOwner,house_owner,hsh_group) &

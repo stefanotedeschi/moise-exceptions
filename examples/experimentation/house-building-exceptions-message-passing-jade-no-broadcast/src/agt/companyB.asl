@@ -22,8 +22,8 @@ my_price(1500). // initial belief
 
 -!site_prepared[env_failure_reason(F)] : play(Eng,engineer,hsh_group) & play(HouseOwner,house_owner,hsh_group)
    <- .print("The site is flooded due to ",F,"!");
-      .send(Eng,tell,exception(S,site_preparation_exception,[errorCode(F)]));
- 	   .send(HouseOwner,tell,exception(S,site_preparation_exception,[errorCode(F)]));
+      .send(Eng,tell,exception(bhsch,site_preparation_exception,[errorCode(F)]));
+ 	   .send(HouseOwner,tell,exception(bhsch,site_preparation_exception,[errorCode(F)]));
       //.broadcast(tell,exception(bhsch,site_preparation_exception,[errorCode(F)]));
       .fail.
 
