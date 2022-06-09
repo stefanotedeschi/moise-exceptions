@@ -1,7 +1,7 @@
 /*
     This program was automatically generated from
     the organisation specification 'cake'
-    on aprile 28, 2022 - 16:24:11
+    on giugno 09, 2022 - 17:34:09
 
     This is a MOISE tool, see more at http://moise.sourceforge.net
 
@@ -262,13 +262,13 @@ scope scheme(cake_sch) {
         -> fail(ach_thr_goal_exc_not_raised(S,G,E,Ag)).
    norm exc_arg_not_ground:  
            raised(S,E,Ag,Args) &
-           exceptionSpecification(E) &
+           exceptionSpecification(E,_) &
            .member(Arg,Args) &
            not .ground(Arg)
         -> fail(exc_arg_not_ground(S,E,Arg)).
    norm exc_arg_missing:  
            raised(S,E,Ag,Args) &
-           exceptionSpecification(E) &
+           exceptionSpecification(E,_) &
            exceptionArgument(E,ArgFunctor,ArgArity) &
            not (.member(Arg,Args) &
            Arg=..[ArgFunctor,T,A] &
@@ -276,7 +276,7 @@ scope scheme(cake_sch) {
         -> fail(exc_arg_missing(S,E,ArgFunctor,ArgArity)).
    norm exc_arg_unknown:  
            raised(S,E,Ag,Args) &
-           exceptionSpecification(E) &
+           exceptionSpecification(E,_) &
            .member(Arg,Args) &
            Arg=..[ArgFunctor,T,A] &
            .length(T,ArgArity) &

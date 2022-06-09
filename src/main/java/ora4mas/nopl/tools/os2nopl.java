@@ -101,11 +101,11 @@ public class os2nopl {
         condCode.put(PROP_AchThrGoalExcNotRaised,
                 "done(S,TG,Ag) & raisingGoal(TG,E,_) & not super_goal(_,TG) & not raised(S,E,_,_)");
         condCode.put(PROP_ExcArgNotGround,
-                "raised(S,E,Ag,Args) & exceptionSpecification(E) & .member(Arg,Args) & not .ground(Arg)");
+                "raised(S,E,Ag,Args) & exceptionSpecification(E,_) & .member(Arg,Args) & not .ground(Arg)");
         condCode.put(PROP_ExcArgMissing,
-                "raised(S,E,Ag,Args) & exceptionSpecification(E) & exceptionArgument(E,ArgFunctor,ArgArity) & not (.member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity))");
+                "raised(S,E,Ag,Args) & exceptionSpecification(E,_) & exceptionArgument(E,ArgFunctor,ArgArity) & not (.member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity))");
         condCode.put(PROP_ExcArgUnknown,
-                "raised(S,E,Ag,Args) & exceptionSpecification(E) & .member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity) & not exceptionArgument(E,ArgFunctor,ArgArity)");
+                "raised(S,E,Ag,Args) & exceptionSpecification(E,_) & .member(Arg,Args) & Arg=..[ArgFunctor,T,A] & .length(T,ArgArity) & not exceptionArgument(E,ArgFunctor,ArgArity)");
         
     }
     // arguments that 'explains' the property
