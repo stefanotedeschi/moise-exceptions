@@ -34,7 +34,7 @@ public class LoggingArtifact extends Artifact {
 
         endTimeMillis = Calendar.getInstance().getTimeInMillis();
 
-        String log = endTimeMillis - startTimeMillis + "," + nObligations + "," + nExceptions + ",";
+        String log = endTimeMillis - startTimeMillis + "," + nMessages + "," + nExceptions + ",";
 
         log += '"' + "[";
 

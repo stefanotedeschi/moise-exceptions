@@ -1,0 +1,50 @@
+// This company bids for site preparation
+// Strategy: decreasing its price by 150 until its minimal value
+
+{ include("common.asl") }
+
+my_price(1500). // initial belief
+
+!discover_art("auction_for_SitePreparation").
+!discover_logging_art.
+
++currentBid(V)[artifact_id(Art)]        // there is a new value for current bid
+    : not i_am_winning(Art) &           // I am not the winner
+      my_price(P) & P < V               // I can offer a better bid
+   <- //.print("my bid in auction artifact ", Art, " is ",math.max(V-150,P));
+      bid( math.max(V-150,P) ).         // place my bid offering a cheaper service
+
+/* plans for execution phase */
+
++!site_prepared  // the organisational goal (created from an obligation)
+   <- .print("Preparing site...");
+      prepareSite;
+      .print("Done!").
+
+-!site_prepared[env_failure_reason(F)]
+    : loggerArtifact(LogArtId)
+   <- .print("The site is flooded due to ",F,"!");
+      //.send(Eng,tell,exception(S,site_preparation_exception,[errorCode(F)]));
+ 	   //.send(HouseOwner,tell,exception(S,site_preparation_exception,[errorCode(F)]));
+      .broadcast(tell,exception(bhsch,site_preparation_exception,[errorCode(F)]));
+      logException(site_preparation_exception)[artifact_id(LogArtId)];
+      .fail.
+
++handlerProposal(bhsch,site_preparation_exception)[source(Sender)]
+    : not (handlerProposal(bhsch,site_preparation_exception)[source(AnotherSender)] & Sender \== AnotherSender) &
+      loggerArtifact(LogArtId)
+   <- logMessage[artifact_id(LogArtId)];
+      -handlerProposal(bhsch,site_preparation_exception)[source(Sender)];
+      .send(Sender,tell,handlerProposalAccepted(bhsch,site_preparation_exception)).
+
++handled(bhsch,site_preparation_exception)[source(Sender)]
+    : focused(ora4mas,bhsch,ArtId) &
+      loggerArtifact(LogArtId)
+	<- logMessage[artifact_id(LogArtId)];
+      -handled(S,site_preparation_exception)[source(Sender)];
+      !site_prepared;
+	   goalAchieved(site_prepared)[artifact_id(ArtId)].
+
+{ include("org_code.asl") }
+{ include("exception_logging.asl") }
+{ include("$jacamoJar/templates/common-cartago.asl") }
