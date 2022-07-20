@@ -1,8 +1,11 @@
 
-+!switchOnOven
++!cookingTemperatureSetup
 	<- .print("Switching on oven...").
 	
-+!bakeCake
++!firstTimeBaking
+	<- .print("Baking cake...").
+
++!secondTimeBaking
 	<- .print("Baking cake...").
 	
 

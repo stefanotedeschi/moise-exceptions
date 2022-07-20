@@ -14,24 +14,24 @@
 
 mas bakery {
 
-    agent bak {
-    	roles: baker in bakeOff
+    agent wh {
+    	roles: warehouse in bakeOff
     }
-    agent cus {
-    	roles: customer in bakeOff
+    agent oo {
+    	roles: ovenOperator in bakeOff
     }
-    agent appr {
-    	roles: apprentice in bakeOff
+    agent plh {
+    	roles: productionLineHead in bakeOff
     }
-    agent supp {
-    	roles: supplier in bakeOff
+    agent pm {
+    	roles: productionManager in bakeOff
     }
 
-    organisation cakeOrg : cake-os.xml {
-		group bakeOff : bakery {
-			responsible-for: applePie
+    organisation cookiesOrg : cookie-os.xml {
+		group bakeOff : factory {
+			responsible-for: tarts
 		}
-		scheme applePie : cake_sch
+		scheme tarts : tarts_sch
 	}
 
 	java-path: ., src/env

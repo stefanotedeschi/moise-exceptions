@@ -1,11 +1,11 @@
 
-+!provideIngredients
++!ingredientsCollection
 	<- .print("Providing ingredients...");
 	   .print("Some ingredients are missing!");
-	   goalFailed(provideIngredients);
+	   goalFailed(ingredientsCollection);
 	   .fail.
 	   
-+!notifyIngredientsUnavailability
++!notifyIngredientsShortage
 	<- .print("Notifying that strawberries are missing...");
 	   raiseException(ingredientsUnavailable,[missingIngredients([strawberries])]).
 	   
