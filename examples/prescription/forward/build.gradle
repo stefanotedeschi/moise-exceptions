@@ -1,0 +1,73 @@
+/*
+   example: bakery
+
+   Gradle build file for JaCaMo Application
+   September 27, 2018 - 15:33:36
+*/
+
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+defaultTasks 'run'
+
+version '1.0'
+group   'it.unito.di'
+
+sourceCompatibility = 16
+targetCompatibility = 16
+
+repositories {
+    mavenCentral()
+    //mavenLocal()
+
+    maven { url "https://repo.gradle.org/gradle/libs-releases-local" }
+    maven { url "https://raw.github.com/jacamo-lang/mvn-repo/master" }
+    maven { url "https://moise-exceptions.sourceforge.io/maven2" }
+    //maven { url "http://www.di.unito.it/~tedeschi/maven2" }
+
+    flatDir {
+       dirs 'lib'
+    }
+}
+
+dependencies {
+    implementation group: 'org.jacamo',  name: 'jacamo',           version: '1.1.1-SNAPSHOT'
+    implementation group: 'it.unito.di', name: 'moise-exceptions', version: '0.3', changing: true
+}
+
+configurations {
+    compile.exclude group: 'org.jacamo', module: 'moise'
+}
+
+configurations.all {
+    // Check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/env'
+            srcDir 'src/agt'
+            srcDir 'src/org'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+}
+
+task run (type: JavaExec, dependsOn: 'classes') {
+    description 'runs the application'
+    group ' JaCaMo'
+    mainClass = 'jacamo.infra.JaCaMoLauncher'
+    args 'prescription-forward.jcm'
+    classpath sourceSets.main.runtimeClasspath
+}
+
+clean {
+    delete 'bin'
+    delete 'build'
+}

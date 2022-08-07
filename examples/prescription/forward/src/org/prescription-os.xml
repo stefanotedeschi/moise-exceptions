@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="https://moise-exceptions.sourceforge.io/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification
+    id="prescription_org" os-version="1.0"
+    
+    xmlns="https://moise-exceptions.sourceforge.io/os"
+    
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://moise-exceptions.sourceforge.io/os https://moise-exceptions.sourceforge.io/xml/0.3/os.xsd">
+
+    <structural-specification>
+
+        <role-definitions>
+            <role id="patient" />
+            <role id="doctor" />
+            <role id="pharmacist" />
+        </role-definitions>
+
+        <group-specification id="prescription_group">
+            <roles>
+                <role id="patient" min="1" max="1" />
+                <role id="doctor" min="1" max="1" />
+                <role id="pharmacist" min="1" max="1" />
+            </roles>
+        </group-specification>
+
+    </structural-specification>
+
+    <functional-specification>
+
+        <scheme id="prescription_sch">
+
+            <goal id="prescription">
+                <plan operator="sequence">
+                    <goal id="sendComplain" />
+                    <goal id="completePrescription">
+                        <plan operator="parallel">
+                            <goal id="receiveFilled" />
+                            <goal id="receivePrescribePatient" />
+                            <goal id="prescribeAndFill">
+                                <plan operator="sequence">
+                                    <goal id="receiveComplain" />
+                                    <goal id="sendPrescribe">
+                                        <plan operator="parallel">
+                                            <goal id="sendPrescribePharmacist" />
+                                            <goal id="sendPrescribePatient" />
+                                        </plan>
+                                    </goal>
+                                    <goal id="receivePrescribePharmacist" />
+                                    <goal id="sendFilled" />
+                                </plan>
+                            </goal>
+                        </plan>
+                    </goal>
+                </plan>
+            </goal>
+
+            <notification-policy id="resend" target="receiveFilled" condition="failed(_,receiveFilled)">
+                <exception-specification id="forward">
+                    <raising-goal id="forwardPrescribe" />
+                    <handling-goal id="receiveForwardedPrescribe" />
+                </exception-specification>
+            </notification-policy>
+
+            <mission id="mPatient" min="1" max="1">
+                <goal id="sendComplain" />
+                <goal id="receiveFilled" />
+                <goal id="receivePrescribePatient" />
+                <goal id="forwardPrescribe" />
+            </mission>
+            <mission id="mDoctor" min="1" max="1">
+                <goal id="receiveComplain" />
+                <goal id="sendPrescribePharmacist" />
+                <goal id="sendPrescribePatient" />
+            </mission>
+            <mission id="mPharmacist" min="1" max="1">
+                <goal id="receivePrescribePharmacist" />
+                <goal id="sendFilled" />
+                <goal id="receiveForwardedPrescribe" />
+            </mission>
+
+        </scheme>
+
+    </functional-specification>
+
+    <normative-specification>
+        <norm id="n1" type="obligation" role="patient"    mission="mPatient" />
+        <norm id="n2" type="obligation" role="doctor"     mission="mDoctor" />
+        <norm id="n3" type="obligation" role="pharmacist" mission="mPharmacist" />
+    </normative-specification>
+
+</organisational-specification>
