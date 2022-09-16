@@ -2,17 +2,26 @@
 available(raspberries).
 available(chocolate).
 
-+!dealWithMissingIngredients
-     : exceptionRaised(_,ingredientsUnavailable,_) &
-       exceptionArgument(_,ingredientsUnavailable,missingIngredients(I)) &
++!dealWithIngredientsShortage
+     : exceptionRaised(_,ingredientsShortage,_) &
+       exceptionArgument(_,ingredientsShortage,missingIngredients(I)) &
        .member(strawberries,I) &
        available(raspberries)
 	<- .print("I will use ",raspberries," instead of ",strawberries);
-	   goalReleased(provideIngredients).
+	   goalReleased(ingredientsCollection).
 	   
-+!mixIngredients
++!doughMixingAndFeeding
 	<- .print("Mixing ingredients...").
+
++!cutting
+	<- .print("Cutting tarts...").
 	   
++!jamFilling
+	<- .print("Filling tarts with jam...").
+
++!packaging
+	<- .print("Packaging tarts...").
+
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
 

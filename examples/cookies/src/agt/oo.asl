@@ -3,10 +3,10 @@
 	<- .print("Switching on oven...").
 	
 +!firstTimeBaking
-	<- .print("Baking cake...").
+	<- .print("First time baking...").
 
 +!secondTimeBaking
-	<- .print("Baking cake...").
+	<- .print("Second time baking...").
 	
 
 { include("$jacamoJar/templates/common-cartago.asl") }
