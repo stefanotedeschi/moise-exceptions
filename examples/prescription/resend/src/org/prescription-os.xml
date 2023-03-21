@@ -32,7 +32,7 @@
 
         <scheme id="prescription_sch">
 
-            <goal id="prescription">
+            <goal id="prescription" ttf="5 seconds">
                 <plan operator="sequence">
                     <goal id="sendComplain" />
                     <goal id="completePrescription">
@@ -51,9 +51,10 @@
                 </plan>
             </goal>
 
-            <notification-policy id="resend" target="receiveFilled" condition="failed(_,receiveFilled)">
-                <exception-specification id="resend">
-                    <raising-goal id="resendComplain" />
+            <notification-policy id="resend" target="getMedication" condition="failed(_,waitForDrugs)">
+                <exception-specification id="prescriptionDelay">
+                    <exception-argument id="..." arity="..." />
+                    <raising-goal id="raiseDelayException" />
                     <handling-goal id="receiveResentComplain" />
                 </exception-specification>
             </notification-policy>
