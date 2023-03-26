@@ -1,7 +1,7 @@
 //symptom(headache).
 symptom(fever).
 
-+!sendComplain : symptom(S)
++!sendComplain(hello) : symptom(S)
 	<- .print("I'm ill. Sending a complaint to the doctor...");
 	   //.send(doctor,tell,symptom(S)).
 	   .
