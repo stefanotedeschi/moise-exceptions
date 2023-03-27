@@ -1,7 +1,6 @@
-+!prescribe : request(prescription)
-	<- .print("Sending prescription to pharmacist...");
-	   //.send(pharmacist,tell,send(prescription)).
-	   .
+// +!prescribe : request(prescription)
+// 	<- .print("Sending prescription to pharmacist...");
+// 	   .send(pharmacist,tell,send(prescription)).
 
 +!handle_exception_lost_request : request(prescription)
 	<- .print("Handling exception LOST REQUEST");
