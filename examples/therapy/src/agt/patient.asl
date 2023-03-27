@@ -9,6 +9,14 @@
 	<- .wait({+deliver(drugs)});
 	   !follow_therapy.
 
++!raise_exception_lost_request
+	<- .print("Raising exception LOST REQUEST");
+	   raiseException(exception_lost_request,[date("23.03.2023")]).
+
++!raise_exception_no_delivery
+	<- .print("Raising exception NO DELIVERY");
+	   raiseException(exception_no_delivery,[patient_name(doctor),date("23.03.2023")]).
+
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
 
