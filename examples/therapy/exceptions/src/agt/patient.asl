@@ -15,7 +15,7 @@
 
 +!raise_exception_no_delivery
 	<- .print("Raising exception NO DELIVERY");
-	   raiseException(exception_no_delivery,[patient_name(doctor),date("23.03.2023")]).
+	   raiseException(exception_no_delivery,[doctor_name(doctor),date("23.03.2023")]).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
