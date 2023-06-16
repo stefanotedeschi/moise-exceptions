@@ -128,6 +128,10 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         missions.add(m);
     }
 
+    public boolean removeMission(Mission m) {
+        return missions.remove(m);
+    }
+
     public void setMissionCardinality(String missionId, Cardinality c) throws MoiseConsistencyException {
         Mission m = getMission(missionId);
         if (m == null) {
@@ -195,7 +199,7 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     }
 
     //
-    // Recovery strategies methods
+    // Notification policies methods
     public void addNotificationPolicy(NotificationPolicy np) {
         notificationPolicies.put(np.getId(), np);
     }
@@ -331,5 +335,4 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
             }
         }
     }
-
 }

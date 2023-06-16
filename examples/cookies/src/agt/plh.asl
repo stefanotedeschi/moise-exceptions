@@ -4,7 +4,7 @@ available(chocolate).
 
 +!dealWithIngredientsShortage
      : exceptionRaised(_,ingredientsShortage,_) &
-       exceptionArgument(_,ingredientsShortage,missingIngredients(I)) &
+       exceptionArgument(_,ingredientsShortage,availableFillings(I)) &
        .member(strawberries,I) &
        available(raspberries)
 	<- .print("I will use ",raspberries," instead of ",strawberries);

@@ -18,6 +18,6 @@ mas house_building_no_exceptions_ours {
    }
    agent companyE
 
-   class-path: res
+   
    
 }

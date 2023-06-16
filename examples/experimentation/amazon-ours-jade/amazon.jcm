@@ -98,7 +98,7 @@ mas amazon_exceptions {
 
 	}
 
-    class-path: res
+    
 
     platform: jade()
 

@@ -10,7 +10,7 @@
 	 : scheme(am_sch,_,SchId) &
 	   group(GroupName,key_account_management_group,_) &
 	   play(Am,key_account_manager,GroupName)
-	<- .print("Description received!")
+	<- .print("Description received!");
 	   .send(Am,tell,description(D));
 	   goalAchieved(get_description)[artifact_id(SchId)].
 	   

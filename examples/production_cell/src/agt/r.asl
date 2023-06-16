@@ -58,13 +58,13 @@
 	<- .print("Scheduling table motor fix...").
 	
 +!pauseProduction
-	<- .print("Pausing production...")
+	<- .print("Pausing production...");
 	   .wait(5000);
 	   goalReleased(turnTableMoveUp);
 	   .print("Problem solved! Production resumed").
 	   
 +!emergencyStop
-	<- .print("***EMERGENCY STOP***")
+	<- .print("***EMERGENCY STOP***");
 	   goalReleased(producePlate).
 
 // uncomment the include below to have an agent compliant with its organisation

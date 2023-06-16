@@ -6,7 +6,7 @@
 +!turnTableMoveUp
 	<- .print("Turning table and moving up...");
 	   .print("Unable to move up!");
-	   goalFailed(turnTableMoveUp)
+	   goalFailed(turnTableMoveUp);
 	   .fail.
 	
 +!turnTableMoveDown

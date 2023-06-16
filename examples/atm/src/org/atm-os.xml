@@ -42,7 +42,7 @@
                 <plan operator="sequence">
                     <goal id="obtainAmount">
                         <plan operator="sequence">
-                            <goal id="getAmountAsString(hello)" />
+                            <goal id="getAmountAsString" />
                             <goal id="parseAmount" />
                         </plan>
                     </goal>

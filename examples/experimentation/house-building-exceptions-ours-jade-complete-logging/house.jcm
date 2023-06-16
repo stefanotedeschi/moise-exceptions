@@ -19,7 +19,7 @@ mas house_building_exceptions_ours {
    agent companyE
    agent engineer1
 
-   class-path: res
+   
 
    platform: jade()
 

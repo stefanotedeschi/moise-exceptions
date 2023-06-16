@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.tools.ant.filters.StringInputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

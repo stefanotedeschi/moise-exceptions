@@ -19,6 +19,6 @@ mas house_building_exceptions_message_passing {
    agent companyE
    agent engineer1
 
-   class-path: res
+   
 
 }

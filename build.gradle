@@ -3,10 +3,8 @@
 
 */
 
-import groovy.swing.SwingBuilder
-
 plugins {
-  id 'java'
+  id 'java-library'
   id 'eclipse'
   id 'maven-publish'
 }
@@ -16,12 +14,13 @@ defaultTasks 'jar'
 version '0.3'
 group   'it.unito.di'
 
-sourceCompatibility = 16
-targetCompatibility = 16
+sourceCompatibility = 17
+targetCompatibility = 17
 
 repositories {
     mavenCentral()
 
+    maven { url 'https://repo.gradle.org/gradle/libs-releases' }
     maven { url "https://raw.githubusercontent.com/jacamo-lang/mvn-repo/master" }
 
 }
@@ -41,16 +40,29 @@ publishing {
 }
 
 dependencies {
-    implementation group: 'org.jason-lang', name: 'jason',    version: '2.5.2', changing: false
-    implementation group: 'org.jacamo',     name: 'npl' ,     version: '0.5',   changing: true, transitive: false
-    implementation group: 'org.jacamo',     name: 'cartago',  version: '3.0',   changing: true
-    implementation group: 'org.jacamo',     name: 'jaca',     version: '3.0',   changing: true
+    api('org.jason:jason:3.1') {
+     exclude group: 'net.sf.ingenias', module: 'jade'
+    }
+    api('org.jacamo:npl:0.5')  {  transitive = false  }
+    api('org.jacamo:cartago:3.1') {  transitive = false  }
+    api('org.jacamo:jaca:3.1') {  transitive = false  }
 
     testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
 
-    implementation group: 'guru.nidi', name: 'graphviz-java', version: '0.7.0'
+    api('guru.nidi:graphviz-java:0.7.0') {
+     exclude group: 'xml-apis', module: 'xml-apis'
+     exclude group: 'xml-apis', module: 'xml-apis-ext'
+    }
 
     //umljavadoc 'org.umlgraph:umlgraph:5.6'
+
+    // used in cartago web infrastructure
+    implementation "io.vertx:vertx-core:3.7.0"
+    implementation "io.vertx:vertx-sync:3.7.0"
+    implementation "io.vertx:vertx-unit:3.7.0"
+    implementation "io.vertx:vertx-web:3.7.0"
+    implementation "io.vertx:vertx-web-client:3.7.0"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.9.8"
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
@@ -74,20 +86,6 @@ clean {
     delete 'bin'
     delete 'doc/api'
     delete 'test.xml'
-}
-
-task intsim (type: JavaExec, dependsOn: 'jar') {
-    description 'runs an interactive simulation of some organisation'
-    mainClass = 'jason.infra.centralised.RunCentralisedMAS'
-    args 'org-simulator.mas2j'
-    classpath sourceSets.main.runtimeClasspath
-    workingDir project.projectDir.absolutePath + '/examples/sim'
-}
-
-task sim (type: JavaExec, dependsOn: 'jar') {
-    description 'runs a program that simulates some dynamics of an organisation'
-    mainClass = 'ora4mas.nopl.simulator.ConsoleSimulator'
-    classpath sourceSets.main.runtimeClasspath
 }
 
 task os2dot (type: JavaExec, dependsOn: 'jar') {

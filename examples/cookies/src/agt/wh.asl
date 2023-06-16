@@ -7,7 +7,7 @@
 	   
 +!notifyIngredientsShortage
 	<- .print("Notifying that strawberries are missing...");
-	   raiseException(ingredientsShortage,[missingIngredients([strawberries])]).
+	   raiseException(ingredientsShortage,[availableFillings([strawberries])]).
 	   
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

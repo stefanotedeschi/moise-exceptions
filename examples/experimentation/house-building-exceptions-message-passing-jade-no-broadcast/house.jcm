@@ -19,7 +19,7 @@ mas house_building_exceptions_message_passing_jade_no_broadcast {
    agent companyE
    agent engineer1
 
-   class-path: res
+   
 
    platform: jade()
 
