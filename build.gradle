@@ -76,7 +76,7 @@ test {
 }
 
 jar {
-    baseName 'moise-exceptions'
+    archiveBaseName = 'moise-exceptions'
     into('') {
         from configurations.extraLibs
     }
@@ -100,14 +100,14 @@ eclipse {
 }
 
 task javadocJar (type: Jar, dependsOn: javadoc) {
-    baseName 'moise-exceptions'
-    classifier = 'javadoc'
+    archiveBaseName = 'moise-exceptions'
+    archiveClassifier = 'javadoc'
     from '${docsDir}/../../doc/api'
 }
 
 task sourceJar (type : Jar) {
-    baseName 'moise-exceptions'
-    classifier = 'sources'
+    archiveBaseName = 'moise-exceptions'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
