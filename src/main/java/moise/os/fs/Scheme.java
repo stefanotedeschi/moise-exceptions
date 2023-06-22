@@ -28,6 +28,8 @@ import moise.common.MoiseElement;
 import moise.common.MoiseException;
 import moise.os.Cardinality;
 import moise.os.CardinalitySet;
+import moise.os.fs.accountability.AccountabilityAgreement;
+import moise.os.fs.accountability.AgreementConditionTemplate;
 import moise.os.fs.exceptions.ExceptionSpecification;
 import moise.os.fs.exceptions.NotificationPolicy;
 import moise.os.fs.exceptions.PolicyConditionTemplate;
@@ -56,20 +58,21 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
     protected FS                       fs       = null;
 
     protected Map<String, NotificationPolicy> notificationPolicies = new HashMap<>();
+    protected Map<String, AccountabilityAgreement> accountabilityAgreements = new HashMap<>();
     
     protected PolicyConditionTemplate[] policyConditionTemplates;
+    protected AgreementConditionTemplate[] agreementConditionTemplates;
 
     public Scheme(String id, FS fs) {
         super(id);
         this.fs = fs;
         
         // get policy types from configuration file
-        InputStream is = getClass().getResourceAsStream("/json/policy-conditions-templates.json");
+        InputStream is = getClass().getResourceAsStream("/json/agreement-conditions-templates.json");
         JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
         Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
-        policyConditionTemplates = gson.fromJson(reader, PolicyConditionTemplate[].class);
+        agreementConditionTemplates = gson.fromJson(reader, AgreementConditionTemplate[].class);
     }
-
 
     public void setRoot(Goal g) {
         root = g;
@@ -104,6 +107,10 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
                 return true;
         return false;
     }*/
+
+    public AgreementConditionTemplate[] getAgreementConditionTemplates() {
+        return agreementConditionTemplates;
+    }
 
     public PolicyConditionTemplate[] getPolicyConditionTemplates() {
         return policyConditionTemplates;
@@ -198,7 +205,15 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         return ms;
     }
 
-    //
+    // Accountability agreements methods
+    public void addAccountabilityAgreement(AccountabilityAgreement aa) {
+        accountabilityAgreements.put(aa.getId(), aa);
+    }
+
+    public Collection<AccountabilityAgreement> getAccountabilityAgreements() {
+        return accountabilityAgreements.values();
+    }
+
     // Notification policies methods
     public void addNotificationPolicy(NotificationPolicy np) {
         notificationPolicies.put(np.getId(), np);
@@ -262,6 +277,11 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
         // goals
         ele.appendChild(getRoot().getAsDOM(document));
 
+        // accountability agreements
+        for (AccountabilityAgreement aa : getAccountabilityAgreements()) {
+            ele.appendChild(aa.getAsDOM(document));
+        }
+
         // notification policies
         for (NotificationPolicy np : getNotificationPolicies()) {
             ele.appendChild(np.getAsDOM(document));
@@ -293,7 +313,15 @@ public class Scheme extends MoiseElement implements ToXML, ToProlog {
 //        InputStream is = getClass().getResourceAsStream("/json/exceptions-conf.json");
 //        JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(is)));
 //        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create();
+//        agreementConditionTemplates = gson.fromJson(reader, AgreementConditionTemplate[].class);
 //        policyConditionTemplates = gson.fromJson(reader, PolicyConditionTemplate[].class);
+
+        // accountability agreements
+        for (Element aaEle : DOMUtils.getDOMDirectChilds(ele, AccountabilityAgreement.getXMLTag())) {
+            AccountabilityAgreement aa = new AccountabilityAgreement(aaEle.getAttribute("id"), this);
+            aa.setFromDOM(aaEle);
+            addAccountabilityAgreement(aa);
+        }
 
         // notification policies
         for (Element npEle : DOMUtils.getDOMDirectChilds(ele, NotificationPolicy.getXMLTag())) {

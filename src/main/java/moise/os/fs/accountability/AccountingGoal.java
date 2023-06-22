@@ -15,5 +15,9 @@ public class AccountingGoal extends AgreementGoal {
         ele.setAttribute("atype","accounting");
         return ele;
     }
+    
+    public static String getXMLTag() {
+        return "accounting-goal";
+    }
 
 }

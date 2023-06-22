@@ -16,4 +16,8 @@ public class TreatmentGoal extends AgreementGoal {
         return ele;
     }
     
+    public static String getXMLTag() {
+        return "treatment-goal";
+    }
+    
 }

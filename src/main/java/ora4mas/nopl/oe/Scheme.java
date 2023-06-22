@@ -63,6 +63,7 @@ public class Scheme extends CollectiveOE {
         createLiteral("failed",new VarTerm("SID"), new VarTerm("Goal")),
         createLiteral("raised", new VarTerm("SID"), new VarTerm("Exception"), new VarTerm("Ag"), new VarTerm("Args")),
         createLiteral("released", new VarTerm("SID"), new VarTerm("Goal")),
+        createLiteral("account", new VarTerm("SID"), new VarTerm("Account"))
     };
 
 
@@ -74,6 +75,7 @@ public class Scheme extends CollectiveOE {
     public final static PredicateIndicator failedPI      = dynamicFacts[7].getPredicateIndicator();
     public final static PredicateIndicator raisedPI      = dynamicFacts[8].getPredicateIndicator();
     public final static PredicateIndicator releasedPI    = dynamicFacts[9].getPredicateIndicator();
+    public final static PredicateIndicator accountPI     = dynamicFacts[10].getPredicateIndicator();
 
     // specification
     private moise.os.fs.Scheme spec;
@@ -97,13 +99,16 @@ public class Scheme extends CollectiveOE {
     // the literal is raised(schemeId, exceptionId, agent name, arguments)
     private List<Literal> raiseds = new CopyOnWriteArrayList<>();
 
+    // the literal is account(schemeId, account)
+    private List<Literal> accounts = new ArrayList<>();
+
     // list of satisfied goals
     private Set<String> satisfiedGoals = new HashSet<>(); // we use "contains" a lot, so remains HashSet
 
     public Scheme(moise.os.fs.Scheme spec, String id) {
         super(id);
         this.spec = spec;
-        
+
         // copy initial values of goal args
         for (Goal g: spec.getGoals()) {
             if (g.getArguments() != null) {
@@ -115,7 +120,7 @@ public class Scheme extends CollectiveOE {
             }
         }
     }
-    
+
     public moise.os.fs.Scheme getSpec() {
         return spec;
     }
@@ -144,6 +149,12 @@ public class Scheme extends CollectiveOE {
         }
         argS += "]";
         raiseds.add(createLiteral(raisedPI.getFunctor(), termId, createAtom(exception), createAtom(ag), ASSyntax.parseList(argS)));
+    }
+
+    public void addAccount(Object[] account) throws ParseException, npl.parser.ParseException {
+        for (Object a : account) {
+            accounts.add(createLiteral(accountPI.getFunctor(), termId, ASSyntax.parseLiteral(a.toString())));
+        }
     }
 
     public Term getTermId() {
@@ -243,7 +254,7 @@ public class Scheme extends CollectiveOE {
         }
         return changed;
     }
-    
+
     protected boolean resetGoalAndPreConditions(Goal goal) {
         boolean changed = removeDoneGoal(goal);
 
@@ -393,6 +404,9 @@ public class Scheme extends CollectiveOE {
                 return lu.iterator();
             }
         }
+        else if(pi.equals(accountPI)) {
+            return consultFromCollection(l, u, accounts);
+        }
         return LogExpr.EMPTY_UNIF_LIST.iterator();
     }
 
@@ -515,6 +529,7 @@ public class Scheme extends CollectiveOE {
         g.doneGoals.addAll(this.doneGoals);
         g.failedGoals.addAll(this.failedGoals);
         g.raiseds.addAll(this.raiseds);
+        g.accounts.addAll(this.accounts);
         g.releasedGoals.addAll(this.releasedGoals);
         //g.accomplisedMissions.addAll(this.accomplisedMissions);
         g.satisfiedGoals.addAll(this.satisfiedGoals);

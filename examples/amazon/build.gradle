@@ -20,11 +20,11 @@ targetCompatibility = 17
 
 repositories {
     mavenCentral()
-    //mavenLocal()
+    mavenLocal()
 
     maven { url "https://repo.gradle.org/gradle/libs-releases" }
     maven { url "https://raw.github.com/jacamo-lang/mvn-repo/master" }
-    maven { url "https://moise-exceptions.sourceforge.io/maven2" }
+    //maven { url "https://moise-exceptions.sourceforge.io/maven2" }
 
     flatDir {
        dirs 'lib'
@@ -69,8 +69,4 @@ task run (type: JavaExec, dependsOn: 'classes') {
 clean {
     delete 'bin'
     delete 'build'
-    delete '.settings'
-    delete '.classpath'
-    delete '.project'
-    delete 'e_r_r_o_r.txt'
 }

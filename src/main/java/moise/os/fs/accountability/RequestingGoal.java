@@ -15,5 +15,9 @@ public class RequestingGoal extends AgreementGoal {
         ele.setAttribute("atype","requesting");
         return ele;
     }
+    
+    public static String getXMLTag() {
+        return "requesting-goal";
+    }
 
 }

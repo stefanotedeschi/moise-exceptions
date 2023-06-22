@@ -34,6 +34,7 @@ import jason.asSyntax.NumberTerm;
 import jason.asSyntax.PredicateIndicator;
 import jason.asSyntax.Term;
 import jason.asSyntax.VarTerm;
+import jason.stdlib.literal;
 import jason.util.Config;
 import moise.common.MoiseException;
 import moise.oe.GoalInstance;
@@ -115,6 +116,8 @@ public class SchemeBoard extends OrgArt {
 
 	private List<ObsProperty> exceptionsObsProps = new ArrayList<>();
 	private List<ObsProperty> exceptionArgumentsObsProps = new ArrayList<>();
+	
+	private List<ObsProperty> accountsObsProps = new ArrayList<>();
 
     protected static Collection<SchemeBoard> schBoards = new ArrayList<>();
     public static Collection<SchemeBoard> getSchemeBoards() {
@@ -357,6 +360,22 @@ public class SchemeBoard extends OrgArt {
                 //updateExceptionsObsProp();
             }
         }, "Error setting goal " + goal + " as released");
+    }
+
+    @OPERATION
+    public void giveAccount(Object[] account) throws CartagoException {
+        ora4masOperationTemplate(new Operation() {
+            public void exec() throws NormativeFailureException, Exception {
+                getSchState().addAccount(account);
+                nengine.verifyNorms();         
+                for (Object a : account) {
+                    Literal l = ASSyntax.parseLiteral(a.toString());
+                    ObsProperty op = defineObsProperty("account",l);
+                    op.addAnnot(ASSyntax.parseLiteral("accountGiver(" + getOpUserName() + ")"));
+                    accountsObsProps.add(op);
+                }
+            }
+        }, "Error giving account " + account);
     }
 
     @OPERATION

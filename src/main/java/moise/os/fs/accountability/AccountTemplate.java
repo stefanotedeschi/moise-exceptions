@@ -75,29 +75,28 @@ public class AccountTemplate extends moise.common.MoiseElement implements ToXML,
             accountArguments.add(l);
         }
         
-        for(Element gEle: DOMUtils.getDOMDirectChilds(ele, Goal.getXMLTag())) {
-            if(gEle.getAttribute("atype").equals("requesting")) {
-                RequestingGoal rg = new RequestingGoal(gEle.getAttribute("id"), this);
-                rg.setFromDOM(gEle, sch);
-                sch.addGoal(rg);
-                requestingGoals.add(rg);
-            }
-            else if(gEle.getAttribute("atype").equals("treatment")) {
-                TreatmentGoal tg = new TreatmentGoal(gEle.getAttribute("id"), this);
-                tg.setFromDOM(gEle, sch);
-                sch.addGoal(tg);
-                treatmentGoals.add(tg);
-            }
-            else if(gEle.getAttribute("atype").equals("accounting")) {
-                if(accountingGoal != null) {
-                    throw new MoiseException("Cannot have multiple accounting goals in accountability agreement " + inAgreement.getId());
-                }
-                accountingGoal = new AccountingGoal(gEle.getAttribute("id"), this);
-                accountingGoal.setFromDOM(gEle, sch);
-                sch.addGoal(accountingGoal);
-            }
+        for(Element gEle: DOMUtils.getDOMDirectChilds(ele, RequestingGoal.getXMLTag())) {
+            RequestingGoal rg = new RequestingGoal(gEle.getAttribute("id"), this);
+            rg.setFromDOM(gEle, sch);
+            sch.addGoal(rg);
+            requestingGoals.add(rg);
         } 
         
+        for(Element gEle: DOMUtils.getDOMDirectChilds(ele, TreatmentGoal.getXMLTag())) {
+            TreatmentGoal tg = new TreatmentGoal(gEle.getAttribute("id"), this);
+            tg.setFromDOM(gEle, sch);
+            sch.addGoal(tg);
+            treatmentGoals.add(tg);
+        }
+        
+        for(Element gEle: DOMUtils.getDOMDirectChilds(ele, AccountingGoal.getXMLTag())) {
+            if(accountingGoal != null) {
+                throw new MoiseException("Cannot have multiple accounting goals in accountability agreement " + inAgreement.getId());
+            }
+            accountingGoal = new AccountingGoal(gEle.getAttribute("id"), this);
+            accountingGoal.setFromDOM(gEle, sch);
+            sch.addGoal(accountingGoal);
+        } 
         if(accountingGoal == null) {
             throw new MoiseException("Accounting goal missing in account template in agreement " + inAgreement.getId());
         }
