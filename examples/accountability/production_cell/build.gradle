@@ -1,5 +1,5 @@
 /*
-   example: amazon
+   example: production_cell
 
    Gradle build file for JaCaMo Application
    September 27, 2018 - 15:33:36
@@ -62,7 +62,7 @@ task run (type: JavaExec, dependsOn: 'classes') {
     description 'runs the application'
     group ' JaCaMo'
     mainClass = 'jacamo.infra.JaCaMoLauncher'
-    args 'amazon.jcm'
+    args 'production_cell.jcm'
     classpath sourceSets.main.runtimeClasspath
 }
 

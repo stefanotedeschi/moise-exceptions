@@ -1,0 +1,47 @@
+[giacomo] Waiting bids for 5 seconds...
+[giacomo] Winner of task Painting is companyD11 for 896
+[giacomo] Winner of task Roof is companyE for 1090
+[giacomo] Winner of task ElectricalSystem is companyC4 for 300
+[giacomo] Winner of task Floors is companyE for 890
+[giacomo] Winner of task Walls is companyE for 890
+[giacomo] Winner of task Engineering is engineer1 for 4850
+[giacomo] Winner of task WindowsDoors is companyC2 for 2000
+[giacomo] Winner of task Plumbing is companyA for 300
+[giacomo] Winner of task SitePreparation is companyB for 1850
+[giacomo] 
+[giacomo] *** Execution Phase ***
+[giacomo] 
+[giacomo] Contracting companyD11 for Painting
+[giacomo] Contracting companyE for Roof
+[giacomo] Contracting companyC4 for ElectricalSystem
+[giacomo] Contracting companyE for Floors
+[giacomo] Contracting companyE for Walls
+[giacomo] Contracting engineer1 for Engineering
+[giacomo] Contracting companyC2 for WindowsDoors
+[giacomo] Contracting companyA for Plumbing
+[giacomo] Contracting companyB for SitePreparation
+[companyB] I am obliged to commit to prepare_site on bhsch... doing so
+[companyD11] I am obliged to commit to paint_house on bhsch... doing so
+[companyC4] I am obliged to commit to install_electrical_system on bhsch... doing so
+[companyA] I am obliged to commit to install_plumbing on bhsch... doing so
+[giacomo] I am obliged to commit to management_of_house_building on bhsch... doing so
+[engineer1] I am obliged to commit to site_inspection on bhsch... doing so
+[companyC2] I am obliged to commit to fit_windows on bhsch... doing so
+[companyE] I am obliged to commit to lay_floors on bhsch... doing so
+[companyE] I am obliged to commit to build_walls on bhsch... doing so
+[companyC2] I am obliged to commit to fit_doors on bhsch... doing so
+[companyE] I am obliged to commit to build_roof on bhsch... doing so
+[companyB] Preparing site...
+[companyB] The site is flooded due to flooding!
+[companyB] RAISING SITE PREPARATION EXCEPTION WITH ERROR CODE flooding!
+[companyB] I am not obliged to achieve site_prepared for scheme bhsch anymore, dropping the intention.
+[companyB] No failure event was generated for -!site_prepared[code(prepareSite),code_line(26),code_src("file:src/agt/companyB.asl"),env_failure_reason(flooding),error(action_failed),error(ia_failed),error_msg(""),error_msg("Bad weather"),scheme(bhsch),source(self)]
+intention 252: 
+    -!site_prepared[code(prepareSite),code_line(26),code_src("file:src/agt/companyB.asl"),env_failure_reason(flooding),error(action_failed),error_msg("Bad weather"),scheme(bhsch),source(self)] <- ... .fail / {F=flooding, ArtId=cobj_7}
+    +!site_prepared[scheme(bhsch),source(self)] <- ... prepareSite / {}
+    +!fulfill_obligation(bhsch,site_prepared,cobj_7,prepare_site)[source(self)] <- ... !Goal[scheme(Scheme)]; goalAchieved(Goal)[artifact_id(ArtId)] / {Goal=site_prepared, Scheme=bhsch, Mission=prepare_site, ArtId=cobj_7}
+    +obligation(companyB,(enabled(bhsch,site_prepared) & not (failed(bhsch,site_prepared))),done(bhsch,site_prepared,companyB),1687517177637)[artifact_id(cobj_7),artifact_name(bhsch),norm(ngoal,[["A",companyB],["S",bhsch],["D","1970-0-4 1:20:0"],["G",site_prepared],["M",prepare_site],["What",done(bhsch,site_prepared,companyB)]]),percept_type(obs_prop),source(percept),workspace("/main/ora4mas",cobj_4)] <- ... !fulfill_obligation(Scheme,Goal,ArtId,Mission) / {Goal=site_prepared, Scheme=bhsch, Ag=companyB, Deadline=1687517177637, ArtId=cobj_7, Norm=(enabled(bhsch,site_prepared) & not (failed(bhsch,site_prepared))), Un=[["A",companyB],["S",bhsch],["D","1970-0-4 1:20:0"],["G",site_prepared],["M",prepare_site],["What",done(bhsch,site_prepared,companyB)]], Mission=prepare_site, _86=ngoal, What=done(bhsch,site_prepared,companyB)}
+
+[engineer1] Inspecting site...
+[engineer1] Done!
+[engineer1] Fixing flooding...
